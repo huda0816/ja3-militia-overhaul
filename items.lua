@@ -92,6 +92,10 @@ PlaceObj('ModItemCode', {
 	'CodeFileName', "Code/Init.lua",
 }),
 PlaceObj('ModItemCode', {
+	'name', "MilitiaManagement",
+	'CodeFileName', "Code/MilitiaManagement.lua",
+}),
+PlaceObj('ModItemCode', {
 	'name', "Movement",
 	'CodeFileName', "Code/Movement.lua",
 }),

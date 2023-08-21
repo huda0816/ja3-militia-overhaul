@@ -57,10 +57,6 @@ function UnitProperties:GetPersonalMorale()
 		return morale
 	end
 
-	print("Militia Morale")
-
-	Inspect(self)
-
 	if HUDA_MilitiaOverhaul:GetUnitDistance(self) < 4 then
 
 		print("Distance: " .. HUDA_MilitiaOverhaul:GetUnitDistance(self))

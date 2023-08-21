@@ -1,11 +1,39 @@
 local x_button = CustomSettingsMod.Utils.XTemplate_FindElementsByProp(XTemplates["SquadsAndMercs"], "__class",
 	"XButton")
 
-x_button.element[1].Id = "idBgSquadIcon"
+if x_button then
+	x_button.element[1].Id = "idBgSquadIcon"
 
-x_button.element.OnContextUpdate = function(self, context)
-	if context.militia then
-		self.idBgSquadIcon:SetImage("Mod/LXPER6t/Icons/merc_squad_militia.png")
+	x_button.element.OnContextUpdate = function(self, context)
+		if IsContextMilitia(context) then
+			self.idBgSquadIcon:SetImage("Mod/LXPER6t/Icons/merc_squad_militia.png")
+		end
+	end
+end
+
+
+
+local tm_template = CustomSettingsMod.Utils.XTemplate_FindElementsByProp(XTemplates["TeamMembers"], "__template",
+	"SquadsAndMercs")
+
+if tm_template then
+	tm_template.element.__context = function(parent, context)
+		local squads =  GetSquadsOnMapUI()
+
+		local militia = table.filter(squads, function(k, v) return IsContextMilitia(v) end)
+		local mercs = table.filter(squads, function(k, v) return not IsContextMilitia(v) end)
+
+		local both = {}
+
+		for _, merc in pairs(mercs) do
+			table.insert(both, merc)
+		end
+
+		for _, mil in pairs(militia) do
+			table.insert(both, mil)
+		end
+
+		return both
 	end
 end
 

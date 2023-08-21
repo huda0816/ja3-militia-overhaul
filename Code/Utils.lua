@@ -7,3 +7,21 @@ function ArrayContains(array, value)
 
 	return false
 end
+
+function IsContextMilitia(context)
+	local militia = false
+
+	if context.militia then
+		militia = true
+	elseif context.UniqueId then
+		local squad = gv_Squads[context.UniqueId]
+
+		if squad then
+			militia = squad.militia
+		end
+	end
+
+	return militia
+end
+
+CSMFindElement = CustomSettingsMod.Utils.XTemplate_FindElementsByProp
