@@ -1,21 +1,35 @@
 const.Satellite.MercSquadMaxPeople = 8
 
+-- function OnMsg.UnitAssignedToSquad(squad_id, unit_id, create_new_squad)
+--     print("OnMsg.UnitAssignedToSquad", squad_id, unit_id, create_new_squad)
+--     local squad = gv_Squads[squad_id]
+
+--     if squad then
+--         Inspect(table.copy(squad))
+
+--     end
+
+-- end
+
 
 function GetSquadManagementSquads(mercs)
     local last_squad_in_table = gv_Squads and gv_Squads[#gv_Squads] or nil
 
-    if (last_squad_in_table and last_squad_in_table.joining_squad) then
-        local joining_squad = gv_Squads[last_squad_in_table.joining_squad]        
+    print("numsquad", #gv_Squads)
+    print(last_squad_in_table)
 
-        if joining_squad.militia then
-            last_squad_in_table.militia = true
-            g_PlayerSquads = table.filter(g_PlayerSquads, function(i, v)
-                return v.UniqueId ~= last_squad_in_table.UniqueId
-            end)
-            ObjModified("ui_player_squads")
-            return GetSquadManagementMilitiaSquads()
-        end
-    end
+    -- if (last_squad_in_table and last_squad_in_table.joining_squad) then
+    --     local joining_squad = gv_Squads[last_squad_in_table.joining_squad]        
+
+    --     if joining_squad.militia then
+    --         last_squad_in_table.militia = true
+    --         g_PlayerSquads = table.filter(g_PlayerSquads, function(i, v)
+    --             return v.UniqueId ~= last_squad_in_table.UniqueId
+    --         end)
+    --         ObjModified("ui_player_squads")
+    --         return GetSquadManagementMilitiaSquads()
+    --     end
+    -- end
 
     if not mercs and last_squad_in_table and last_squad_in_table.militia then
         return GetSquadManagementMilitiaSquads()
@@ -61,6 +75,15 @@ if FirstLoad then
 
     if sm_content then
         sm_content.element.__context = function(parent, context) return GetSquadManagementSquads(true) end
+
+        Inspect(sm_content)
+
+        sm_content.element[2][1].MinWidth = 930
+        sm_content.element[2][1].MaxWidth = 930
+
+        XTemplates["PDASquadManagement"][1][4].MinWidth = 1280
+        XTemplates["PDASquadManagement"][1][4].MaxWidth = 1280
+
     end
 
     for _, v in ipairs(CustomSettingsMod.Utils.XTemplate_FindElementsByProp(XTemplates["PDASquadManagement"], "ActionId", "idFilters", "first_on_branch")) do
@@ -77,12 +100,12 @@ if FirstLoad then
             "ButtonA",
             "OnAction",
             function(self, host, source, ...)
-                if self.ActionName == "Militia" then
-                    source:SetText(Untranslated("Mercs"))
+                if self.ActionName == "Militia" then                    
+                    host.idToolBar.ididMilitia:SetText(Untranslated("Mercs"))
                     self:SetProperty("ActionName", "Mercs")
                     host.idContent:SetContext(GetSquadManagementMilitiaSquads())
                 else
-                    source:SetText(Untranslated("Militia"))
+                    host.idToolBar.ididMilitia:SetText(Untranslated("Militia"))
                     self:SetProperty("ActionName", "Militia")
                     host.idContent:SetContext(GetSquadManagementSquads(true))
                 end
