@@ -64,7 +64,7 @@ function OnMsg.SquadFinishedTraveling(squad)
 		if unit.class ~= "MilitiaElite" then
 			local distance = HUDA_MilitiaOverhaul:GetUnitDistance(unit)
 
-			print("Distance: " .. distance)
+			-- print("Distance: " .. distance)
 
 			if distance > 4 then
 				unit:AddStatusEffect("FarFromHome")

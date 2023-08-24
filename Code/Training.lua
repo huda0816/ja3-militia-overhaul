@@ -55,6 +55,9 @@ end
 local HUDAOriginalSpawnMilitia = SpawnMilitia
 
 function SpawnMilitia(trainAmount, sector, bFromOperation)
+
+	print("SpawnMilitia")
+
 	local militia_id = sector.militia_squad_id
 
 	local original_array = {}

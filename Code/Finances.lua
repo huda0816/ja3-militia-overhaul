@@ -106,6 +106,18 @@ if FirstLoad then
     end
 end -- FirstLoad
 
+HUDA_OriginalGetMercCurrentDailySalary = GetMercCurrentDailySalary
+
+function GetMercCurrentDailySalary(id)
+    local unitData = gv_UnitData[id]
+
+    if unitData.militia then
+      return HUDA_MilitiaFinances:GetSalary(unitData)
+    end
+
+    return HUDA_OriginalGetMercCurrentDailySalary(id)
+    
+end
 
 HUDA_OriginalGetMoneyProjection = GetMoneyProjection
 
@@ -138,6 +150,24 @@ DefineClass.HUDA_MilitiaFinances = {
     MilitiaEliteIncome = 80,
     CampaignCosts = 40
 }
+
+function HUDA_MilitiaFinances:GetSalary(unit, days) 
+
+    days = days or 1
+
+    local base_salary = 0
+
+    if unit.class == "MilitiaRookie" then
+        base_salary = self.MilitiaRookieIncome * days
+    elseif unit.class == "MilitiaVeteran" then
+        base_salary = self.MilitiaVeteranIncome * days
+    elseif unit.class == "MilitiaElite" then
+        base_salary = self.MilitiaEliteIncome * days
+    end
+
+    return base_salary + self:AddCampaignBonus(unit)
+    
+end
 
 function HUDA_MilitiaFinances:GetMilitiaUpkeep(days)
 

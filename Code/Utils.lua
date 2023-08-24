@@ -24,4 +24,10 @@ function IsContextMilitia(context)
 	return militia
 end
 
-CSMFindElement = CustomSettingsMod.Utils.XTemplate_FindElementsByProp
+function HUDA_GetAllMilitiaSoldiers()
+	return table.filter(gv_UnitData, function(k, v)
+        return v.militia
+    end)
+end
+
+HUDA_FindElement = CustomSettingsMod.Utils.XTemplate_FindElementsByProp

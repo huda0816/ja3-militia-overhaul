@@ -11,44 +11,16 @@ const.Satellite.MercSquadMaxPeople = 8
 
 -- end
 
-
-function GetSquadManagementSquads(mercs)
-    local last_squad_in_table = gv_Squads and gv_Squads[#gv_Squads] or nil
-
-    print("numsquad", #gv_Squads)
-    print(last_squad_in_table)
-
-    -- if (last_squad_in_table and last_squad_in_table.joining_squad) then
-    --     local joining_squad = gv_Squads[last_squad_in_table.joining_squad]        
-
-    --     if joining_squad.militia then
-    --         last_squad_in_table.militia = true
-    --         g_PlayerSquads = table.filter(g_PlayerSquads, function(i, v)
-    --             return v.UniqueId ~= last_squad_in_table.UniqueId
-    --         end)
-    --         ObjModified("ui_player_squads")
-    --         return GetSquadManagementMilitiaSquads()
-    --     end
-    -- end
-
-    if not mercs and last_squad_in_table and last_squad_in_table.militia then
-        return GetSquadManagementMilitiaSquads()
-    end
-    local squads = GetPlayerMercSquads()
-    local items = {}
-    for _, squad in ipairs(squads) do
-        if squad.CurrentSector then
-            local item = { squad = squad }
-            for i = 1, const.Satellite.MercSquadMaxPeople do
-                item[#item + 1] = squad.units[i] or "empty"
-            end
-            items[#items + 1] = item
+function OnMsg.UnitJoinedPlayerSquad(squad_id)
+    local dlg = GetDialog("PDASquadManagement")
+    if dlg then
+        local squad = gv_Squads[squad_id]
+        if squad.militia then
+            dlg.idContent:SetContext(GetSquadManagementMilitiaSquads())
+        else
+            dlg.idContent:SetContext(GetSquadManagementSquads())
         end
     end
-    table.sort(items, function(a, b)
-        return a.squad.UniqueId < b.squad.UniqueId
-    end)
-    return items
 end
 
 function GetSquadManagementMilitiaSquads()
@@ -64,26 +36,41 @@ function GetSquadManagementMilitiaSquads()
         end
     end
     table.sort(items, function(a, b)
-        return a.squad.UniqueId < b.squad.UniqueId
+        return a.squad.CurrentSector < b.squad.CurrentSector
     end)
     return items
 end
 
-if FirstLoad then
+local sat_conflict = CustomSettingsMod.Utils.XTemplate_FindElementsByProp(XTemplates["SatelliteConflict"], "ActionId",
+    "actionFight")
 
-    local sm_content = CustomSettingsMod.Utils.XTemplate_FindElementsByProp(XTemplates["PDASquadManagement"], "Id", "idContent")
+if sat_conflict then
+    sat_conflict.element.ActionState = function(self, host)
+        local sector = host.context
+        return CanGoInMap(sector.Id) and
+        #GetSquadsInSector(sector.Id, "excludeTravelling", true, "excludeArriving", "excludeRetreating") > 0
+    end
+end
+
+if FirstLoad then
+    local sm_content = CustomSettingsMod.Utils.XTemplate_FindElementsByProp(XTemplates["PDASquadManagement"], "Id",
+        "idContent")
 
     if sm_content then
-        sm_content.element.__context = function(parent, context) return GetSquadManagementSquads(true) end
-
-        Inspect(sm_content)
+        sm_content.element.__context = function(parent, context) return GetSquadManagementSquads() end
 
         sm_content.element[2][1].MinWidth = 930
         sm_content.element[2][1].MaxWidth = 930
 
         XTemplates["PDASquadManagement"][1][4].MinWidth = 1280
         XTemplates["PDASquadManagement"][1][4].MaxWidth = 1280
+    end
 
+    local drag_a_merc = CustomSettingsMod.Utils.XTemplate_FindElementsByProp(XTemplates["PDASquadManagement"], "Id",
+        "idDragAMerc")
+
+    if drag_a_merc then
+        drag_a_merc.element.Text = Untranslated("Drag here to create squad")
     end
 
     for _, v in ipairs(CustomSettingsMod.Utils.XTemplate_FindElementsByProp(XTemplates["PDASquadManagement"], "ActionId", "idFilters", "first_on_branch")) do
@@ -100,7 +87,7 @@ if FirstLoad then
             "ButtonA",
             "OnAction",
             function(self, host, source, ...)
-                if self.ActionName == "Militia" then                    
+                if self.ActionName == "Militia" then
                     host.idToolBar.ididMilitia:SetText(Untranslated("Mercs"))
                     self:SetProperty("ActionName", "Mercs")
                     host.idContent:SetContext(GetSquadManagementMilitiaSquads())
@@ -113,38 +100,98 @@ if FirstLoad then
         })
         )
     end
+
+
+    local squad_names = CustomSettingsMod.Utils.XTemplate_FindElementsByProp(XTemplates["PDASquadManagement"], "Id",
+        "idSquadName", "all")
+
+    if squad_names then
+        for _, v in ipairs(squad_names) do
+            table.insert(v.ancestors[1], 3, PlaceObj("XTemplateWindow", {
+                "__class",
+                "XText",
+                "Id",
+                "idSquadNameFull",
+                "Margins",
+                box(4, 24, 4, 0),
+                "Padding",
+                box(0, 0, 0, 0),
+                "HAlign",
+                "left",
+                "FoldWhenHidden",
+                true,
+                "Visible",
+                false,
+                "TextStyle",
+                "HUDASMALLPDASM",
+                "ContextUpdateOnOpen",
+                true,
+                "Translate",
+                true,
+                "Text",
+                Untranslated("I am text"),
+                "OnContextUpdate",
+                function(self, context, ...)
+                    self.parent[2]:SetProperty("FoldWhenHidden", true)
+                    self.parent[1]:SetProperty("FoldWhenHidden", true)
+
+                    if context.militia then
+                        self.parent[1]:SetVisible(false)
+                        self.parent[2]:SetVisible(false)
+
+                        self:SetText(Untranslated(context.Name))
+                        self:SetVisible(true)
+                    else
+                        self.parent[1]:SetVisible(true)
+                        self.parent[2]:SetVisible(true)
+                        self:SetVisible(false)
+                    end
+                end
+            }))
+        end
+    end
 end
 
+local HUDA_OldOpenSquadCreation = OpenSquadCreation
+
 function OpenSquadCreation(squad_id)
-    local dlg = GetDialog("PDASquadManagement")
     local context = gv_Squads[squad_id]
+
+    if context.militia then
+        return
+    end
 
     local unit = gv_UnitData[context.units[1]]
 
     if unit and unit.militia then
-        local squad = gv_Squads[squad_id]
-
-        if not squad.militia then
-            squad.militia = true
-            squad.Name = HUDAGetRandomSquadName(squad.CurrentSector)
-            squad.image = ""
-        end
-
-        g_PlayerSquads = table.filter(g_PlayerSquads, function(i, v)
-            return v.UniqueId ~= squad_id
-        end)
-
-        local dlg = GetDialog("PDASquadManagement")
-        if dlg then
-            dlg.idContent:SetContext(GetSquadManagementMilitiaSquads())
-        end
-
-        ObjModified("ui_player_squads")
         return
     end
 
-    if dlg and context then
-        local squadCreation = XTemplateSpawn("PDASquadCreation", dlg, context)
-        squadCreation:Open()
+    HUDA_OldOpenSquadCreation(squad_id)
+end
+
+local HUDA_OldCreateNewSatelliteSquad = CreateNewSatelliteSquad
+
+function CreateNewSatelliteSquad(predef_props, unit_ids, days, seed, enemy_squad_def, reason)
+    print("predef_props", predef_props.Name)
+    print("joining_squad", predef_props.joining_squad)
+    print("type name", type(predef_props.Name))
+
+    if unit_ids then
+        for _, v in ipairs(unit_ids) do
+            local unit = gv_UnitData[v]
+            if unit and unit.militia then
+                predef_props.militia = true
+                predef_props.image = ""
+                if type(predef_props.Name) ~= "table" then
+                    local name = HUDA_GetRandomMilitiaSquadName()
+                    predef_props.Name = name
+                    predef_props.ShortName = name
+                end
+                break
+            end
+        end
     end
+
+    return HUDA_OldCreateNewSatelliteSquad(predef_props, unit_ids, days, seed, enemy_squad_def, reason)
 end

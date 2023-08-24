@@ -1,13 +1,30 @@
 function HUDA_GetRandomMilitiaName()
-    return HUDA_male_militia_names[InteractionRand(223)]
+
+    local rand = InteractionRand(180)
+
+    rand = rand + 1
+
+    print("rand", rand)
+
+    return HUDA_male_militia_names[rand]
 end
 
 function HUDA_GetRandomMilitiaSquadName()
-    return HUDA_militia_squad_names[InteractionRand(60)]
+
+    local rand = InteractionRand(60)
+
+    rand = rand + 1
+
+    return HUDA_militia_squad_names[rand]
 end
 
 function HUDA_GetRandomBio(name)
-    local bio = HUDA_militia_bios[InteractionRand(50)]
+
+    local rand = InteractionRand(49)
+
+    rand = rand + 1
+
+    local bio = HUDA_militia_bios[rand]
 
     return string.gsub(bio, "<name>", name)
 end
@@ -24,10 +41,14 @@ function UpdateNickNames(unit_ids)
         units = table.filter(unit_data, function(k, v) return v.militia and ArrayContains(unit_ids, k) end)
     end
 
+    Inspect(units)
+
     if units then
         for k, unit in pairs(units) do
             if not unit.Nick then
                 local nick = HUDA_GetRandomMilitiaName()
+
+                print("nick", nick)
 
                 unit.Nick = nick
                 unit.AllCapsNick = string.upper(nick)
@@ -39,7 +60,7 @@ function UpdateNickNames(unit_ids)
             end
 
             if not unit.JoinLocation then
-                unit.JoinLocation = unit:GetSector().Id
+                unit.JoinLocation = HUDA_GetSector(unit)
             end
 
             if not unit.Bio and unit.Nick then
@@ -52,10 +73,19 @@ function UpdateNickNames(unit_ids)
 
             unit:AddStatusEffect("GCMilitia")
 
-            print("Morale", unit.class, unit:GetPersonalMorale())
+            -- print("Morale", unit.class, unit:GetPersonalMorale())
 
         end
     end
+end
+
+function HUDA_GetSector(unit)
+    local squad = gv_Squads[unit.Squad]
+    local sector_id = squad and squad.CurrentSector
+    if not sector_id then
+        return gv_Sectors["H2"]
+    end
+    return gv_Sectors[sector_id]
 end
 
 function HUDAGetRandomSquadName(sector_id)
@@ -63,7 +93,8 @@ function HUDAGetRandomSquadName(sector_id)
 
     local sector_name = GetSectorName(sector)
 
-    return sector_name .. " - " .. HUDA_GetRandomMilitiaSquadName()
+    -- return sector_name .. " - " .. HUDA_GetRandomMilitiaSquadName()
+    return HUDA_GetRandomMilitiaSquadName()
 end
 
 function HUDA_RandomizeStats(unit)
