@@ -206,7 +206,7 @@ function HUDA_MilitiaFinances:AddCampaignBonus(unit)
         return 0
     end
 
-    local squad_distance = HUDA_MilitiaOverhaul:GetSquadDistance(unit_squad)
+    local squad_distance = HUDA_GetSquadDistance(unit_squad)
 
     return squad_distance > 2 and self.CampaignCosts or 0
 end

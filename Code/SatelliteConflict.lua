@@ -21,15 +21,15 @@ function UIEnterSectorInternal(sector_id, force)
 	end
 end
 
-if FirstLoad then
+-- if FirstLoad then
     local huda_enabled_button = HUDA_FindElement(XTemplates["SatelliteConflict"], "comment", "red enabled")
 
     if huda_enabled_button then
         huda_enabled_button.element.ActionState = function(self, host)
             local sector = host.context
-            return CanGoInMap(sector.Id) and
+			return CanGoInMap(sector.Id) and
             #GetSquadsInSector(sector.Id, "excludeTravelling", true, "excludeArriving", "excludeRetreating") > 0 and
-            "hidden" or "disabled"
+            "enabled" or "hidden"
         end
     end
 
@@ -39,9 +39,9 @@ if FirstLoad then
     if huda_disabled_button then
         huda_disabled_button.element.ActionState = function(self, host)
             local sector = host.context
-            return CanGoInMap(sector.Id) and
-            #GetSquadsInSector(sector.Id, "excludeTravelling", true, "excludeArriving", "excludeRetreating") > 0 and
-            "enabled" or "hidden"
+			return (CanGoInMap(sector.Id) or
+            #GetSquadsInSector(sector.Id, "excludeTravelling", true, "excludeArriving", "excludeRetreating") < 1) and
+            "hidden" or "disabled"
         end
     end
-end
+-- end

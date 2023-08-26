@@ -1,18 +1,3 @@
--- g_travelsquad = {}
-
--- function OnMsg.SquadStartedTravelling(squad)
--- 	g_travelsquad = squad
-
--- 	if (squad.route and squad.route.displayedSectionEnd) then
--- 		local destination = gv_Sectors[squad.route.displayedSectionEnd]
--- 		local start = gv_Sectors[squad.CurrentSector]
-
--- 		local s2 = gv_Sectors[squadTable.BornInSector].XMapPosition
--- 		local dist = destination.XMapPosition:Dist(start.XMapPosition)
-
--- 	end
--- end
-
 function IsPlayer1Squad(squad)
 	return squad.Side == "player1"
 end
@@ -62,9 +47,7 @@ function OnMsg.SquadFinishedTraveling(squad)
 		unit:RemoveStatusEffect("FarFromHome")
 
 		if unit.class ~= "MilitiaElite" then
-			local distance = HUDA_MilitiaOverhaul:GetUnitDistance(unit)
-
-			-- print("Distance: " .. distance)
+			local distance = HUDA_GetUnitDistance(unit)
 
 			if distance > 4 then
 				unit:AddStatusEffect("FarFromHome")

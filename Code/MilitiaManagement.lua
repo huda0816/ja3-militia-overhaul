@@ -1,16 +1,3 @@
-const.Satellite.MercSquadMaxPeople = 8
-
--- function OnMsg.UnitAssignedToSquad(squad_id, unit_id, create_new_squad)
---     print("OnMsg.UnitAssignedToSquad", squad_id, unit_id, create_new_squad)
---     local squad = gv_Squads[squad_id]
-
---     if squad then
---         Inspect(table.copy(squad))
-
---     end
-
--- end
-
 function OnMsg.UnitJoinedPlayerSquad(squad_id)
     local dlg = GetDialog("PDASquadManagement")
     if dlg then
@@ -184,7 +171,7 @@ function CreateNewSatelliteSquad(predef_props, unit_ids, days, seed, enemy_squad
                 predef_props.militia = true
                 predef_props.image = ""
                 if type(predef_props.Name) ~= "table" then
-                    local name = HUDA_GetRandomMilitiaSquadName()
+                    local name = HUDA_MilitiaPersonalization:GetRandomSquadName(HUDA_GetSectorId(unit))
                     predef_props.Name = name
                     predef_props.ShortName = name
                 end

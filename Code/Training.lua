@@ -55,9 +55,6 @@ end
 local HUDAOriginalSpawnMilitia = SpawnMilitia
 
 function SpawnMilitia(trainAmount, sector, bFromOperation)
-
-	print("SpawnMilitia")
-
 	local militia_id = sector.militia_squad_id
 
 	local original_array = {}
@@ -68,8 +65,8 @@ function SpawnMilitia(trainAmount, sector, bFromOperation)
 		if militia.units then
 			local unit_data = gv_UnitData
 
-			for index, value in ipairs(militia.units) do				
-					table.insert(original_array, table.raw_copy(unit_data[value]))
+			for index, value in ipairs(militia.units) do
+				table.insert(original_array, table.raw_copy(unit_data[value]))
 			end
 		end
 	end
@@ -80,32 +77,26 @@ function SpawnMilitia(trainAmount, sector, bFromOperation)
 	militia_squad.OriginalSide = "ally"
 	militia_squad.BornInSector = militia_squad.BornInSector or sector.Id
 
-	if ArrayContains(militia_squad.Name, "MILITIA") then
-		militia_squad.Name = Untranslated(HUDAGetRandomSquadName(sector.Id))
-	end
+	-- HUDA_MilitiaPersonalization:PersonalizeSquad(militia_squad.UniqueId)
 
 	if #original_array > 0 then
 		local unit_data = gv_UnitData
 
 		for index, value in ipairs(original_array) do
-
 			if unit_data[militia_squad.units[index]] then
 				MergeMilitia(unit_data[militia_squad.units[index]], value)
 			end
-	
 		end
 	end
 
-	UpdateNickNames(militia_squad.units)
+	HUDA_MilitiaPersonalization:Personalize(militia_squad.units)
 
 	ObjModified("ui_player_squads")
 
 	return militia_squad, count_trained
 end
 
-
 function MergeMilitia(new, original)
-	
 	local protected = {
 		randomization_seed = true,
 		session_id = true,
@@ -121,7 +112,4 @@ function MergeMilitia(new, original)
 			new[k] = v
 		end
 	end
-
 end
-
-

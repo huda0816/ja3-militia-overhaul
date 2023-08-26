@@ -22,12 +22,88 @@ function TFormat.HUDA_MilitiaOrigin(context_obj)
 	return GetSectorName(unit.JoinLocation or "Knowhere")
 end
 
+function TFormat.HUDA_MilitiaBio(context_obj)
+	local unit = gv_UnitData[context_obj.session_id]
+	return unit.Bio or "This man's bio is a mystery."
+end
+
 if FirstLoad then
 	local huda_pda_merc_rollover_attributes = CustomSettingsMod.Utils.XTemplate_FindElementsByProp(
 		XTemplates["PDAMercRollover"], "comment",
 		"attributes label")
 
 	if huda_pda_merc_rollover_attributes then
+		table.insert(huda_pda_merc_rollover_attributes.ancestors[1], huda_pda_merc_rollover_attributes.indices[1] + 2,
+		PlaceObj("XTemplateWindow", {
+			"__condition",
+			function(parent, context)
+				return context.militia and gv_SatelliteView
+			end,
+			"__class",
+			"XContextWindow",
+			"Margins",
+			box(0, 0, 0, 0),
+			"Padding",
+			box(14, 3, 14, 3),
+			"MinHeight",
+			34,
+			"LayoutMethod",
+			"VList",
+			"LayoutVSpacing",
+			-3,
+			"Background",
+			RGBA(32, 35, 47, 255)
+		}, {
+			PlaceObj("XTemplateWindow", {
+				"__class",
+				"XText",
+				"VAlign",
+				"center",
+				"MaxWidth",
+				400,
+				"Clip",
+				false,
+				"UseClipBox",
+				false,
+				"TextStyle",
+				"SatelliteContextMenuKeybind",
+				"Translate",
+				true,
+				"Text",
+				Untranslated("<HUDA_MilitiaBio()>")
+			})
+		})
+	)
+		table.insert(huda_pda_merc_rollover_attributes.ancestors[1], huda_pda_merc_rollover_attributes.indices[1] + 2,
+		PlaceObj("XTemplateWindow", {
+			"__condition",
+			function(parent, context)
+				return context.militia and gv_SatelliteView
+			end,
+			"comment",
+			"attributes label",
+			"__class",
+			"XText",
+			"Margins",
+			box(8, 0, 0, 0),
+			"MinHeight",
+			34,
+			"Clip",
+			false,
+			"UseClipBox",
+			false,
+			"FoldWhenHidden",
+			true,
+			"TextStyle",
+			"PDABrowserNameSmall",
+			"Translate",
+			true,
+			"Text",
+			Untranslated("Bio"),
+			"TextVAlign",
+			"center"
+		})
+		)
 		table.insert(huda_pda_merc_rollover_attributes.ancestors[1], huda_pda_merc_rollover_attributes.indices[1] + 2,
 			PlaceObj("XTemplateWindow", {
 				"__condition",
@@ -122,12 +198,52 @@ if FirstLoad then
 		x_button.element[1].Id = "idBgSquadIcon"
 
 		x_button.element.OnContextUpdate = function(self, context)
-			if IsContextMilitia(context) then
+			if HUDA_IsContextMilitia(context) then
 				self.idBgSquadIcon:SetImage("Mod/LXPER6t/Icons/merc_squad_militia.png")
 			end
 		end
 	end
 
+	table.insert(XTemplates["GameShortcuts"], PlaceObj("XTemplateAction", {
+		"ActionId",
+		"actionDeleteMilitia",
+		"ActionSortKey",
+		"10000",
+		"ActionName",
+		Untranslated("Dismiss Unit"),
+		"ActionShortcut",
+		"U",
+		"ActionBindable",
+		true,
+		"ActionMouseBindable",
+		false,
+		"ActionState",
+		function(self, host)
+			return SatelliteToggleActionState() and "enabled" or "disabled"
+		end,
+		"OnAction",
+		function(self, host, source, ...)
+			local unit_id = g_SatelliteUI and g_SatelliteUI.context_menu
+			if not unit_id then
+				return
+			end
+			unit_id = unit_id and unit_id:ResolveId("idContent"):GetContext().unit_id
+			local unit = gv_UnitData[unit_id]
+			local items = {}
+			unit:ForEachItem(function(item, slot)
+				unit:RemoveItem(slot, item)
+				table.insert(items, item)
+			end)
+			local sector_id = gv_CurrentSectorId
+			AddToSectorInventory(sector_id, items)
+			RemoveUnitFromSquad(unit, "despawn")
+			ObjModified("ui_player_squads")
+			ObjModified("hud_squads")
+		end,
+		"IgnoreRepeated",
+		true
+	})
+	)
 
 	local huda_context_actions = CustomSettingsMod.Utils.XTemplate_FindElementsByProp(
 		XTemplates["SatelliteViewMapContextMenu"],
@@ -145,6 +261,9 @@ if FirstLoad then
 				if squad and squad.militia then
 					context.actions = table.filter(context.actions,
 						function(k, v) return v ~= "actionOpenCharacterContextMenu" and v ~= "idPerks" end)
+					if gv_SatelliteView then
+						table.insert(context.actions, "actionDeleteMilitia")
+					end
 				end
 			end
 
@@ -156,8 +275,8 @@ if FirstLoad then
 		tm_template.element.__context = function(parent, context)
 			local squads = GetSquadsOnMapUI()
 
-			local militia = table.filter(squads, function(k, v) return IsContextMilitia(v) end)
-			local mercs = table.filter(squads, function(k, v) return not IsContextMilitia(v) end)
+			local militia = table.filter(squads, function(k, v) return HUDA_IsContextMilitia(v) end)
+			local mercs = table.filter(squads, function(k, v) return not HUDA_IsContextMilitia(v) end)
 
 			local both = {}
 
@@ -282,4 +401,47 @@ function SquadWindow:SpawnSquadIcon(parent)
 		img:SetId("idSquadIcon")
 	end
 	return img
+end
+
+function RemoveUnitFromSquad(unit_data, reason)
+	local squad_id = unit_data.Squad
+	local squad = gv_Squads[squad_id]
+	unit_data.OldSquad = squad_id
+	unit_data.Squad = false
+	if g_Units[unit_data.session_id] then
+		local unit = g_Units[unit_data.session_id]
+		unit.OldSquad = squad_id
+		if reason == "despawn" then
+			unit.session_id = false
+		end
+		if not (unit:IsDead() and unit:IsMerc() and squad) or not (#squad.units > 1) then
+			unit.Squad = false
+		else
+			unit_data.Squad = squad_id
+		end
+	end
+	if not squad then
+		return
+	end
+	table.remove_value(squad.units, unit_data.session_id)
+	if not next(squad.units) then
+		Msg("PreSquadDespawned", squad_id, squad.CurrentSector, reason)
+		if squad.militia then
+			local sector = gv_Sectors[squad.CurrentSector]
+			if sector.militia_squad_id == squad.UniqueId then
+				if #sector.militia_squads > 1 then
+					sector.militia_squad_id = table.filter(sector.militia_squads,
+							function(k, v) return v ~= squad.UniqueId and #squad.units >= SatelliteSector.MaxMilitia end)
+						[1] or
+						false
+				else
+					sector.militia_squad_id = false
+				end
+			end
+		end
+		RemoveSquadsFromLists(gv_Squads[squad_id])
+		gv_Squads[squad_id] = nil
+		Msg("SquadDespawned", squad_id, squad.CurrentSector, squad.Side)
+	end
+	ObjModified(squad)
 end
