@@ -21,16 +21,12 @@ PlaceObj('ModItemCharacterEffectCompositeDef', {
 	'Description', T(579526836304, --[[ModItemCharacterEffectCompositeDef GCMilitia Description]] "A perk every militia solider gets after bootcamp. Which allows them to clean and maintain their weapons."),
 }),
 PlaceObj('ModItemCode', {
-	'name', "Init",
-	'CodeFileName', "Code/Init.lua",
-}),
-PlaceObj('ModItemCode', {
-	'name', "Personalization",
-	'CodeFileName', "Code/Personalization.lua",
-}),
-PlaceObj('ModItemCode', {
 	'name', "Finances",
 	'CodeFileName', "Code/Finances.lua",
+}),
+PlaceObj('ModItemCode', {
+	'name', "Init",
+	'CodeFileName', "Code/Init.lua",
 }),
 PlaceObj('ModItemCode', {
 	'name', "MilitiaManagement",
@@ -45,8 +41,16 @@ PlaceObj('ModItemCode', {
 	'CodeFileName', "Code/PerkEffects.lua",
 }),
 PlaceObj('ModItemCode', {
+	'name', "Personalization",
+	'CodeFileName', "Code/Personalization.lua",
+}),
+PlaceObj('ModItemCode', {
 	'name', "SatelliteConflict",
 	'CodeFileName', "Code/SatelliteConflict.lua",
+}),
+PlaceObj('ModItemCode', {
+	'name', "BiosAndNames",
+	'CodeFileName', "Code/BiosAndNames.lua",
 }),
 PlaceObj('ModItemCode', {
 	'name', "SquadsAndMilitia",

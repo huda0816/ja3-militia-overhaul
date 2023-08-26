@@ -1,6 +1,7 @@
-g_LocalMilitia = {}
-
+-- Overrides the original function. There is no other way
 function RollForMilitiaPromotion(sector)
+	sector = type(sector) == "table" and sector or gv_Sectors[sector]
+
 	local squads = GetMilitiaSquads(sector)
 
 	local promotedCount = 0
@@ -8,7 +9,7 @@ function RollForMilitiaPromotion(sector)
 		local unitIds = table.copy(squad.units)
 		for _, id in ipairs(unitIds) do
 			local unitData = gv_UnitData[id]
-			local chance = 30
+			local chance = 100
 			local roll = InteractionRand(100, "MilitiaPromotion")
 			if chance > roll then
 				local copy = table.raw_copy(unitData)
@@ -27,7 +28,7 @@ function RollForMilitiaPromotion(sector)
 
 				local new_guy = gv_UnitData[new_guy_id]
 
-				MergeMilitia(new_guy, copy)
+				HUDA_MergeMilitia(new_guy, copy)
 			end
 		end
 	end
@@ -57,6 +58,7 @@ local HUDAOriginalSpawnMilitia = SpawnMilitia
 function SpawnMilitia(trainAmount, sector, bFromOperation)
 	local militia_id = sector.militia_squad_id
 
+	-- pushing the militia soldiers into a table so we can copy them later
 	local original_array = {}
 
 	if militia_id then
@@ -73,18 +75,14 @@ function SpawnMilitia(trainAmount, sector, bFromOperation)
 
 	local militia_squad, count_trained = HUDAOriginalSpawnMilitia(trainAmount, sector, bFromOperation)
 
-	militia_squad.Side = "player1"
-	militia_squad.OriginalSide = "ally"
-	militia_squad.BornInSector = militia_squad.BornInSector or sector.Id
-
-	-- HUDA_MilitiaPersonalization:PersonalizeSquad(militia_squad.UniqueId)
+	HUDA_MilitiaPersonalization:PersonalizeSquad(militia_squad.UniqueId)
 
 	if #original_array > 0 then
 		local unit_data = gv_UnitData
 
 		for index, value in ipairs(original_array) do
 			if unit_data[militia_squad.units[index]] then
-				MergeMilitia(unit_data[militia_squad.units[index]], value)
+				HUDA_MergeMilitia(unit_data[militia_squad.units[index]], value)
 			end
 		end
 	end
@@ -96,7 +94,7 @@ function SpawnMilitia(trainAmount, sector, bFromOperation)
 	return militia_squad, count_trained
 end
 
-function MergeMilitia(new, original)
+function HUDA_MergeMilitia(new, original)
 	local protected = {
 		randomization_seed = true,
 		session_id = true,
@@ -107,9 +105,26 @@ function MergeMilitia(new, original)
 		MaxAttacks = true,
 	}
 
+	local stats = {
+		'Health ',
+		'Agility',
+		'Dexterity',
+		'Strength',
+		'Wisdom',
+		'Leadership',
+		'Marksmanship',
+		'Mechanical',
+		'Explosives',
+		'Medical',
+	}
+
 	for k, v in pairs(original) do
 		if not protected[k] then
-			new[k] = v
+			if HUDA_ArrayContains(stats, k) then
+				new[k] = v + InteractionRandRange(1, 3, "MilitiaPromotion")
+			else
+				new[k] = v
+			end
 		end
 	end
 end

@@ -34,75 +34,75 @@ if FirstLoad then
 
 	if huda_pda_merc_rollover_attributes then
 		table.insert(huda_pda_merc_rollover_attributes.ancestors[1], huda_pda_merc_rollover_attributes.indices[1] + 2,
-		PlaceObj("XTemplateWindow", {
-			"__condition",
-			function(parent, context)
-				return context.militia and gv_SatelliteView
-			end,
-			"__class",
-			"XContextWindow",
-			"Margins",
-			box(0, 0, 0, 0),
-			"Padding",
-			box(14, 3, 14, 3),
-			"MinHeight",
-			34,
-			"LayoutMethod",
-			"VList",
-			"LayoutVSpacing",
-			-3,
-			"Background",
-			RGBA(32, 35, 47, 255)
-		}, {
 			PlaceObj("XTemplateWindow", {
+				"__condition",
+				function(parent, context)
+					return context.militia and gv_SatelliteView
+				end,
+				"__class",
+				"XContextWindow",
+				"Margins",
+				box(0, 0, 0, 0),
+				"Padding",
+				box(14, 3, 14, 3),
+				"MinHeight",
+				34,
+				"LayoutMethod",
+				"VList",
+				"LayoutVSpacing",
+				-3,
+				"Background",
+				RGBA(32, 35, 47, 255)
+			}, {
+				PlaceObj("XTemplateWindow", {
+					"__class",
+					"XText",
+					"VAlign",
+					"center",
+					"MaxWidth",
+					400,
+					"Clip",
+					false,
+					"UseClipBox",
+					false,
+					"TextStyle",
+					"SatelliteContextMenuKeybind",
+					"Translate",
+					true,
+					"Text",
+					Untranslated("<HUDA_MilitiaBio()>")
+				})
+			})
+		)
+		table.insert(huda_pda_merc_rollover_attributes.ancestors[1], huda_pda_merc_rollover_attributes.indices[1] + 2,
+			PlaceObj("XTemplateWindow", {
+				"__condition",
+				function(parent, context)
+					return context.militia and gv_SatelliteView
+				end,
+				"comment",
+				"attributes label",
 				"__class",
 				"XText",
-				"VAlign",
-				"center",
-				"MaxWidth",
-				400,
+				"Margins",
+				box(8, 0, 0, 0),
+				"MinHeight",
+				34,
 				"Clip",
 				false,
 				"UseClipBox",
 				false,
+				"FoldWhenHidden",
+				true,
 				"TextStyle",
-				"SatelliteContextMenuKeybind",
+				"PDABrowserNameSmall",
 				"Translate",
 				true,
 				"Text",
-				Untranslated("<HUDA_MilitiaBio()>")
+				Untranslated("Bio"),
+				"TextVAlign",
+				"center"
 			})
-		})
-	)
-		table.insert(huda_pda_merc_rollover_attributes.ancestors[1], huda_pda_merc_rollover_attributes.indices[1] + 2,
-		PlaceObj("XTemplateWindow", {
-			"__condition",
-			function(parent, context)
-				return context.militia and gv_SatelliteView
-			end,
-			"comment",
-			"attributes label",
-			"__class",
-			"XText",
-			"Margins",
-			box(8, 0, 0, 0),
-			"MinHeight",
-			34,
-			"Clip",
-			false,
-			"UseClipBox",
-			false,
-			"FoldWhenHidden",
-			true,
-			"TextStyle",
-			"PDABrowserNameSmall",
-			"Translate",
-			true,
-			"Text",
-			Untranslated("Bio"),
-			"TextVAlign",
-			"center"
-		})
 		)
 		table.insert(huda_pda_merc_rollover_attributes.ancestors[1], huda_pda_merc_rollover_attributes.indices[1] + 2,
 			PlaceObj("XTemplateWindow", {

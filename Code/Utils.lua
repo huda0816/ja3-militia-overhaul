@@ -32,8 +32,6 @@ function HUDA_GetAllMilitiaSoldiers()
     end)
 end
 
-
-
 function HUDA_keyOf(tbl, value)
     for k, v in pairs(tbl) do
         if v == value then
@@ -41,15 +39,6 @@ function HUDA_keyOf(tbl, value)
         end
     end
     return nil
-end
-
-function HUDA_MilitiaPersonalization:GetSector(unit)
-    local squad = gv_Squads[unit.Squad]
-    local sector_id = squad and squad.CurrentSector
-    if not sector_id then
-        return gv_Sectors["H2"]
-    end
-    return gv_Sectors[sector_id]
 end
 
 function HUDA_GetSector(unit)
@@ -75,7 +64,7 @@ function HUDA_GetSquadDistance(squad)
 end
 
 function HUDA_GetUnitDistance(unit)
-	
+
 	local squad = gv_Squads[unit.Squad]
 
 	local current_sector = squad.CurrentSector
@@ -94,6 +83,16 @@ function HUDA_ReindexTable(tbl)
 
 	for k, v in pairs(tbl) do
 		table.insert(new_tbl, v)
+	end
+
+	return new_tbl
+end
+
+function HUDA_TableColumn(tbl, column)
+	local new_tbl = {}
+
+	for k, v in pairs(tbl) do
+		table.insert(new_tbl, v[column])
 	end
 
 	return new_tbl
