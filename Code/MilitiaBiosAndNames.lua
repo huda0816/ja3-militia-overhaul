@@ -2,8 +2,7 @@ GameVar("HUDA_MilitiaSquadNames", {})
 GameVar("HUDA_MilitiaBios", {})
 
 function HUDA_GetAvailableBios(speciality)
-    print("HUDA_GetAvailableBios", HUDA_MilitiaBios)
-
+    
     if not HUDA_MilitiaBios then
         return {}
     end

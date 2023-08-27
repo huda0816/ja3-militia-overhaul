@@ -160,9 +160,6 @@ end
 local HUDA_OldCreateNewSatelliteSquad = CreateNewSatelliteSquad
 
 function CreateNewSatelliteSquad(predef_props, unit_ids, days, seed, enemy_squad_def, reason)
-    print("predef_props", predef_props.Name)
-    print("joining_squad", predef_props.joining_squad)
-    print("type name", type(predef_props.Name))
 
     if unit_ids then
         for _, v in ipairs(unit_ids) do

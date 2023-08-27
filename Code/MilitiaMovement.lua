@@ -150,7 +150,7 @@ function UnitProperties:GetPersonalMorale()
 	if unit.class == "MilitiaRookie" then
 		morale = morale - 3
 	elseif unit.class == "MilitiaVeteran" then
-		morale = morale - 1
+		morale = morale - 2
 	elseif unit.class == "MilitiaElite" then
 		morale = morale - 0
 	end

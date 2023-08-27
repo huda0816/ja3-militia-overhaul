@@ -145,11 +145,16 @@ function OnMsg.NewDay()
 end
 
 DefineClass.HUDA_MilitiaFinances = {
-    MilitiaRookieIncome = 20,
-    MilitiaVeteranIncome = 40,
-    MilitiaEliteIncome = 80,
-    CampaignCosts = 40
+    MilitiaRookieIncome = HUDA_GetModOptions("MilitiaRookieIncome", 20),
+    MilitiaVeteranIncome = HUDA_GetModOptions("MilitiaVeteranIncome", 40),
+    MilitiaEliteIncome = HUDA_GetModOptions("MilitiaEliteIncome", 100),
+    MilitiaCampaignCosts = HUDA_GetModOptions("MilitiaCampaignCosts", 40),
 }
+
+function HUDA_MilitiaFinances:UpdateProps(prop_name, value)
+    local property_name = prop_name:gsub("huda_", "")
+    self[property_name] = value
+end
 
 function HUDA_MilitiaFinances:GetSalary(unit, days) 
 
@@ -208,7 +213,7 @@ function HUDA_MilitiaFinances:AddCampaignBonus(unit)
 
     local squad_distance = HUDA_GetSquadDistance(unit_squad)
 
-    return squad_distance > 2 and self.CampaignCosts or 0
+    return squad_distance > 2 and self.MilitiaCampaignCosts or 0
 end
 
 function HUDA_MilitiaFinances:PayUpkeep()

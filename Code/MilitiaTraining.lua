@@ -9,7 +9,7 @@ function RollForMilitiaPromotion(sector)
 		local unitIds = table.copy(squad.units)
 		for _, id in ipairs(unitIds) do
 			local unitData = gv_UnitData[id]
-			local chance = 100
+			local chance = 10
 			local roll = InteractionRand(100, "MilitiaPromotion")
 			if chance > roll then
 				local copy = table.raw_copy(unitData)
@@ -122,6 +122,11 @@ function HUDA_MergeMilitia(new, original)
 		if not protected[k] then
 			if HUDA_ArrayContains(stats, k) then
 				new[k] = v + InteractionRandRange(1, 3, "MilitiaPromotion")
+				new["base_" .. k] = new[k]
+				if k == "Health " then
+					new.MaxHitPoints = new[k]
+					new.HitPoints = new[k]
+				end
 			else
 				new[k] = v
 			end

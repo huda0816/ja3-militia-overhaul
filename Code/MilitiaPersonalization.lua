@@ -13,28 +13,54 @@ function HUDA_MilitiaPersonalization:Personalize(unit_ids)
 
     if units then
         for k, unit in pairs(units) do
+
+            local gunit = g_Units[unit.session_id]
+
             if not unit.Nick then
                 local nick = self:GetRandomMilitiaName()
 
                 unit.Nick = nick
                 unit.AllCapsNick = string.upper(nick)
                 unit.snype_nick = "Militia " .. nick
+
+                if gunit then
+                    gunit.Nick = unit.Nick
+                    gunit.AllCapsNick = unit.AllCapsNick
+                    gunit.snype_nick = unit.snype_nick
+                end
+
             end
 
             if not unit.JoinDate then
                 unit.JoinDate = Game.CampaignTime
+
+                if gunit then
+                    gunit.JoinDate = unit.JoinDate
+                end
             end
 
             if not unit.JoinLocation then
                 unit.JoinLocation = HUDA_GetSector(unit)
+
+                if gunit then
+                    gunit.JoinLocation = unit.JoinLocation
+                end
             end
 
             if not unit.Specialization or unit.Specialization == "None" then
                 unit.Specialization = self:GetSpecialization(unit)
+
+                if gunit then
+                    gunit.Specialization = unit.Specialization
+                end
             end
 
             if not unit.Bio and unit.Nick then
                 unit.Bio = self:GetRandomBio(unit)
+
+                if gunit then
+                    gunit.Bio = unit.Bio
+                end
             end
 
             if not unit.StatsRandomized then
@@ -42,6 +68,10 @@ function HUDA_MilitiaPersonalization:Personalize(unit_ids)
             end
 
             unit:AddStatusEffect("GCMilitia")
+
+            if gunit then
+                gunit:AddStatusEffect("GCMilitia")
+            end
         end
 
         ObjModified("ui_player_squads")
@@ -138,6 +168,11 @@ function HUDA_MilitiaPersonalization:GetSpecialization(unit)
 end
 
 function HUDA_MilitiaPersonalization:RandomizeStats(unit)
+
+    local gunit = g_Units[unit.session_id]
+
+    print("gunit", unit.session_id, gunit and "true" or "false")
+
     local defaults = {
         Health = 65,
         Agility = 65,
@@ -170,10 +205,27 @@ function HUDA_MilitiaPersonalization:RandomizeStats(unit)
             v = v + 10
         end
 
-        unit[k] = Min(100, InteractionRandRange(v - 10, v + 10))
+        unit['base_' .. k] = Min(100, InteractionRandRange(v - 6, v + 6))
+        unit[k] = unit['base_' .. k]
+
+        if k == "Health" then
+            unit.HitPoints = unit[k]
+            unit.MaxHitPoints = unit[k]
+        end
+
+        if gunit then
+            gunit['base_' .. k] = unit['base_' .. k]
+            gunit[k] = unit[k]
+            gunit.HitPoints = unit[k]
+            gunit.MaxHitPoints = unit[k]
+        end
     end
 
     unit.StatsRandomized = true
+
+    if gunit then
+        gunit.StatsRandomized = true
+    end
 end
 
 function HUDA_MilitiaPersonalization:PersonalizeSquad(squad_id)

@@ -2,10 +2,19 @@
 const.Satellite.MercSquadMaxPeople = 8
 
 -- Default Militia Equipment is nil
-MilitiaRookie.Equipment = nil
-MilitiaVeteran.Equipment = nil
-MilitiaElite.Equipment = nil
 
+
+local stored_equipment = MilitiaRookie.Equipment
+
+if HUDA_GetModOptions("huda_NoWeaponsMilitia", nil) then
+	MilitiaRookie.Equipment = nil
+	MilitiaVeteran.Equipment = nil
+	MilitiaElite.Equipment = nil
+else
+	MilitiaRookie.Equipment = stored_equipment
+	MilitiaVeteran.Equipment = stored_equipment
+	MilitiaElite.Equipment = stored_equipment
+end
 
 -- Savegame Hook, Transform Ally Squads to Militia Squads
 function OnMsg.ZuluGameLoaded(game)
