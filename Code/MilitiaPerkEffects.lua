@@ -1,23 +1,24 @@
 -- GCMilita Perk Effects
-function OnMsg.NewHour()
+-- Militia Soldiers cleaning their gear daily
+function OnMsg.NewDay()
     local militia = HUDA_GetAllMilitiaSoldiers()
 
     for _, unit in pairs(militia) do
         
         local armor = unit:GetEquipedArmour()
         local weapons = unit:GetHandheldItems()
-        local conditionPerHour = 1
+        local conditionPerDay = 20
 
         for _, item in ipairs(armor) do
             if item.Repairable and item.Condition < 80 then
-                item.Condition = item.Condition + conditionPerHour
+                item.Condition = Min(80, item.Condition + conditionPerDay)
             end
         end
 
         for _, item in ipairs(weapons) do
             if item.Repairable and item.Condition < 80
             then
-                item.Condition = item.Condition + conditionPerHour
+                item.Condition = Min(80, item.Condition + conditionPerDay)
             end
         end
     end

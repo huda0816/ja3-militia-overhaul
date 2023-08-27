@@ -7,13 +7,7 @@ function OnMsg.SquadStartedTravelling(squad)
 		local current_sector = gv_Sectors[squad.CurrentSector]
 
 		if current_sector.militia_squad_id == squad.UniqueId then
-			if #current_sector.militia_squads > 1 then
-				current_sector.militia_squad_id = table.filter(current_sector.militia_squads, function(k, v)
-					return v.UniqueId ~= squad.UniqueId
-				end)[1].UniqueId
-			else
-				current_sector.militia_squad_id = nil
-			end
+			current_sector.militia_squad_id = HUDA_GetTrainableMilitiaSquad(current_sector, squad.UniqueId)
 		end
 	end
 end
@@ -24,11 +18,7 @@ function OnMsg.SquadSectorChanged(squad)
 		local previous_sector = gv_Sectors[squad.PreviousSector]
 
 		if previous_sector.militia_squad_id == squad.UniqueId then
-			if #previous_sector.militia_squads > 0 then
-				previous_sector.militia_squad_id = previous_sector.militia_squads[1].UniqueId
-			else
-				previous_sector.militia_squad_id = nil
-			end
+			previous_sector.militia_squad_id = HUDA_GetTrainableMilitiaSquad(previous_sector)
 		end
 	end
 end
@@ -43,7 +33,6 @@ function OnMsg.SquadFinishedTraveling(squad)
 	end)
 
 	for k, unit in pairs(units) do
-
 		unit:RemoveStatusEffect("FarFromHome")
 
 		if unit.class ~= "MilitiaElite" then
@@ -59,7 +48,7 @@ end
 function OnMsg.SquadFinishedTraveling(squad)
 	local current_sector = gv_Sectors[squad.CurrentSector]
 
-	if not current_sector.militia_squad_id and squad.militia then
+	if not current_sector.militia_squad_id and squad.militia and not HUDA_IsSquadFull(squad, current_sector) then
 		current_sector.militia_squad_id = squad.UniqueId
 	end
 end
@@ -134,7 +123,6 @@ end
 HUDA_Original_Get_Personal_Morale = UnitProperties.GetPersonalMorale
 
 function UnitProperties:GetPersonalMorale()
-
 	local morale = HUDA_Original_Get_Personal_Morale(self)
 
 	if not self.militia then

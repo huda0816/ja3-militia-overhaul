@@ -14,6 +14,5 @@ DefineClass.FarFromHome = {
 	Icon = "Mod/LXPER6t/Icons/farfromhome.png",
 	Shown = true,
 	ShownSatelliteView = true,
-	HideOnBadge = true,
 }
 

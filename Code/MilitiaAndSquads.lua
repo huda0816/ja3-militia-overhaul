@@ -1,5 +1,14 @@
 function TFormat.HUDA_MilitiaSince(context_obj)
+	if not context_obj then
+		return
+	end
+
 	local unit = gv_UnitData[context_obj.session_id]
+
+	if not unit then
+		return
+	end
+
 	local t = GetTimeAsTable(unit.JoinDate or 0)
 	local month = string.format("%02d", t and t.month or 1)
 	local day = string.format("%02d", t and t.day or 1)
@@ -18,12 +27,30 @@ function TFormat.HUDA_MilitiaSince(context_obj)
 end
 
 function TFormat.HUDA_MilitiaOrigin(context_obj)
+	if not context_obj then
+		return
+	end
+
 	local unit = gv_UnitData[context_obj.session_id]
+
+	if not unit then
+		return
+	end
+
 	return GetSectorName(unit.JoinLocation or "Knowhere")
 end
 
 function TFormat.HUDA_MilitiaBio(context_obj)
+	if not context_obj then
+		return
+	end
+
 	local unit = gv_UnitData[context_obj.session_id]
+
+	if not unit then
+		return
+	end
+
 	return unit.Bio or "This man's bio is a mystery."
 end
 
@@ -429,19 +456,17 @@ function RemoveUnitFromSquad(unit_data, reason)
 		if squad.militia then
 			local sector = gv_Sectors[squad.CurrentSector]
 			if sector.militia_squad_id == squad.UniqueId then
-				if #sector.militia_squads > 1 then
-					sector.militia_squad_id = table.filter(sector.militia_squads,
-							function(k, v) return v ~= squad.UniqueId and #squad.units >= SatelliteSector.MaxMilitia end)
-						[1] or
-						false
-				else
-					sector.militia_squad_id = false
-				end
+				sector.militia_squad_id = HUDA_GetTrainableMilitiaSquad(sector, squad.UniqueId)
 			end
 		end
 		RemoveSquadsFromLists(gv_Squads[squad_id])
 		gv_Squads[squad_id] = nil
 		Msg("SquadDespawned", squad_id, squad.CurrentSector, squad.Side)
+	else
+		if squad.militia then
+			local sector = gv_Sectors[squad.CurrentSector]
+			sector.militia_squad_id = HUDA_GetTrainableMilitiaSquad(sector)
+		end
 	end
 	ObjModified(squad)
 end

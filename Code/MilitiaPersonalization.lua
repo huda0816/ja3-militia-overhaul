@@ -13,7 +13,6 @@ function HUDA_MilitiaPersonalization:Personalize(unit_ids)
 
     if units then
         for k, unit in pairs(units) do
-
             local gunit = g_Units[unit.session_id]
 
             if not unit.Nick then
@@ -28,7 +27,6 @@ function HUDA_MilitiaPersonalization:Personalize(unit_ids)
                     gunit.AllCapsNick = unit.AllCapsNick
                     gunit.snype_nick = unit.snype_nick
                 end
-
             end
 
             if not unit.JoinDate then
@@ -87,9 +85,8 @@ function HUDA_MilitiaPersonalization:GetRandomMilitiaName()
 end
 
 function HUDA_MilitiaPersonalization:GetRandomMilitiaSquadName()
-    
     local available_names = HUDA_GetAvailableSquadNames()
-    
+
     local rand = InteractionRand(#available_names)
 
     rand = rand > 0 and rand or 1
@@ -168,10 +165,7 @@ function HUDA_MilitiaPersonalization:GetSpecialization(unit)
 end
 
 function HUDA_MilitiaPersonalization:RandomizeStats(unit)
-
     local gunit = g_Units[unit.session_id]
-
-    print("gunit", unit.session_id, gunit and "true" or "false")
 
     local defaults = {
         Health = 65,
@@ -216,8 +210,11 @@ function HUDA_MilitiaPersonalization:RandomizeStats(unit)
         if gunit then
             gunit['base_' .. k] = unit['base_' .. k]
             gunit[k] = unit[k]
-            gunit.HitPoints = unit[k]
-            gunit.MaxHitPoints = unit[k]
+
+            if k == "Health" then
+                gunit.HitPoints = unit[k]
+                gunit.MaxHitPoints = unit[k]
+            end
         end
     end
 
@@ -229,18 +226,14 @@ function HUDA_MilitiaPersonalization:RandomizeStats(unit)
 end
 
 function HUDA_MilitiaPersonalization:PersonalizeSquad(squad_id)
-
     local filteredSquads = table.filter(gv_Squads, function(k, v) return v.UniqueId == squad_id end)
 
     local squad_ids = HUDA_TableColumn(filteredSquads, "UniqueId")
-
-    Inspect(squad_ids)
 
     self:PersonalizeSquads(squad_ids)
 end
 
 function HUDA_MilitiaPersonalization:PersonalizeSquads(squad_ids)
-    
     local militaSquads
 
     if not squads then

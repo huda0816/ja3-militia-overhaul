@@ -1,13 +1,10 @@
-function OnMsg.UnitJoinedPlayerSquad(squad_id)
-    local dlg = GetDialog("PDASquadManagement")
-    if dlg then
-        local squad = gv_Squads[squad_id]
-        if squad.militia then
-            dlg.idContent:SetContext(GetSquadManagementMilitiaSquads())
-        else
-            dlg.idContent:SetContext(GetSquadManagementSquads())
-        end
-    end
+-- This is needed
+const.Satellite.MercSquadMaxPeople = const.Satellite.MercSquadMaxPeople ~= 6 and const.Satellite.MercSquadMaxPeople or 8
+
+DefaultMaxMercs = const.Satellite.MercSquadMaxPeople
+
+function OnMsg.Autorun()
+    DefaultMaxMercs = const.Satellite.MercSquadMaxPeople ~= 6 and const.Satellite.MercSquadMaxPeople or 8
 end
 
 function GetSquadManagementMilitiaSquads()
@@ -35,7 +32,7 @@ if sat_conflict then
     sat_conflict.element.ActionState = function(self, host)
         local sector = host.context
         return CanGoInMap(sector.Id) and
-        #GetSquadsInSector(sector.Id, "excludeTravelling", true, "excludeArriving", "excludeRetreating") > 0
+            #GetSquadsInSector(sector.Id, "excludeTravelling", true, "excludeArriving", "excludeRetreating") > 0
     end
 end
 
@@ -46,11 +43,11 @@ if FirstLoad then
     if sm_content then
         sm_content.element.__context = function(parent, context) return GetSquadManagementSquads() end
 
-        sm_content.element[2][1].MinWidth = 930
-        sm_content.element[2][1].MaxWidth = 930
+        sm_content.element[2][1].MinWidth = 950
+        sm_content.element[2][1].MaxWidth = 950
 
-        XTemplates["PDASquadManagement"][1][4].MinWidth = 1280
-        XTemplates["PDASquadManagement"][1][4].MaxWidth = 1280
+        XTemplates["PDASquadManagement"][1][4].MinWidth = 1300
+        XTemplates["PDASquadManagement"][1][4].MaxWidth = 1300
     end
 
     local drag_a_merc = CustomSettingsMod.Utils.XTemplate_FindElementsByProp(XTemplates["PDASquadManagement"], "Id",
@@ -75,10 +72,12 @@ if FirstLoad then
             "OnAction",
             function(self, host, source, ...)
                 if self.ActionName == "Militia" then
+                    const.Satellite.MercSquadMaxPeople = SatelliteSector.MaxMilitia or 8
                     host.idToolBar.ididMilitia:SetText(Untranslated("Mercs"))
                     self:SetProperty("ActionName", "Mercs")
                     host.idContent:SetContext(GetSquadManagementMilitiaSquads())
                 else
+                    const.Satellite.MercSquadMaxPeople = DefaultMaxMercs
                     host.idToolBar.ididMilitia:SetText(Untranslated("Militia"))
                     self:SetProperty("ActionName", "Militia")
                     host.idContent:SetContext(GetSquadManagementSquads(true))
@@ -139,6 +138,8 @@ if FirstLoad then
     end
 end
 
+
+-- Prevent Icon Popup if militia
 local HUDA_OldOpenSquadCreation = OpenSquadCreation
 
 function OpenSquadCreation(squad_id)
@@ -157,10 +158,10 @@ function OpenSquadCreation(squad_id)
     HUDA_OldOpenSquadCreation(squad_id)
 end
 
+-- Add predef props
 local HUDA_OldCreateNewSatelliteSquad = CreateNewSatelliteSquad
 
 function CreateNewSatelliteSquad(predef_props, unit_ids, days, seed, enemy_squad_def, reason)
-
     if unit_ids then
         for _, v in ipairs(unit_ids) do
             local unit = gv_UnitData[v]
@@ -178,4 +179,41 @@ function CreateNewSatelliteSquad(predef_props, unit_ids, days, seed, enemy_squad
     end
 
     return HUDA_OldCreateNewSatelliteSquad(predef_props, unit_ids, days, seed, enemy_squad_def, reason)
+end
+
+function OnMsg.UnitJoinedPlayerSquad(squad_id)
+    local dlg = GetDialog("PDASquadManagement")
+    if dlg then
+        local squad = gv_Squads[squad_id]
+        if squad.militia then
+            dlg.idContent:SetContext(GetSquadManagementMilitiaSquads())
+        else
+            dlg.idContent:SetContext(GetSquadManagementSquads())
+        end
+    end
+end
+
+-- reset max mercs
+function OnMsg.DialogClose(dlg)
+    if dlg.XTemplate == "PDASquadManagement" then
+        const.Satellite.MercSquadMaxPeople = DefaultMaxMercs
+    end
+end
+
+-- reset all trainables
+function OnMsg.DialogClose(dlg)
+    if dlg.XTemplate == "PDASquadManagement" then
+        local sectors_with_militia = table.filter(gv_Sectors, function(i, v) return v.militia_squad_id or v.militia_squads end)
+
+        for k, v in pairs(sectors_with_militia) do
+            if v.militia_squad_id then
+                local squad = gv_Squads[v.militia_squad_id]
+                if HUDA_IsSquadFull(squad, v) then
+                    v.militia_squad_id = HUDA_GetTrainableMilitiaSquad(v, squad.UniqueId)
+                end
+            else
+                v.militia_squad_id = HUDA_GetTrainableMilitiaSquad(v)
+            end
+        end
+    end
 end

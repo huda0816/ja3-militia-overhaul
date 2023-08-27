@@ -177,7 +177,7 @@ end
 function HUDA_MilitiaFinances:GetMilitiaUpkeep(days)
 
     local militia_units = table.filter(gv_UnitData, function(k, v)
-        return v.militia
+        return v.militia and v.Squad
     end)
 
     local upkeep = 0
