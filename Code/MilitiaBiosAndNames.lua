@@ -217,5 +217,5 @@ HUDA_male_militia_names = {
     "Oba", "Panya", "Quara", "Rashidi", "Simba", "Tafari", "Ujima", "Vijay", "Wamalwa", "Xolani", "Yusuf",
     "Zahur", "Abebe", "Birhanu", "Desta", "Endale", "Fikru", "Girma", "Habte", "Iyasu", "Jember", "Kebrom",
     "Lulseged", "Mekonnen", "Nigussie", "Obang", "Petros", "Qidus", "Rufael", "Selassie", "Tewodros", "Woldemariam",
-    "Xola", "Yared", "Zewdu"
+    "Xola", "Yared", "Zewdu", "Chapi"
 }

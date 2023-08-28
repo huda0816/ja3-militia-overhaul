@@ -11,8 +11,6 @@ function HUDA_CheckCityOccupation()
     for k, city in pairs(cities) do
         local city_sectors = HUDA_GetControlledCitySectors(k)
 
-        print("city", k, "sectors", city_sectors)
-
         if city_sectors and #city_sectors > 0 then
             local militia_count = 0
 

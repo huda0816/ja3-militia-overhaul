@@ -298,6 +298,9 @@ if FirstLoad then
 		end
 	end
 
+	local tm_template = CustomSettingsMod.Utils.XTemplate_FindElementsByProp(XTemplates["TeamMembers"], "__template",
+	"SquadsAndMercs")
+
 	if tm_template then
 		tm_template.element.__context = function(parent, context)
 			local squads = GetSquadsOnMapUI()

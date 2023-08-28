@@ -13,7 +13,7 @@ return PlaceObj('ModDef', {
 	},
 	'id', "LXPER6t",
 	'author', "permanent666",
-	'version', 1230,
+	'version', 1243,
 	'lua_revision', 233360,
 	'saved_with_revision', 340446,
 	'code', {
@@ -35,6 +35,6 @@ return PlaceObj('ModDef', {
 		"Code/MilitiaLoyalty.lua",
 	},
 	'has_options', true,
-	'saved', 1693175071,
-	'code_hash', -6604256195016032111,
+	'saved', 1693241631,
+	'code_hash', 8040243492554305887,
 })

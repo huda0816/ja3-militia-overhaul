@@ -236,7 +236,7 @@ end
 function HUDA_MilitiaPersonalization:PersonalizeSquads(squad_ids)
     local militaSquads
 
-    if not squads then
+    if not squad_ids then
         militaSquads = table.filter(gv_Squads, function(k, v) return v.militia end)
     else
         militaSquads = table.filter(gv_Squads, function(k, v) return v.militia and HUDA_ArrayContains(squad_ids, k) end)
@@ -254,7 +254,7 @@ function HUDA_MilitiaPersonalization:PersonalizeSquads(squad_ids)
                 squad.BornInSector = squad.CurrentSector
             end
 
-            if not squad.Name or squad.Name == "MILITIA" or HUDA_ArrayContains(squad.Name, "MILITIA") then
+            if not squad.Name or squad.Name == "MILITIA" then
                 squad.Name = Untranslated(self:GetRandomSquadName(squad.CurrentSector))
             end
         end
