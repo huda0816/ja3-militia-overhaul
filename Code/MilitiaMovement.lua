@@ -120,26 +120,27 @@ function HUDACanTravel(squad, sector_id)
 	return true
 end
 
-HUDA_Original_Get_Personal_Morale = UnitProperties.GetPersonalMorale
+local HUDA_Original_Get_Personal_Morale = UnitProperties.GetPersonalMorale
 
 function UnitProperties:GetPersonalMorale()
+
 	local morale = HUDA_Original_Get_Personal_Morale(self)
 
 	if not self.militia then
 		return morale
 	end
 
-	if HUDA_GetUnitDistance(self) < 4 then
+	if not self:HasStatusEffect("FarFromHome") then
 		return morale
 	end
 
 	local unit = gv_UnitData[self.session_id]
 
-	if unit.class == "MilitiaRookie" then
+	if unit.class == "MilitiaRookie" or string.find(unit.session_id, "MilitiaRookie") then
 		morale = morale - 3
-	elseif unit.class == "MilitiaVeteran" then
+	elseif unit.class == "MilitiaVeteran" or string.find(unit.session_id, "MilitiaVeteran") then
 		morale = morale - 2
-	elseif unit.class == "MilitiaElite" then
+	elseif unit.class == "MilitiaElite" or string.find(unit.session_id, "MilitiaElite") then
 		morale = morale - 0
 	end
 
