@@ -254,8 +254,8 @@ function HUDA_MilitiaPersonalization:PersonalizeSquads(squad_ids)
                 squad.BornInSector = squad.CurrentSector
             end
 
-            if not squad.Name or squad.Name == "MILITIA" then
-                squad.Name = Untranslated(self:GetRandomSquadName(squad.CurrentSector))
+            if not squad.Name or squad.Name == "MILITIA" or IsT(squad.Name) then
+                squad.Name = self:GetRandomSquadName(squad.CurrentSector)
             end
         end
     end
