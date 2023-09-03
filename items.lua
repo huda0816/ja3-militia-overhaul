@@ -48,6 +48,10 @@ PlaceObj('ModItemCode', {
 	'CodeFileName', "Code/MilitiaInit.lua",
 }),
 PlaceObj('ModItemCode', {
+	'name', "MilitiaLoyalty",
+	'CodeFileName', "Code/MilitiaLoyalty.lua",
+}),
+PlaceObj('ModItemCode', {
 	'name', "MilitiaManagement",
 	'CodeFileName', "Code/MilitiaManagement.lua",
 }),
@@ -72,12 +76,12 @@ PlaceObj('ModItemCode', {
 	'CodeFileName', "Code/MilitiaTraining.lua",
 }),
 PlaceObj('ModItemCode', {
-	'name', "MilitiaLoyalty",
-	'CodeFileName', "Code/MilitiaLoyalty.lua",
+	'name', "MilitiaOverrides",
+	'CodeFileName', "Code/MilitiaOverrides.lua",
 }),
 PlaceObj('ModItemOptionChoice', {
 	'name', "huda_MilitiaCampaignCosts",
-	'DisplayName', "Aditional costs when on campaign",
+	'DisplayName', "Aditional costs when on campaign per 20hours of supply travel time",
 	'DefaultValue', "40",
 	'ChoiceList', {
 		"0",

@@ -128,15 +128,24 @@ function GetMoneyProjection(days)
     return money - upkeep
 end
 
-function TFormat.GetDailyMoneyChange()
+local HUDA_DailyCosts = 0
+
+function HUDA_UpdateDailyCosts()
     local upkeep = HUDA_MilitiaFinances:GetMilitiaUpkeep()
     local dailyIncome = GetDailyIncome()
     local burnRate = GetBurnRate(1)
-    local change = dailyIncome - burnRate - upkeep
+    HUDA_DailyCosts = dailyIncome - burnRate - upkeep
+end
+
+function OnMsg.NewHour()
+    HUDA_UpdateDailyCosts()
+end
+
+function TFormat.GetDailyMoneyChange()    
     return T({
         780491782250,
         "<moneyWithSign(amount)>",
-        amount = change
+        amount = HUDA_DailyCosts
     })
 end
 
@@ -187,14 +196,15 @@ function HUDA_MilitiaFinances:GetMilitiaUpkeep(days)
     local elites = 0
 
     for _, unit in pairs(militia_units) do
+
         if unit.class == "MilitiaRookie" then
-            upkeep = upkeep + self.MilitiaRookieIncome
+            upkeep = upkeep +  tonumber(self.MilitiaRookieIncome)
             rookies = rookies + 1
         elseif unit.class == "MilitiaVeteran" then
-            upkeep = upkeep + self.MilitiaVeteranIncome
+            upkeep = upkeep +  tonumber(self.MilitiaVeteranIncome)
             veterans = veterans + 1
         elseif unit.class == "MilitiaElite" then
-            upkeep = upkeep + self.MilitiaEliteIncome
+            upkeep = upkeep +  tonumber(self.MilitiaEliteIncome)
             elites = elites + 1
         end
 
@@ -211,9 +221,19 @@ function HUDA_MilitiaFinances:AddCampaignBonus(unit)
         return 0
     end
 
-    local squad_distance = HUDA_GetSquadDistance(unit_squad)
+    local squad_distance, closest_sector = HUDA_GetShortestDistanceToCityAndBases(unit_squad.CurrentSector)
 
-    return squad_distance > 2 and self.MilitiaCampaignCosts or 0
+    if not closest_sector or not squad_distance or squad_distance < 2 then
+        return 0
+    end
+
+    local travel_time, water_sectors = HUDA_GetSupplyTravelInfo(closest_sector, unit_squad.CurrentSector)
+
+    local water_price = water_sectors and #water_sectors * DivRound(self.MilitiaCampaignCosts, 10) or 0
+
+    local price = DivRound(travel_time, 3600) * DivRound(self.MilitiaCampaignCosts, 20)  + water_price
+
+    return price
 end
 
 function HUDA_MilitiaFinances:PayUpkeep()

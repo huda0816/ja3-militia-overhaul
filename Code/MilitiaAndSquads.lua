@@ -37,7 +37,9 @@ function TFormat.HUDA_MilitiaOrigin(context_obj)
 		return
 	end
 
-	return GetSectorName(unit.JoinLocation or "Knowhere")
+	local sector = type(unit.JoinLocation) == "table" and unit.JoinLocation or gv_Sectors[unit.JoinLocation or "H2"]
+
+	return GetSectorName(sector)
 end
 
 function TFormat.HUDA_MilitiaBio(context_obj)
@@ -64,7 +66,7 @@ if FirstLoad then
 			PlaceObj("XTemplateWindow", {
 				"__condition",
 				function(parent, context)
-					return context.militia and gv_SatelliteView
+					return context.militia and gv_SatelliteView and not HUDA_IsInventoryView()
 				end,
 				"__class",
 				"XContextWindow",
@@ -105,7 +107,7 @@ if FirstLoad then
 			PlaceObj("XTemplateWindow", {
 				"__condition",
 				function(parent, context)
-					return context.militia and gv_SatelliteView
+					return context.militia and gv_SatelliteView and not HUDA_IsInventoryView()
 				end,
 				"comment",
 				"attributes label",
@@ -135,7 +137,7 @@ if FirstLoad then
 			PlaceObj("XTemplateWindow", {
 				"__condition",
 				function(parent, context)
-					return context.militia
+					return context.militia and not HUDA_IsInventoryView()
 				end,
 				"__class",
 				"XContextWindow",
@@ -190,7 +192,7 @@ if FirstLoad then
 			PlaceObj("XTemplateWindow", {
 				"__condition",
 				function(parent, context)
-					return context.militia
+					return context.militia and not HUDA_IsInventoryView()
 				end,
 				"comment",
 				"attributes label",
@@ -246,7 +248,7 @@ if FirstLoad then
 		false,
 		"ActionState",
 		function(self, host)
-			return SatelliteToggleActionState() and "enabled" or "disabled"
+			return SatelliteToggleActionState() or "enabled" or "disabled"
 		end,
 		"OnAction",
 		function(self, host, source, ...)
@@ -288,7 +290,7 @@ if FirstLoad then
 				if squad and squad.militia then
 					context.actions = table.filter(context.actions,
 						function(k, v) return v ~= "actionOpenCharacterContextMenu" and v ~= "idPerks" end)
-					if gv_SatelliteView then
+					if gv_SatelliteView and context.unit_id then
 						table.insert(context.actions, "actionDeleteMilitia")
 					end
 				end
@@ -299,7 +301,7 @@ if FirstLoad then
 	end
 
 	local tm_template = CustomSettingsMod.Utils.XTemplate_FindElementsByProp(XTemplates["TeamMembers"], "__template",
-	"SquadsAndMercs")
+		"SquadsAndMercs")
 
 	if tm_template then
 		tm_template.element.__context = function(parent, context)

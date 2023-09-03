@@ -31,7 +31,7 @@ function RollForMilitiaPromotion(sector)
 
 				if new_guy_id then
 					local new_guy = gv_UnitData[new_guy_id]
-					
+
 					if new_guy then
 						HUDA_MergeMilitia(new_guy, copy)
 					end

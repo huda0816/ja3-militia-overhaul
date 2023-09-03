@@ -1,6 +1,86 @@
+local hasJoinlocation = false
+local hasJoindate = false
+local hasStatsRandomized = false
+local hasHandledEquipment = false
+for _, prop in ipairs(UnitProperties.properties) do
+
+    if prop.id == 'JoinLocation' then
+        hasJoinlocation = true
+    end
+    if prop.id == 'JoinDate' then
+        hasJoindate = true
+    end
+    if prop.id == 'StatsRandomized' then
+        hasStatsRandomized = true
+    end
+    if prop.id == 'HandledEquipment' then
+        hasHandledEquipment = true
+    end
+end
+
+if not hasJoinlocation then
+
+    UnitProperties.properties[#UnitProperties.properties + 1] = {
+        category = "General",
+        id = "JoinLocation",
+        editor = "text",
+        default = "",
+    }
+end
+
+if not hasJoindate then
+
+    UnitProperties.properties[#UnitProperties.properties + 1] = {
+        category = "General",
+        id = "JoinDate",
+        editor = "number",
+        default = 0,
+    }
+end
+
+if not hasStatsRandomized then
+
+    UnitProperties.properties[#UnitProperties.properties + 1] = {
+        category = "General",
+        id = "StatsRandomized",
+        editor = "boolean",
+        default = false,
+    }
+end
+
+if not hasHandledEquipment then
+
+    UnitProperties.properties[#UnitProperties.properties + 1] = {
+        category = "General",
+        id = "HandledEquipment",
+        editor = "boolean",
+        default = false,
+    }
+end
+
+local hasSquadBornIn = false
+
+for _, prop in ipairs(SatelliteSquad.properties) do
+
+    if prop.id == 'BornInSector' then
+        hasSquadBornIn = true
+    end
+end
+
+if not hasSquadBornIn then
+
+    SatelliteSquad.properties[#SatelliteSquad.properties + 1] = {
+        category = "General",
+        id = "BornInSector",
+        editor = "text",
+        default = "",
+    }
+end
+
+
 DefineClass.HUDA_MilitiaPersonalization = {}
 
-function HUDA_MilitiaPersonalization:Personalize(unit_ids)
+function HUDA_MilitiaPersonalization:Personalize(unit_ids, first)
     local units = {}
 
     local unit_data = gv_UnitData
@@ -29,7 +109,18 @@ function HUDA_MilitiaPersonalization:Personalize(unit_ids)
                 end
             end
 
-            if not unit.JoinDate then
+            if not unit.HandledEquipment then
+
+                if HUDA_GetModOptions("militiaNoWeapons") == true and not first then
+                    unit:ForEachItem(function(item, slot)
+                        unit:RemoveItem(slot, item)
+                    end)
+                end
+
+                unit.HandledEquipment = true
+            end
+
+            if not unit.JoinDate or unit.JoinDate == 0 then
                 unit.JoinDate = Game.CampaignTime
 
                 if gunit then
@@ -37,8 +128,9 @@ function HUDA_MilitiaPersonalization:Personalize(unit_ids)
                 end
             end
 
-            if not unit.JoinLocation then
-                unit.JoinLocation = HUDA_GetSector(unit)
+            if not unit.JoinLocation or unit.JoinLocation == "" then
+
+                unit.JoinLocation = HUDA_GetSectorId(unit)
 
                 if gunit then
                     gunit.JoinLocation = unit.JoinLocation
@@ -250,12 +342,21 @@ function HUDA_MilitiaPersonalization:PersonalizeSquads(squad_ids)
                 squad.image = ""
             end
 
-            if not squad.BornInSector then
-                squad.BornInSector = squad.CurrentSector
-            end
-
             if not squad.Name or squad.Name == "MILITIA" or IsT(squad.Name) then
                 squad.Name = self:GetRandomSquadName(squad.CurrentSector)
+            end
+
+            if not squad.BornInSector or squad.BornInSector == "" then
+
+                -- fix the home sector of squads
+                local name_sector
+
+                for i in string.gmatch(squad.Name, "%S+") do
+                    name_sector = i
+                    break
+                end
+
+                squad.BornInSector = name_sector or squad.CurrentSector
             end
         end
     end

@@ -48,16 +48,3 @@ function HUDA_CheckCityOccupation()
         end
     end
 end
-
-function HUDA_GetControlledCitySectors(city)
-    local sectors = GetCitySectors(city)
-
-    if sectors then
-        local controlled_sectors = table.filter(sectors, function(i, v)
-            local sector = gv_Sectors[v]
-            return sector and (sector.Side == "player1" or sector.Side == "player2")
-        end)
-
-        return HUDA_ReindexTable(controlled_sectors)
-    end
-end

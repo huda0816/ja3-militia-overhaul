@@ -49,6 +49,103 @@ function HUDA_GetSectorId(unit)
 	return squad and squad.CurrentSector or "H2"
 end
 
+function HUDA_GetSupplyTravelInfo(start, goal)
+	local route = GenerateRouteDijkstra(start, goal)
+
+	if not route then
+		return 0
+	end
+
+	local water_sectors = table.ifilter(route, function(i, v)
+		return gv_Sectors[v].Passability == "Water"
+	end)
+
+	local previous = start
+	local time = 0
+	local breakdown = false
+	for i, w in ipairs(route) do
+		if previous then
+			local nextTravel = GetSectorTravelTime(previous, w, route)
+			if nextTravel then
+				time = time + Max(nextTravel, lMinVisualTravelTime * 2)
+			end
+		end
+		previous = w
+	end
+	return time, water_sectors
+end
+
+function HUDA_GetControlledCitySectors(city)
+	local sectors = GetCitySectors(city)
+
+	if sectors then
+		local controlled_sectors = table.filter(sectors, function(i, v)
+			local sector = gv_Sectors[v]
+			return sector and (sector.Side == "player1" or sector.Side == "player2")
+		end)
+
+		return HUDA_ReindexTable(controlled_sectors)
+	end
+end
+
+function HUDA_GetGuardposts(own) -- own = true, only own guardposts, false = only enemy guardposts, nil = all guardposts
+	local guardposts = {}
+
+	for k, sector in pairs(gv_Sectors) do
+		if sector.Guardpost then
+			if own == nil or sector.Side == "player1" or sector.Side == "player2" then
+				table.insert(guardposts, sector)
+			end
+		end
+	end
+
+	return guardposts
+end
+
+function HUDA_GetShortestDistanceToCityAndBases(sectorId)
+	local distance = 1000
+	local closest_sector
+	local closest_city
+
+	for k, city in pairs(gv_Cities) do
+		if (city.Loyalty > 30) then
+			local city_sectors = HUDA_GetControlledCitySectors(k)
+
+			for _, city_sector in ipairs(city_sectors) do
+				local city_distance = GetSectorDistance(sectorId, city_sector)
+
+				if city_distance == 0 then
+					return 0, city_sector, k
+				end
+
+				if city_distance < distance then
+					distance = city_distance
+					closest_sector = city_sector
+					closest_city = k
+				end
+			end
+		end
+	end
+
+	local guardposts = HUDA_GetGuardposts(true)
+
+	for _, guardpost in ipairs(guardposts) do
+		local guardpost_distance = GetSectorDistance(sectorId, guardpost.Id)
+
+		if guardpost_distance == 0 then
+			return 0, guardpost.Id, nil
+		end
+
+		if guardpost_distance < distance then
+			distance = guardpost_distance
+			closest_sector = guardpost.Id
+			closest_city = nil
+		end
+	end
+
+	return distance, closest_sector, closest_city
+end
+
 function HUDA_GetSquadDistance(squad)
 	local current_sector = squad.CurrentSector
 
@@ -154,6 +251,20 @@ function HUDA_GetTrainableMilitiaSquad(sector, exclude)
 	return squad.UniqueId
 end
 
+function HUDA_IsInventoryView()
+	local dlg = GetDialog("FullscreenGameDialogs")
+
+	if not dlg then
+		return false
+	end
+
+	if dlg.Mode ~= "inventory" then
+		return false
+	end
+
+	return true
+end
+
 function HUDA_GetModOptions(id, default, type)
 	id = "huda_" .. id
 
@@ -163,9 +274,7 @@ end
 function OnMsg.ApplyModOptions(mod_id)
 	if CurrentModOptions then
 		for k, v in pairs(CurrentModOptions) do
-			if k == huda_militiaNoWeapons then
-				HUDA_UpdateEquipment(v)
-			elseif string.starts_with(k, "huda_Militia") then
+			if string.starts_with(k, "huda_Militia") then
 				HUDA_MilitiaFinances:UpdateProps(k, v)
 			end
 		end
