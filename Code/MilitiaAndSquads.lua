@@ -220,6 +220,13 @@ if FirstLoad then
 		)
 	end
 
+	local x_fit = CustomSettingsMod.Utils.XTemplate_FindElementsByProp(XTemplates["SquadsAndMercs"], "__class",
+		"XFitContent")
+
+	if x_fit then
+		x_fit.element.HandleMouse = false
+	end
+
 	local x_button = CustomSettingsMod.Utils.XTemplate_FindElementsByProp(XTemplates["SquadsAndMercs"], "__class",
 		"XButton")
 
