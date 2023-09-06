@@ -5,8 +5,8 @@ PlaceObj('ModItemCharacterEffectCompositeDef', {
 	'msg_reactions', {},
 	'Conditions', {},
 	'Modifiers', {},
-	'DisplayName', T(336500922829, --[[ModItemCharacterEffectCompositeDef FarFromHome DisplayName]] "Far From Home"),
-	'Description', T(400857602467, --[[ModItemCharacterEffectCompositeDef FarFromHome Description]] "Militia soldiers who fight too far from their hometown, especially rookies, face various negative effects such as loss of morale."),
+	'DisplayName', T(818889667726, --[[ModItemCharacterEffectCompositeDef FarFromHome DisplayName]] "Far From Home"),
+	'Description', T(647742787391, --[[ModItemCharacterEffectCompositeDef FarFromHome Description]] "Militia soldiers who fight too far from their hometown, especially rookies, face various negative effects such as loss of morale."),
 	'type', "Debuff",
 	'Icon', "Mod/LXPER6t/Icons/farfromhome.png",
 	'Shown', true,
@@ -16,8 +16,8 @@ PlaceObj('ModItemCharacterEffectCompositeDef', {
 	'Id', "GCMilitia",
 	'object_class', "CharacterEffect",
 	'msg_reactions', {},
-	'DisplayName', T(587939415775, --[[ModItemCharacterEffectCompositeDef GCMilitia DisplayName]] "Grand Chien Militia"),
-	'Description', T(579526836304, --[[ModItemCharacterEffectCompositeDef GCMilitia Description]] "A perk every militia solider gets after bootcamp. Which allows them to clean and maintain their weapons."),
+	'DisplayName', T(197165705495, --[[ModItemCharacterEffectCompositeDef GCMilitia DisplayName]] "Grand Chien Militia"),
+	'Description', T(385001526251, --[[ModItemCharacterEffectCompositeDef GCMilitia Description]] "A perk every militia solider gets after bootcamp. Which allows them to clean and maintain their weapons."),
 }),
 PlaceObj('ModItemCode', {
 	'name', "MilitiaUtils",
@@ -60,6 +60,14 @@ PlaceObj('ModItemCode', {
 	'CodeFileName', "Code/MilitiaMovement.lua",
 }),
 PlaceObj('ModItemCode', {
+	'name', "MilitiaOverrides",
+	'CodeFileName', "Code/MilitiaOverrides.lua",
+}),
+PlaceObj('ModItemCode', {
+	'name', "MilitiaPDA",
+	'CodeFileName', "Code/MilitiaPDA.lua",
+}),
+PlaceObj('ModItemCode', {
 	'name', "MilitiaPerkEffects",
 	'CodeFileName', "Code/MilitiaPerkEffects.lua",
 }),
@@ -76,8 +84,8 @@ PlaceObj('ModItemCode', {
 	'CodeFileName', "Code/MilitiaTraining.lua",
 }),
 PlaceObj('ModItemCode', {
-	'name', "MilitiaOverrides",
-	'CodeFileName', "Code/MilitiaOverrides.lua",
+	'name', "PDAMilitia",
+	'CodeFileName', "Code/PDAMilitia.lua",
 }),
 PlaceObj('ModItemOptionChoice', {
 	'name', "huda_MilitiaCampaignCosts",
@@ -279,7 +287,7 @@ PlaceObj('ModItemOptionToggle', {
 PlaceObj('ModItemTextStyle', {
 	RolloverTextColor = 4291018156,
 	TextColor = 4291018156,
-	TextFont = T(302983541219, --[[ModItemTextStyle HUDASMALLPDASM TextFont]] "HMGothic Rough A, 10"),
+	TextFont = T(108402117459, --[[ModItemTextStyle HUDASMALLPDASM TextFont]] "HMGothic Rough A, 10"),
 	id = "HUDASMALLPDASM",
 }),
 }

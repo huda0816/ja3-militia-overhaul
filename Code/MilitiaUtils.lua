@@ -265,6 +265,16 @@ function HUDA_IsInventoryView()
 	return true
 end
 
+function HUDA_IsSquadManagementView()
+	local dlg = GetDialog("PDASquadManagement")
+
+	if not dlg then
+		return false
+	end
+
+	return true
+end
+
 function HUDA_GetModOptions(id, default, type)
 	id = "huda_" .. id
 
