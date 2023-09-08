@@ -20,10 +20,6 @@ PlaceObj('ModItemCharacterEffectCompositeDef', {
 	'Description', T(385001526251, --[[ModItemCharacterEffectCompositeDef GCMilitia Description]] "A perk every militia solider gets after bootcamp. Which allows them to clean and maintain their weapons."),
 }),
 PlaceObj('ModItemCode', {
-	'name', "MilitiaUtils",
-	'CodeFileName', "Code/MilitiaUtils.lua",
-}),
-PlaceObj('ModItemCode', {
 	'name', "MilitiaAndSquads",
 	'CodeFileName', "Code/MilitiaAndSquads.lua",
 }),
@@ -84,8 +80,36 @@ PlaceObj('ModItemCode', {
 	'CodeFileName', "Code/MilitiaTraining.lua",
 }),
 PlaceObj('ModItemCode', {
+	'name', "MilitiaUtils",
+	'CodeFileName', "Code/MilitiaUtils.lua",
+}),
+PlaceObj('ModItemCode', {
 	'name', "PDAMilitia",
 	'CodeFileName', "Code/PDAMilitia.lua",
+}),
+PlaceObj('ModItemCode', {
+	'name', "PDAMilitiaFinances",
+	'CodeFileName', "Code/PDAMilitiaFinances.lua",
+}),
+PlaceObj('ModItemCode', {
+	'name', "PDAMilitiaHyperlinkHeader",
+	'CodeFileName', "Code/PDAMilitiaHyperlinkHeader.lua",
+}),
+PlaceObj('ModItemCode', {
+	'name', "PDAMilitiaSquad",
+	'CodeFileName', "Code/PDAMilitiaSquad.lua",
+}),
+PlaceObj('ModItemCode', {
+	'name', "PDAMilitiaSquads",
+	'CodeFileName', "Code/PDAMilitiaSquads.lua",
+}),
+PlaceObj('ModItemCode', {
+	'name', "PDAMilitiaStartPage",
+	'CodeFileName', "Code/PDAMilitiaStartPage.lua",
+}),
+PlaceObj('ModItemCode', {
+	'name', "MilitiaConflictTracker",
+	'CodeFileName', "Code/MilitiaConflictTracker.lua",
 }),
 PlaceObj('ModItemOptionChoice', {
 	'name', "huda_MilitiaCampaignCosts",
@@ -289,5 +313,11 @@ PlaceObj('ModItemTextStyle', {
 	TextColor = 4291018156,
 	TextFont = T(108402117459, --[[ModItemTextStyle HUDASMALLPDASM TextFont]] "HMGothic Rough A, 10"),
 	id = "HUDASMALLPDASM",
+}),
+PlaceObj('ModItemXTemplate', {
+	id = "",
+	PlaceObj('XTemplateWindow', {
+		'__class', "XEdit",
+	}),
 }),
 }

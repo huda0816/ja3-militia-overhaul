@@ -12,7 +12,7 @@ PlaceObj("XTemplate", {
         "InitialMode",
         "start_page",
         "InternalModes",
-        "start_page,home,finances,squads,squad,soldier,login,logout,test,test_result_stats,test_result_perks,error,pet_intro, imp_confirm,imp_confirm_intro, final_confirm, outcome, pswd_reset, title_text, home, gallery, construction"
+        "start_page,home,finances,squads,squad,soldier,login,logout,construction,shop,edit_squad"
     }, {
         PlaceObj("XTemplateFunc", {
             "name",
@@ -25,7 +25,7 @@ PlaceObj("XTemplate", {
                 self:SetFocus()
                 ObjModified("right panel")
                 ObjModified("left panel")
-                ObjModified("imp header")
+                ObjModified("militia header")
             end
         }),
         PlaceObj("XTemplateFunc", {
@@ -42,6 +42,11 @@ PlaceObj("XTemplate", {
             "func",
             function(self, mode, dialog)
                 print("OnDialogModeChange", mode)
+                if mode == "start_page" then
+                    self:SetMode("home")
+                    return
+                end
+                ObjModified("pda_url")
             end
         }),
         PlaceObj("XTemplateFunc", {
@@ -144,9 +149,7 @@ PlaceObj("XTemplate", {
             "MinWidth",
             1076,
             "MaxWidth",
-            1076,
-            "MaxHeight",
-            849
+            1076
         }, {
             PlaceObj("XTemplateWindow", nil, {
                 PlaceObj("XTemplateWindow", {
@@ -154,7 +157,7 @@ PlaceObj("XTemplate", {
                     "header",
                     "__context",
                     function(parent, context)
-                        return "imp header"
+                        return "militia header"
                     end,
                     "Id",
                     "idHeader",
@@ -278,7 +281,7 @@ PlaceObj("XTemplate", {
                                 "comment",
                                 "home",
                                 "__template",
-                                "PDAImpHyperlinkHeader",
+                                "PDAMilitiaHyperlinkHeader",
                                 "Id",
                                 "idHome",
                                 "LinkId",
@@ -310,7 +313,7 @@ PlaceObj("XTemplate", {
                                 "comment",
                                 "finances",
                                 "__template",
-                                "PDAImpHyperlinkHeader",
+                                "PDAMilitiaHyperlinkHeader",
                                 "Id",
                                 "idFinances",
                                 "LinkId",
@@ -342,7 +345,7 @@ PlaceObj("XTemplate", {
                                 "comment",
                                 "squads",
                                 "__template",
-                                "PDAImpHyperlinkHeader",
+                                "PDAMilitiaHyperlinkHeader",
                                 "Id",
                                 "idSquads",
                                 "LinkId",
@@ -351,19 +354,6 @@ PlaceObj("XTemplate", {
                                 "squads",
                                 "Text",
                                 T(126748905760, "SQUADS")
-                            }, {
-                                PlaceObj("XTemplateFunc", {
-                                    "name",
-                                    "OnClick(self, dlg)",
-                                    "func",
-                                    function(self, dlg)
-                                        -- if not g_ImpTest.last_opened_question then
-                                        --     GetDialog(self):StartTest()
-                                        -- else
-                                        --     GetDialog(self):OpenQuestion(g_ImpTest.last_opened_question)
-                                        -- end
-                                    end
-                                })
                             })
                         }),
                         PlaceObj("XTemplateWindow", {
@@ -397,7 +387,7 @@ PlaceObj("XTemplate", {
                                 "comment",
                                 "log out",
                                 "__template",
-                                "PDAImpHyperlinkHeader",
+                                "PDAMilitiaHyperlinkHeader",
                                 "Id",
                                 "idLogOut",
                                 "LinkId",
@@ -447,7 +437,7 @@ PlaceObj("XTemplate", {
                     "footer",
                     "__context",
                     function(parent, context)
-                        return "imp footer"
+                        return "militia footer"
                     end,
                     "Id",
                     "idFooter",
@@ -801,7 +791,7 @@ PlaceObj("XTemplate", {
                                 "Translate",
                                 true,
                                 "Text",
-                                T(236432374390, "<copyright> IMP Corp 2001")
+                                "powered by IMP"
                             })
                         }),
                         PlaceObj("XTemplateWindow", {
@@ -1090,103 +1080,9 @@ PlaceObj("XTemplate", {
                             PlaceObj("XTemplateMode", { "mode", "finances" }, {
                                 PlaceObj("XTemplateTemplate", {
                                     "__template",
-                                    "PDAImpAnswers",
+                                    "PDAMilitiaFinances",
                                     "HeaderButtonId",
-                                    "idTest"
-                                }),
-                                PlaceObj("XTemplateAction", {
-                                    "ActionId",
-                                    "idStartOver",
-                                    "ActionName",
-                                    T(640196796709, "Start Over"),
-                                    "ActionToolbar",
-                                    "ActionBar",
-                                    "ActionGamepad",
-                                    "LeftThumbClick",
-                                    "OnAction",
-                                    function(self, host, source, ...)
-                                        host:StartTest()
-                                    end
-                                }),
-                                PlaceObj("XTemplateAction", {
-                                    "ActionId",
-                                    "idSkip",
-                                    "ActionName",
-                                    T(808369493896, "Skip"),
-                                    "ActionToolbar",
-                                    "ActionBar",
-                                    "ActionGamepad",
-                                    "RightThumbClick",
-                                    "ActionState",
-                                    function(self, host)
-                                        local context = host.idContent:GetContext()
-                                        local idx = context and context.question or 0
-                                        return idx ~= 10 and "enabled" or "disabled"
-                                    end,
-                                    "OnAction",
-                                    function(self, host, source, ...)
-                                        host:OpenQuestion("outcome")
-                                    end
-                                }),
-                                PlaceObj("XTemplateAction", {
-                                    "ActionId",
-                                    "idPrev",
-                                    "ActionName",
-                                    T(549570728431, "Prev"),
-                                    "ActionToolbar",
-                                    "ActionBar",
-                                    "ActionGamepad",
-                                    "LeftShoulder",
-                                    "ActionState",
-                                    function(self, host)
-                                        local context = host.idContent:GetContext()
-                                        local idx = context and context.question or 0
-                                        return 1 < idx and "enabled" or "disabled"
-                                    end,
-                                    "OnAction",
-                                    function(self, host, source, ...)
-                                        host:PrevQuestion()
-                                    end
-                                }),
-                                PlaceObj("XTemplateAction", {
-                                    "ActionId",
-                                    "idNext",
-                                    "ActionName",
-                                    T(655064233565, "Next"),
-                                    "ActionToolbar",
-                                    "ActionBar",
-                                    "ActionGamepad",
-                                    "RightShoulder",
-                                    "ActionState",
-                                    function(self, host)
-                                        local context = host.idContent:GetContext()
-                                        local idx = context and context.question or 0
-                                        return idx < 10 and "enabled" or "hidden"
-                                    end,
-                                    "OnAction",
-                                    function(self, host, source, ...)
-                                        host:NextQuestion()
-                                    end
-                                }),
-                                PlaceObj("XTemplateAction", {
-                                    "ActionId",
-                                    "idFinish",
-                                    "ActionName",
-                                    T(426594514812, "Finish"),
-                                    "ActionToolbar",
-                                    "ActionBar",
-                                    "ActionGamepad",
-                                    "RightShoulder",
-                                    "ActionState",
-                                    function(self, host)
-                                        local context = host and host.idContent:GetContext()
-                                        local idx = context and context.question or 0
-                                        return 10 <= idx and "enabled" or "hidden"
-                                    end,
-                                    "OnAction",
-                                    function(self, host, source, ...)
-                                        host:OpenQuestion("outcome")
-                                    end
+                                    "idFinances"
                                 })
                             }),
                             PlaceObj("XTemplateMode", {
@@ -1194,34 +1090,10 @@ PlaceObj("XTemplate", {
                                 "squads"
                             }, {
                                 PlaceObj("XTemplateTemplate", {
-                                    "__context",
-                                    function(parent, context)
-                                        return CreateImpTestResultContext()
-                                    end,
                                     "__template",
-                                    "PDAImpResultMerc",
+                                    "PDAMilitiaSquads",
                                     "HeaderButtonId",
-                                    "idProfile"
-                                }),
-                                PlaceObj("XTemplateAction", {
-                                    "comment",
-                                    "perks",
-                                    "ActionId",
-                                    "idPerks",
-                                    "ActionName",
-                                    T(655064233565, "Next"),
-                                    "ActionToolbar",
-                                    "ActionBar",
-                                    "ActionGamepad",
-                                    "RightShoulder",
-                                    "ActionState",
-                                    function(self, host)
-                                        return GetDialog(self.host):CanAdvanceToMercPerks() and "enabled" or "disabled"
-                                    end,
-                                    "OnActionEffect",
-                                    "mode",
-                                    "OnActionParam",
-                                    "test_result_perks"
+                                    "idSquads"
                                 })
                             }),
                             PlaceObj("XTemplateMode", {
@@ -1229,84 +1101,18 @@ PlaceObj("XTemplate", {
                                 "squad"
                             }, {
                                 PlaceObj("XTemplateTemplate", {
-                                    "__context",
-                                    function(parent, context)
-                                        return CreateImpTestResultContext()
-                                    end,
                                     "__template",
-                                    "PDAImpResultMerc",
+                                    "PDAMilitiaSquad",
                                     "HeaderButtonId",
                                     "idProfile"
-                                }),
-                                PlaceObj("XTemplateAction", {
-                                    "comment",
-                                    "stats",
-                                    "ActionId",
-                                    "idStats",
-                                    "ActionName",
-                                    T(549570728431, "Prev"),
-                                    "ActionToolbar",
-                                    "ActionBar",
-                                    "ActionGamepad",
-                                    "LeftShoulder",
-                                    "OnActionEffect",
-                                    "mode",
-                                    "OnActionParam",
-                                    "test_result_stats"
-                                }),
-                                PlaceObj("XTemplateAction", {
-                                    "comment",
-                                    "done",
-                                    "ActionId",
-                                    "idDone",
-                                    "ActionName",
-                                    T(131832481511, "Done"),
-                                    "ActionToolbar",
-                                    "ActionBar",
-                                    "ActionGamepad",
-                                    "Start",
-                                    "ActionState",
-                                    function(self, host)
-                                        return GetDialog(self.host):CanFinishMercCreation() and "enabled" or "disabled"
-                                    end,
-                                    "OnActionEffect",
-                                    "mode",
-                                    "OnActionParam",
-                                    "final_confirm"
                                 })
                             }),
                             PlaceObj("XTemplateMode", { "mode", "home" }, {
                                 PlaceObj("XTemplateTemplate", {
                                     "__template",
-                                    "PDAImpStartPage",
+                                    "PDAMilitiaStartPage",
                                     "HeaderButtonId",
                                     "idHome"
-                                }),
-                                PlaceObj("XTemplateAction", {
-                                    "comment",
-                                    "ok",
-                                    "ActionId",
-                                    "idOK",
-                                    "ActionName",
-                                    T(175732041340, "OK"),
-                                    "ActionToolbar",
-                                    "ActionBar",
-                                    "ActionShortcut",
-                                    "Enter",
-                                    "ActionGamepad",
-                                    "Start",
-                                    "ActionState",
-                                    function(self, host)
-                                        if g_ImpTest and g_ImpTest.final and g_ImpTest.final.created then
-                                            return "hidden"
-                                        else
-                                            return "enabled"
-                                        end
-                                    end,
-                                    "OnActionEffect",
-                                    "mode",
-                                    "OnActionParam",
-                                    "login"
                                 })
                             })
                         })

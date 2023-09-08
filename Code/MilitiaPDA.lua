@@ -1,7 +1,4 @@
--- if FirstLoad then
-
-    PDABrowser.InternalModes = PDABrowser.InternalModes .. ", militia"
-
+if FirstLoad then
     local pda_mode_container = CustomSettingsMod.Utils.XTemplate_FindElementsByProp(XTemplates["PDABrowser"],
         "__template",
         "PDAAIMBrowser")
@@ -10,11 +7,15 @@
         table.insert(pda_mode_container.ancestors[2], PlaceObj("XTemplateMode", { "mode", "militia" }, {
             PlaceObj("XTemplateTemplate", {
                 "__template",
-                "PDAMilitiaDialog"
+                "PDAMilitiaDialog",
+                "Id",
+                "idBrowserContent"
             })
         }))
     end
--- end
+end
+
+PDABrowser.InternalModes = PDABrowser.InternalModes .. ", militia"
 
 -- DockBrowserTab("militia")
 
@@ -53,10 +54,7 @@ function OpenMilitiaPDA()
         pda:SetMode("browser")
         return
     end
-    print("id content", pda.idContent)
     pda.idContent:SetMode("militia")
-
-    print("mode", pda.idContent.Mode)
 
     -- if pda.idContent.Mode ~= "militia" then
     --     pda.idContent:SetMode("militia")
@@ -64,3 +62,40 @@ function OpenMilitiaPDA()
     --     return
     -- end
 end
+
+local HUDA_OriginalPDAUrl = TFormat.PDAUrl
+
+function TFormat.PDAUrl(context_obj)
+    local pda = GetDialog("PDADialog")
+    if not pda then
+        return false
+    end
+    local content = pda:ResolveId("idContent")
+    local mercBrowser = IsKindOf(content, "PDABrowser") and content
+    local browserContent = mercBrowser.idBrowserContent
+
+    if mercBrowser and mercBrowser:GetMode() == "militia" then
+        local mode = browserContent:GetMode()
+        local mode_param = browserContent.mode_param
+
+        local url = browserContent:GetURL(mode, mode_param)
+
+        return url or
+            T(846448600633, "http://www.gc-militia.org/")
+    end
+
+    return HUDA_OriginalPDAUrl(context_obj)
+end
+
+function TFormat.MilitiaName(context_obj)
+    return context_obj.Name
+end
+
+function _ENV:PDAImpHeaderEnable()
+    -- local header_button = GetDialog(self):ResolveId("idHeader"):ResolveId("idLeftLinks"):ResolveId(self:GetProperty("HeaderButtonId"))
+    -- header_button:ResolveId("idLink"):SetTextStyle("PDAIMPContentTitleSelected")
+  end
+  function _ENV:PDAImpHeaderDisable()
+    -- local header_button = GetDialog(self):ResolveId("idHeader"):ResolveId("idLeftLinks"):ResolveId(self:GetProperty("HeaderButtonId"))
+    -- header_button:ResolveId("idLink"):SetTextStyle("PDAIMPContentTitleActive")
+  end

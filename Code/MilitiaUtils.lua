@@ -1,3 +1,13 @@
+function HUDA_TableValues(tbl)
+	local values = {}
+
+	for k, v in pairs(tbl) do
+		table.insert(values, v)
+	end
+
+	return values
+end
+
 function HUDA_ArrayContains(array, value)
 	for k, v in pairs(array) do
 		if v == value then
@@ -37,6 +47,10 @@ function HUDA_keyOf(tbl, value)
 		end
 	end
 	return nil
+end
+
+function HUDA_GetSectorById(sector_id)
+	return gv_Sectors[sector_id]
 end
 
 function HUDA_GetSector(unit)
@@ -102,6 +116,20 @@ function HUDA_GetGuardposts(own) -- own = true, only own guardposts, false = onl
 	return guardposts
 end
 
+function HUDA_GetSpecializationName(specialization)
+	if specialization == "AllRounder" then
+		return "Rifleman"
+	elseif specialization == "Marksmen" then
+		return "Marksman"
+	elseif specialization == "Doctor" then
+		return "Medic"
+	elseif specialization == "ExplosiveExpert" then
+		return "Grenadier"
+	end
+
+	return specialization
+end
+
 function HUDA_GetShortestDistanceToCityAndBases(sectorId)
 	local distance = 1000
 	local closest_sector
@@ -144,6 +172,32 @@ function HUDA_GetShortestDistanceToCityAndBases(sectorId)
 	end
 
 	return distance, closest_sector, closest_city
+end
+
+function HUDA_GetClosestCity(sectorId)
+	local distance = 1000
+	local closest_sector
+	local closest_city
+
+	for k, city in pairs(gv_Cities) do
+		local city_sectors = GetCitySectors(k)
+
+		for _, city_sector in ipairs(city_sectors) do
+			local city_distance = GetSectorDistance(sectorId, city_sector)
+
+			if city_distance == 0 then
+				return k, 0, city_sector
+			end
+
+			if city_distance < distance then
+				distance = city_distance
+				closest_sector = city_sector
+				closest_city = k
+			end
+		end
+	end
+
+	return closest_city, distance, closest_sector
 end
 
 function HUDA_GetSquadDistance(squad)
@@ -275,6 +329,14 @@ function HUDA_IsSquadManagementView()
 	return true
 end
 
+function HUDA_GetDaysSinceJoin(join_date)
+	local dist = Game.CampaignTime - join_date
+
+	local days = dist / 24 / 60 / 60
+
+	return days
+end
+
 function HUDA_GetModOptions(id, default, type)
 	id = "huda_" .. id
 
@@ -288,5 +350,21 @@ function OnMsg.ApplyModOptions(mod_id)
 				HUDA_MilitiaFinances:UpdateProps(k, v)
 			end
 		end
+	end
+end
+
+function HUDA_GetSquadLeader(units)
+	table.sort(units, function(a, b)
+		return gv_UnitData[a].Experience > gv_UnitData[b].Experience
+	end)
+
+	local leaders = HUDA_ReindexTable(table.filter(units, function(k, v)
+		return gv_UnitData[v].Specialization == "Leader"
+	end))
+
+	if next(leaders) == nil then
+		return gv_UnitData[units[1]]
+	else
+		return gv_UnitData[leaders[1]]
 	end
 end
