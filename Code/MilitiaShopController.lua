@@ -22,6 +22,18 @@ DefineClass.HUDA_ShopController = {
             count = 2,
             basePrice = 500,
             topSeller = true,
+        },
+        {
+            id = "KevlarVest",
+            count = 2,
+            basePrice = 500,
+            topSeller = true,
+        },
+        {
+            id = "AK47",
+            count = 2,
+            basePrice = 1500,
+            topSeller = true,
         }
     },
     DeliveryTypes = {
@@ -236,6 +248,28 @@ function HUDA_ShopController:GetDeliveryDuration(order)
     return deliveryDuration * 60 * 60 * 24
 end
 
+function HUDA_ShopController:GetETA(order)
+    local deliveryDuration = self:GetDeliveryDuration(order)
+
+    local deliveryTime = order.orderTime + deliveryDuration
+
+    local eta = deliveryTime - Game.CampaignTime
+
+    return eta / 60 / 60 / 24
+
+    -- return self:DateFromTime(deliveryTime)
+end
+
+function HUDA_ShopController:DateFromTime(timeStamp)
+    
+    local t = GetTimeAsTable(timeStamp or 0)
+    local month = string.format("%02d", t and t.month or 1)
+	local day = string.format("%02d", t and t.day or 1)
+	local year = tostring(t and t.year or 1)
+
+    return month .. "/" .. day .. "/" .. year
+end
+
 function HUDA_ShopController:RefreshOrders()
     local orders = gv_HUDA_ShopOrders
 
@@ -252,6 +286,18 @@ function HUDA_ShopController:RefreshOrders()
             end
         end
     end
+end
+
+function HUDA_ShopController:Refund(order) 
+
+    gv_HUDA_ShopOrders = table.ifilter(gv_HUDA_ShopOrders, function(i, o)
+        return o.id ~= order.id
+    end)
+
+    AddMoney(order.total, "I.M.P.S.S.", true)
+
+    ObjModified(gv_HUDA_ShopOrders)
+
 end
 
 function HUDA_ShopController:Deliver(order)
@@ -280,9 +326,9 @@ end
 function HUDA_ShopController:Order()
     local cart = gv_HUDA_ShopCart
 
-    local payed = self:Pay(cart)
+    local total = self:Pay(cart)
 
-    if not payed then
+    if not total then
         return
     end
 
@@ -292,6 +338,7 @@ function HUDA_ShopController:Order()
         id = "order_" .. #orders + 1,
         products = cart.products,
         status = "pending",
+        total = total,
         sector = "H2",
         orderTime = Game.CampaignTime,
         deliveryType = cart.deliveryType
@@ -317,7 +364,7 @@ function HUDA_ShopController:Pay(cart)
 
     AddMoney(-total, "I.M.P.S.S.", true)
 
-    return true
+    return total
 end
 
 function HUDA_ShopController:CreateMessageBox(title, text)

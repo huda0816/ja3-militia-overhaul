@@ -12,7 +12,7 @@ PlaceObj("XTemplate", {
         "InitialMode",
         "start_page",
         "InternalModes",
-        "start_page,home,finances,squads,squad,soldier,login,logout,construction,shop,edit_squad"
+        "start_page,home,finances,squads,squad,soldier,login,logout,construction,shop,edit_squad,orders"
     }, {
         PlaceObj("XTemplateFunc", {
             "name",
@@ -866,8 +866,62 @@ PlaceObj("XTemplate", {
                             }, {
                                 PlaceObj("XTemplateMode", {
                                     "mode",
-                                    "shop"
+                                    "shop, orders"
                                 }, {
+                                    PlaceObj("XTemplateWindow", {
+                                        "__class",
+                                        "XText",
+                                        "__condition",
+                                        function(parent, context)
+                                            return #gv_HUDA_ShopOrders > 0
+                                        end,
+                                        "TextHAlign",
+                                        "center",
+                                        "Margins",
+                                        box(0, 0, 0, 10),
+                                        "Padding",
+                                        box(2, 5, 2, 5),
+                                        "BorderWidth",
+                                        2,
+                                        "BorderColor",
+                                        RGBA(255, 255, 255, 255),
+                                        "Background",
+                                        RGBA(88, 92, 68, 255),
+                                        "RolloverBorderColor",
+                                        RGBA(65, 65, 65, 255),
+                                        "MouseCursor",
+                                        "UI/Cursors/Pda_Hand.tga",
+                                        "TextStyle",
+                                        "DescriptionTextWhite",
+                                        "Translate",
+                                        true,
+                                        "Text",
+                                        "your orders"
+                                    }, {
+                                        PlaceObj("XTemplateFunc", {
+                                            "name",
+                                            "OnMouseButtonDown(self, pos, button)",
+                                            "func",
+                                            function(self, pos, button)
+
+                                                if button == "L" then
+                                                    local dlg = GetDialog(self)
+
+                                                    if dlg.Mode == "shop" then
+                                                        dlg:SetMode("orders")
+
+                                                        self:SetText("back")
+                                                    else
+                                                        dlg:SetMode("shop")
+                                                        self:SetText("your orders")
+                                                    end
+                                                end
+                                                -- ObjModified("right panel")
+                                                -- ObjModified("left panel")
+                                                -- ObjModified("militia header")
+                                            end
+                                        })
+                                    }),
                                     PlaceObj("XTemplateWindow", {
                                         "__class",
                                         "XText",
@@ -1123,8 +1177,9 @@ PlaceObj("XTemplate", {
                                                         end
                                                     elseif item.default then
                                                         -- child:Toggle(true)
+                                                        HUDA_ShopController:SetDeliveryType(item)
                                                         child.idbtnChecked:SetToggled(true)
-                                                        child.idbtnChecked:SetIconRow(true and 2 or 1)                                                   
+                                                        child.idbtnChecked:SetIconRow(true and 2 or 1)
                                                     end
                                                 end
                                             }, {
@@ -1174,7 +1229,7 @@ PlaceObj("XTemplate", {
                                                                 --     end
                                                                 -- end
                                                             end
-                                                            ObjModified("right panel")                                                       
+                                                            ObjModified("right panel")
                                                         end
                                                     }),
                                                     PlaceObj("XTemplateFunc", {
@@ -1700,6 +1755,17 @@ PlaceObj("XTemplate", {
                                     "PDAMilitiaShop",
                                     "HeaderButtonId",
                                     "idShop"
+                                })
+                            }),
+                            PlaceObj("XTemplateMode", {
+                                "mode",
+                                "orders"
+                            }, {
+                                PlaceObj("XTemplateTemplate", {
+                                    "__template",
+                                    "PDAMilitiaShopOrders",
+                                    "HeaderButtonId",
+                                    "idShopOrders"
                                 })
                             }),
                             PlaceObj("XTemplateMode", { "mode", "home" }, {

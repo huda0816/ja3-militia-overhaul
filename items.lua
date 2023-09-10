@@ -5,8 +5,8 @@ PlaceObj('ModItemCharacterEffectCompositeDef', {
 	'msg_reactions', {},
 	'Conditions', {},
 	'Modifiers', {},
-	'DisplayName', T(785961314540, --[[ModItemCharacterEffectCompositeDef FarFromHome DisplayName]] "Far From Home"),
-	'Description', T(194728444935, --[[ModItemCharacterEffectCompositeDef FarFromHome Description]] "Militia soldiers who fight too far from their hometown, especially rookies, face various negative effects such as loss of morale."),
+	'DisplayName', T(961555598847, --[[ModItemCharacterEffectCompositeDef FarFromHome DisplayName]] "Far From Home"),
+	'Description', T(752312637169, --[[ModItemCharacterEffectCompositeDef FarFromHome Description]] "Militia soldiers who fight too far from their hometown, especially rookies, face various negative effects such as loss of morale."),
 	'type', "Debuff",
 	'Icon', "Mod/LXPER6t/Icons/farfromhome.png",
 	'Shown', true,
@@ -16,12 +16,8 @@ PlaceObj('ModItemCharacterEffectCompositeDef', {
 	'Id', "GCMilitia",
 	'object_class', "CharacterEffect",
 	'msg_reactions', {},
-	'DisplayName', T(570270671851, --[[ModItemCharacterEffectCompositeDef GCMilitia DisplayName]] "Grand Chien Militia"),
-	'Description', T(690212055266, --[[ModItemCharacterEffectCompositeDef GCMilitia Description]] "A perk every militia solider gets after bootcamp. Which allows them to clean and maintain their weapons."),
-}),
-PlaceObj('ModItemCode', {
-	'name', "MilitiaUtils",
-	'CodeFileName', "Code/MilitiaUtils.lua",
+	'DisplayName', T(910546539467, --[[ModItemCharacterEffectCompositeDef GCMilitia DisplayName]] "Grand Chien Militia"),
+	'Description', T(621380007867, --[[ModItemCharacterEffectCompositeDef GCMilitia Description]] "A perk every militia solider gets after bootcamp. Which allows them to clean and maintain their weapons."),
 }),
 PlaceObj('ModItemCode', {
 	'name', "MilitiaAndSquads",
@@ -96,6 +92,10 @@ PlaceObj('ModItemCode', {
 	'CodeFileName', "Code/MilitiaTraining.lua",
 }),
 PlaceObj('ModItemCode', {
+	'name', "MilitiaUtils",
+	'CodeFileName', "Code/MilitiaUtils.lua",
+}),
+PlaceObj('ModItemCode', {
 	'name', "PDAMilitia",
 	'CodeFileName', "Code/PDAMilitia.lua",
 }),
@@ -114,6 +114,10 @@ PlaceObj('ModItemCode', {
 PlaceObj('ModItemCode', {
 	'name', "PDAMilitiaShop",
 	'CodeFileName', "Code/PDAMilitiaShop.lua",
+}),
+PlaceObj('ModItemCode', {
+	'name', "PDAMilitiaShopOrders",
+	'CodeFileName', "Code/PDAMilitiaShopOrders.lua",
 }),
 PlaceObj('ModItemCode', {
 	'name', "PDAMilitiaSquad",
@@ -333,13 +337,36 @@ PlaceObj('ModItemOptionToggle', {
 PlaceObj('ModItemTextStyle', {
 	RolloverTextColor = 4291018156,
 	TextColor = 4291018156,
-	TextFont = T(863593280496, --[[ModItemTextStyle HUDASMALLPDASM TextFont]] "HMGothic Rough A, 10"),
+	TextFont = T(448189319280, --[[ModItemTextStyle HUDASMALLPDASM TextFont]] "HMGothic Rough A, 10"),
 	id = "HUDASMALLPDASM",
 }),
 PlaceObj('ModItemXTemplate', {
-	id = "",
-	PlaceObj('XTemplateWindow', {
-		'__class', "XEdit",
-	}),
+	id = "Test",
+	PlaceObj('XTemplateWindow', nil, {
+		PlaceObj('XTemplateWindow', nil, {
+			PlaceObj('XTemplateWindow', {
+				'__class', "XText",
+			}),
+			PlaceObj('XTemplateWindow', {
+				'__class', "XText",
+			}),
+			}),
+		PlaceObj('XTemplateWindow', nil, {
+			PlaceObj('XTemplateWindow', nil, {
+				PlaceObj('XTemplateForEach', nil, {
+					PlaceObj('XTemplateWindow', nil, {
+						PlaceObj('XTemplateWindow', {
+							'__class', "XText",
+						}),
+						}),
+					}),
+				}),
+			PlaceObj('XTemplateWindow', nil, {
+				PlaceObj('XTemplateWindow', {
+					'__class', "XText",
+				}),
+				}),
+			}),
+		}),
 }),
 }
