@@ -34,6 +34,7 @@ function RollForMilitiaPromotion(sector)
 
 					if new_guy then
 						HUDA_MergeMilitia(new_guy, copy)
+						Msg("MilitiaPromoted", new_guy, copy.session_id)
 					end
 				end
 			end
@@ -152,6 +153,14 @@ function HUDA_MergeMilitia(new, original)
 				new[k] = v
 			end
 		end
+	end
+
+	if new.session_id ~= original.session_id then
+		
+		new.OldSessionIds = new.OldSessionIds or {}
+
+		table.insert(new.OldSessionIds, original.session_id)
+
 	end
 end
 

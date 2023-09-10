@@ -5,8 +5,8 @@ PlaceObj('ModItemCharacterEffectCompositeDef', {
 	'msg_reactions', {},
 	'Conditions', {},
 	'Modifiers', {},
-	'DisplayName', T(818889667726, --[[ModItemCharacterEffectCompositeDef FarFromHome DisplayName]] "Far From Home"),
-	'Description', T(647742787391, --[[ModItemCharacterEffectCompositeDef FarFromHome Description]] "Militia soldiers who fight too far from their hometown, especially rookies, face various negative effects such as loss of morale."),
+	'DisplayName', T(785961314540, --[[ModItemCharacterEffectCompositeDef FarFromHome DisplayName]] "Far From Home"),
+	'Description', T(194728444935, --[[ModItemCharacterEffectCompositeDef FarFromHome Description]] "Militia soldiers who fight too far from their hometown, especially rookies, face various negative effects such as loss of morale."),
 	'type', "Debuff",
 	'Icon', "Mod/LXPER6t/Icons/farfromhome.png",
 	'Shown', true,
@@ -16,8 +16,12 @@ PlaceObj('ModItemCharacterEffectCompositeDef', {
 	'Id', "GCMilitia",
 	'object_class', "CharacterEffect",
 	'msg_reactions', {},
-	'DisplayName', T(197165705495, --[[ModItemCharacterEffectCompositeDef GCMilitia DisplayName]] "Grand Chien Militia"),
-	'Description', T(385001526251, --[[ModItemCharacterEffectCompositeDef GCMilitia Description]] "A perk every militia solider gets after bootcamp. Which allows them to clean and maintain their weapons."),
+	'DisplayName', T(570270671851, --[[ModItemCharacterEffectCompositeDef GCMilitia DisplayName]] "Grand Chien Militia"),
+	'Description', T(690212055266, --[[ModItemCharacterEffectCompositeDef GCMilitia Description]] "A perk every militia solider gets after bootcamp. Which allows them to clean and maintain their weapons."),
+}),
+PlaceObj('ModItemCode', {
+	'name', "MilitiaUtils",
+	'CodeFileName', "Code/MilitiaUtils.lua",
 }),
 PlaceObj('ModItemCode', {
 	'name', "MilitiaAndSquads",
@@ -30,6 +34,10 @@ PlaceObj('ModItemCode', {
 PlaceObj('ModItemCode', {
 	'name', "MilitiaCompat",
 	'CodeFileName', "Code/MilitiaCompat.lua",
+}),
+PlaceObj('ModItemCode', {
+	'name', "MilitiaConflictTracker",
+	'CodeFileName', "Code/MilitiaConflictTracker.lua",
 }),
 PlaceObj('ModItemCode', {
 	'name', "MilitiaEquipment",
@@ -76,12 +84,16 @@ PlaceObj('ModItemCode', {
 	'CodeFileName', "Code/MilitiaSatelliteConflict.lua",
 }),
 PlaceObj('ModItemCode', {
-	'name', "MilitiaTraining",
-	'CodeFileName', "Code/MilitiaTraining.lua",
+	'name', "MilitiaShopController",
+	'CodeFileName', "Code/MilitiaShopController.lua",
 }),
 PlaceObj('ModItemCode', {
-	'name', "MilitiaUtils",
-	'CodeFileName', "Code/MilitiaUtils.lua",
+	'name', "MilitiaStoryParts",
+	'CodeFileName', "Code/MilitiaStoryParts.lua",
+}),
+PlaceObj('ModItemCode', {
+	'name', "MilitiaTraining",
+	'CodeFileName', "Code/MilitiaTraining.lua",
 }),
 PlaceObj('ModItemCode', {
 	'name', "PDAMilitia",
@@ -92,8 +104,16 @@ PlaceObj('ModItemCode', {
 	'CodeFileName', "Code/PDAMilitiaFinances.lua",
 }),
 PlaceObj('ModItemCode', {
+	'name', "PDAMilitiaHome",
+	'CodeFileName', "Code/PDAMilitiaHome.lua",
+}),
+PlaceObj('ModItemCode', {
 	'name', "PDAMilitiaHyperlinkHeader",
 	'CodeFileName', "Code/PDAMilitiaHyperlinkHeader.lua",
+}),
+PlaceObj('ModItemCode', {
+	'name', "PDAMilitiaShop",
+	'CodeFileName', "Code/PDAMilitiaShop.lua",
 }),
 PlaceObj('ModItemCode', {
 	'name', "PDAMilitiaSquad",
@@ -107,9 +127,11 @@ PlaceObj('ModItemCode', {
 	'name', "PDAMilitiaStartPage",
 	'CodeFileName', "Code/PDAMilitiaStartPage.lua",
 }),
-PlaceObj('ModItemCode', {
-	'name', "MilitiaConflictTracker",
-	'CodeFileName', "Code/MilitiaConflictTracker.lua",
+PlaceObj('ModItemMsgDef', {
+	Description = "When a militia soldier gets promoted",
+	Params = "unit, oldid",
+	comment = "Fires after militia got promoted",
+	id = "MilitiaPromoted",
 }),
 PlaceObj('ModItemOptionChoice', {
 	'name', "huda_MilitiaCampaignCosts",
@@ -311,7 +333,7 @@ PlaceObj('ModItemOptionToggle', {
 PlaceObj('ModItemTextStyle', {
 	RolloverTextColor = 4291018156,
 	TextColor = 4291018156,
-	TextFont = T(108402117459, --[[ModItemTextStyle HUDASMALLPDASM TextFont]] "HMGothic Rough A, 10"),
+	TextFont = T(863593280496, --[[ModItemTextStyle HUDASMALLPDASM TextFont]] "HMGothic Rough A, 10"),
 	id = "HUDASMALLPDASM",
 }),
 PlaceObj('ModItemXTemplate', {

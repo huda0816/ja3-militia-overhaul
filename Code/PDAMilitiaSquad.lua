@@ -173,7 +173,6 @@ PlaceObj("XTemplate", {
                                 PlayFX("Typing", "start")
                                 ObjModified(self.context)
                                 ObjModified(gv_Squads)
-                                print("OnTextChanged")
                             end,
                             "MaxLen",
                             30,

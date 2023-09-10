@@ -2,8 +2,8 @@ local hasJoinlocation = false
 local hasJoindate = false
 local hasStatsRandomized = false
 local hasHandledEquipment = false
+local hasOldSessionIds = false
 for _, prop in ipairs(UnitProperties.properties) do
-
     if prop.id == 'JoinLocation' then
         hasJoinlocation = true
     end
@@ -16,10 +16,12 @@ for _, prop in ipairs(UnitProperties.properties) do
     if prop.id == 'HandledEquipment' then
         hasHandledEquipment = true
     end
+    if prop.id == 'OldSessionIds' then
+        hasOldSessionIds = true
+    end
 end
 
 if not hasJoinlocation then
-
     UnitProperties.properties[#UnitProperties.properties + 1] = {
         category = "General",
         id = "JoinLocation",
@@ -29,7 +31,6 @@ if not hasJoinlocation then
 end
 
 if not hasJoindate then
-
     UnitProperties.properties[#UnitProperties.properties + 1] = {
         category = "General",
         id = "JoinDate",
@@ -39,7 +40,6 @@ if not hasJoindate then
 end
 
 if not hasStatsRandomized then
-
     UnitProperties.properties[#UnitProperties.properties + 1] = {
         category = "General",
         id = "StatsRandomized",
@@ -49,7 +49,6 @@ if not hasStatsRandomized then
 end
 
 if not hasHandledEquipment then
-
     UnitProperties.properties[#UnitProperties.properties + 1] = {
         category = "General",
         id = "HandledEquipment",
@@ -58,17 +57,25 @@ if not hasHandledEquipment then
     }
 end
 
+if not hasOldSessionIds then
+    SatelliteSquad.properties[#SatelliteSquad.properties + 1] = {
+        category = "General",
+        id = "OldSessionIds",
+        editor = "string_list",
+        default = {},
+    }
+end
+
 local hasSquadBornIn = false
 
-for _, prop in ipairs(SatelliteSquad.properties) do
 
+for _, prop in ipairs(SatelliteSquad.properties) do
     if prop.id == 'BornInSector' then
         hasSquadBornIn = true
     end
 end
 
 if not hasSquadBornIn then
-
     SatelliteSquad.properties[#SatelliteSquad.properties + 1] = {
         category = "General",
         id = "BornInSector",
@@ -110,7 +117,6 @@ function HUDA_MilitiaPersonalization:Personalize(unit_ids, first)
             end
 
             if not unit.HandledEquipment then
-
                 if HUDA_GetModOptions("militiaNoWeapons") == true and not first then
                     unit:ForEachItem(function(item, slot)
                         unit:RemoveItem(slot, item)
@@ -129,7 +135,6 @@ function HUDA_MilitiaPersonalization:Personalize(unit_ids, first)
             end
 
             if not unit.JoinLocation or unit.JoinLocation == "" then
-
                 unit.JoinLocation = HUDA_GetSectorId(unit)
 
                 if gunit then
@@ -347,7 +352,6 @@ function HUDA_MilitiaPersonalization:PersonalizeSquads(squad_ids)
             end
 
             if not squad.BornInSector or squad.BornInSector == "" then
-
                 -- fix the home sector of squads
                 local name_sector
 

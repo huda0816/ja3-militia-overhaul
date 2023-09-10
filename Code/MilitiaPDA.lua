@@ -33,7 +33,7 @@ DefineClass.PDAMilitia = {
 function PDAMilitia:Open()
     local mode_param = GetDialogModeParam(self.parent) or GetDialogModeParam(GetDialog("PDADialog")) or
         GetDialog("PDADialog").context
-    print("PDAMilitia:Open", mode_param)
+
     XDialog.Open(self)
 end
 
@@ -43,7 +43,7 @@ function OpenMilitiaPDA()
         full_screen:Close()
     end
     local pda = GetDialog("PDADialog")
-    print("pda", pda.Mode)
+    -- print("pda", pda.Mode)
     -- local mode_param = { browser_page = "militia" }
     -- if not pda then
     --     mode_param.Mode = "browser"
@@ -91,11 +91,16 @@ function TFormat.MilitiaName(context_obj)
     return context_obj.Name
 end
 
+function TFormat.LatestAAR()
+    return HUDA_AARGenerator:PrintAAR(gv_HUDA_ConflictTracker[#gv_HUDA_ConflictTracker])
+end
+
 function _ENV:PDAImpHeaderEnable()
     -- local header_button = GetDialog(self):ResolveId("idHeader"):ResolveId("idLeftLinks"):ResolveId(self:GetProperty("HeaderButtonId"))
     -- header_button:ResolveId("idLink"):SetTextStyle("PDAIMPContentTitleSelected")
-  end
-  function _ENV:PDAImpHeaderDisable()
+end
+
+function _ENV:PDAImpHeaderDisable()
     -- local header_button = GetDialog(self):ResolveId("idHeader"):ResolveId("idLeftLinks"):ResolveId(self:GetProperty("HeaderButtonId"))
     -- header_button:ResolveId("idLink"):SetTextStyle("PDAIMPContentTitleActive")
-  end
+end

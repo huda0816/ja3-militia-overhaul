@@ -1,6 +1,6 @@
 PlaceObj("XTemplate", {
     group = "Zulu PDA",
-    id = "PDAMilitiaStartPage",
+    id = "PDAImpStartPage",
     PlaceObj("XTemplateProperty", {
       "id",
       "HeaderButtonId",
@@ -79,7 +79,7 @@ PlaceObj("XTemplate", {
             "Translate",
             true,
             "Text",
-            "Welcome to the Grand Chien Militia Headquarters!"
+            T(145135869022, "Welcome to the institute for mercenary profiling (I.M.P.)")
           }),
           PlaceObj("XTemplateWindow", {
             "__class",
@@ -95,7 +95,7 @@ PlaceObj("XTemplate", {
             "Translate",
             true,
             "Text",
-            "XYZ"
+            T(378365803881, "At I.M.P. we know the mercenary trade. We can offer you advice that will help you handle the pressures that a mission can put on you, and suggest custom tailored mercenaries for your team. We know you better than yourself!")
           })
         })
       }),
@@ -149,7 +149,7 @@ PlaceObj("XTemplate", {
               "Translate",
               true,
               "Text",
-              T(157984480848, "Latest Battle Report")
+              T(157984480848, "What you get")
             }),
             PlaceObj("XTemplateWindow", {
               "__class",
@@ -167,7 +167,9 @@ PlaceObj("XTemplate", {
               "Translate",
               true,
               "Text",
-              T(543112840540, "<LatestAAR()>")
+              T(543112840540, [[
+  I.M.P. analyzes you scientifically. We look at your personality, your physical abilities and your skills, and we give an exact measure of who you are and what you can do.
+  Right now we have 1 slot for a Personality Evaluation Test (P.E.T.) which can be taken by you or any person you want to field as your mercenary. No surprises! Guaranteed estimation of your abilities with scientific accuracy!]])
             }),
             PlaceObj("XTemplateWindow", {
               "comment",

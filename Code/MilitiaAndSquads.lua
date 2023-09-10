@@ -56,7 +56,7 @@ function TFormat.HUDA_MilitiaBio(context_obj)
 	return unit.Bio or "This man's bio is a mystery."
 end
 
--- if FirstLoad then
+if FirstLoad then
 	local huda_pda_merc_rollover_attributes = CustomSettingsMod.Utils.XTemplate_FindElementsByProp(
 		XTemplates["PDAMercRollover"], "comment",
 		"attributes label")
@@ -240,7 +240,6 @@ end
 		end
 		x_button.element.AltPress = true
 		x_button.element.OnAltPress = function(self, gamepad)
-				  print("HUDA_press_alt", self.context)
 				  if g_SatelliteUI.context_menu then
                     local prev_context = g_SatelliteUI.context_menu[1].context
                     prev = prev_context and prev_context.unit_id
@@ -406,7 +405,7 @@ end
 			self.idUpperIcon:SetVAlign("top")
 		end
 	end
--- end
+end
 
 function SquadWindow:Open()
 	self:SetWidth(72)
@@ -515,13 +514,10 @@ function XSatelliteViewMap:OpenContextMenu(ctrl, sector_id, squad_id, unit_id)
 	  local squadsOnSector = GetSquadsInSector(sector_id)
 	  local canEnterWithAny = false
 	  local currentSelectedSquad = self.selected_squad
-	  print("currentSelectedSquad", currentSelectedSquad)
 	  if currentSelectedSquad and table.find(squadsOnSector, currentSelectedSquad) and GetSquadEnterSectorState(currentSelectedSquad.UniqueId) then
 		canEnterWithAny = currentSelectedSquad
-		print("can enter with selected squad")
 	  end
 	  if not canEnterWithAny then
-		print("can not enter with any", table.find(squadsOnSector, currentSelectedSquad) and "true" or "false")
 		for i, s in ipairs(squadsOnSector) do
 		  if GetSquadEnterSectorState(s.UniqueId) then
 			canEnterWithAny = s

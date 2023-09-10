@@ -18,6 +18,25 @@ function HUDA_ArrayContains(array, value)
 	return false
 end
 
+function HUDA_GetArrayIndex(array, value)
+	for i, v in ipairs(array) do
+		if v == value then
+			return i
+		end
+	end
+
+	return nil
+end
+
+function HUDA_StringSplit(str, sep)
+	local sep, fields = sep or ":", {}
+	local pattern = string.format("([^%s]+)", sep)
+	str:gsub(pattern, function(c)
+		fields[#fields + 1] = c
+	end)
+	return fields
+end
+
 function HUDA_IsContextMilitia(context)
 	local militia = false
 
