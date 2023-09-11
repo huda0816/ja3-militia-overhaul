@@ -4,7 +4,7 @@ function UIEnterSectorInternal(sector_id, force)
 		return
 	end
 	local has_player_squads = #GetSectorSquadsFromSide(sector_id, "player1", "player2") > 0 or
-	#GetMilitiaSquads(sector) > 0
+		#GetMilitiaSquads(sector) > 0
 	if not has_player_squads then
 		local pdaDiag = GetDialog("PDADialog")
 		if pdaDiag and pdaDiag.Mode == "browser" then
@@ -21,28 +21,40 @@ function UIEnterSectorInternal(sector_id, force)
 	end
 end
 
+local HUDA_OriginalIsMerc = IsMerc
+
+function IsMerc(o)
+
+	if gv_Deployment and o.militia then
+		return true
+	end
+
+	return HUDA_OriginalIsMerc(o)
+end
+
 if FirstLoad then
-    local huda_enabled_button = CustomSettingsMod.Utils.XTemplate_FindElementsByProp(XTemplates["SatelliteConflict"], "comment", "red enabled")
+	local huda_enabled_button = CustomSettingsMod.Utils.XTemplate_FindElementsByProp(XTemplates["SatelliteConflict"],
+		"comment", "red enabled")
 
-    if huda_enabled_button then
-        huda_enabled_button.element.ActionState = function(self, host)
-            local sector = host.context
+	if huda_enabled_button then
+		huda_enabled_button.element.ActionState = function(self, host)
+			local sector = host.context
 			return CanGoInMap(sector.Id) and
-            #GetSquadsInSector(sector.Id, "excludeTravelling", true, "excludeArriving", "excludeRetreating") > 0 and
-            "enabled" or "hidden"
-        end
-    end
+				#GetSquadsInSector(sector.Id, "excludeTravelling", true, "excludeArriving", "excludeRetreating") > 0 and
+				"enabled" or "hidden"
+		end
+	end
 
 
-    local huda_disabled_button = CustomSettingsMod.Utils.XTemplate_FindElementsByProp(XTemplates["SatelliteConflict"], "comment", "normal disabled")
+	local huda_disabled_button = CustomSettingsMod.Utils.XTemplate_FindElementsByProp(XTemplates["SatelliteConflict"],
+		"comment", "normal disabled")
 
-    if huda_disabled_button then
-
+	if huda_disabled_button then
 		huda_disabled_button.element.ActionState = function(self, host)
-            local sector = host.context
+			local sector = host.context
 			return (not CanGoInMap(sector.Id) or
-            #GetSquadsInSector(sector.Id, "excludeTravelling", true, "excludeArriving", "excludeRetreating") < 1) and
-            "disabled" or "hidden"
-        end
-    end
+					#GetSquadsInSector(sector.Id, "excludeTravelling", true, "excludeArriving", "excludeRetreating") < 1) and
+				"disabled" or "hidden"
+		end
+	end
 end
