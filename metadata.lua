@@ -15,7 +15,7 @@ return PlaceObj('ModDef', {
 	'author', "permanent666",
 	'version_major', 1,
 	'version_minor', 2,
-	'version', 1438,
+	'version', 1439,
 	'lua_revision', 233360,
 	'saved_with_revision', 340446,
 	'code', {
@@ -38,7 +38,7 @@ return PlaceObj('ModDef', {
 		"Code/MilitiaOverrides.lua",
 	},
 	'has_options', true,
-	'saved', 1694460119,
-	'code_hash', -3249877010890088683,
+	'saved', 1694460368,
+	'code_hash', -6331178772206473939,
 	'steam_id', "3027227786",
 })
