@@ -7,9 +7,11 @@ GameVar("gv_HUDA_ShopSelectedDeliveryType", "standard")
 function OnMsg.NewDay()
     HUDA_ShopController:Restock()
     HUDA_ShopController:RefreshOrders()
+    HUDA_ShopController:CheckAbandonedCart()
 end
 
 DefineClass.HUDA_ShopController = {
+    AbandonedCartTimeout = 1,
     Categories = {
         {
             id = "assault",
@@ -96,6 +98,14 @@ DefineClass.HUDA_ShopController = {
             category = "pistols",
             tier = 2,
             supply = 50
+        },
+        {
+            id = "_762WP_AP",
+            stock = 2,
+            basePrice = 200,
+            category = "ammo",
+            tier = 2,
+            supply = 50
         }
     },
     DeliveryTypes = {
@@ -126,6 +136,34 @@ DefineClass.HUDA_ShopController = {
 
 function HUDA_ShopController:Restock()
     gv_HUDA_ShopInventory = self.InventoryTemplate
+end
+
+function HUDA_ShopController:CheckAbandonedCart()
+    local cart = gv_HUDA_ShopCart
+
+    print("CheckAbandonedCart")
+
+    if cart.abandonedCartSent then
+        return
+    end
+
+    if not cart.products or not next(cart.products) then
+        return
+    end
+
+    local lastModified = cart.lastModified
+
+    print("lastModified", lastModified)
+
+    if not lastModified then
+        return
+    end
+
+    if Game.CampaignTime - lastModified > self.AbandonedCartTimeout * 60 * 60 * 24 then
+        self:SendMails("AbandonedCart")
+
+        cart.abandonedCartSent = true
+    end
 end
 
 function HUDA_ShopController:GetAvailableCategories()
@@ -330,7 +368,7 @@ function HUDA_ShopController:RemoveFromCart(product, count)
     if count and count < productInCart.count then
         productInCart.count = productInCart.count - count
     else
-        table.remove(cart.products, HUDA_GetArrayIndex(cart, productInCart))
+        table.remove(cart.products, HUDA_GetArrayIndex(cart.products, productInCart))
     end
 end
 
@@ -359,6 +397,33 @@ function HUDA_ShopController:GetDeliveryDuration(order)
     local deliveryDuration = order.deliveryType.duration or 3
 
     return deliveryDuration * 60 * 60 * 24
+end
+
+function HUDA_ShopController:OrderToCart(order)
+    local cart = gv_HUDA_ShopCart
+
+    local orderProducts = order.products
+
+    if not orderProducts or not next(orderProducts) then
+        return
+    end
+
+    local cartProducts = cart.products or {}
+
+    for i, orderProduct in ipairs(orderProducts) do
+        local productsInCart = table.ifilter(cartProducts, function(i, cartProduct)
+            return cartProduct.id == orderProduct.id
+        end)
+
+        if not next(productsInCart) then
+            table.insert(cartProducts,
+                { id = orderProduct.id, count = orderProduct.count, name = orderProduct.name, price = orderProduct.price })
+        else
+            productsInCart[1].count = productsInCart[1].count + orderProduct.count
+        end
+    end
+
+    cart.products = cartProducts
 end
 
 function HUDA_ShopController:GetETA(order)
@@ -410,6 +475,10 @@ function HUDA_ShopController:Refund(order)
     ObjModified(gv_HUDA_ShopOrders)
 end
 
+function HUDA_ShopController:EditAddress()
+    self:CreateMessageBox("Edit Address", "Editing the delivery address is not possible at the moment.")
+end
+
 function HUDA_ShopController:Deliver(order)
     local items = {}
 
@@ -430,7 +499,7 @@ function HUDA_ShopController:Deliver(order)
 
     order.status = "delivered"
 
-    self:SendMails("delivered", { localtion = "H2" })
+    self:SendMails("delivered", { location = order.location or "H2" })
 end
 
 function HUDA_ShopController:Order()
@@ -488,32 +557,12 @@ function HUDA_ShopController:SendMails(internalId, context)
 
     if internalId == "delivered" then
         id = "HUDA_ShipmentArrived"
+        context = { location = GetSectorName(gv_Sectors[context.location]) or context.location }
     elseif internalId == "orderPlaced" then
         id = "HUDA_OrderPlaced"
+    else
+        id = "HUDA_" .. internalId
     end
 
     ReceiveEmail(id, context)
 end
-
--------------------------------------- EMAILS --------------------------------------
-
-PlaceObj('Email', {
-    body =
-    "Dear customer,\n\nWe are happy to inform you that your order has been delivered to <location>.\n\nThank you for choosing I.M.P.M.S.S.!\n\nSincerely,\n I.M.P. Customer Service",
-    group = "Militia",
-    label = "Important",
-    id = "HUDA_ShipmentArrived",
-    sender = "shop@imp.net",
-    title = "I.M.P.M.S.S. - Order delivered",
-    repeatable = true,
-})
-
-PlaceObj('Email', {
-    body =
-    "Dear customer,\n\nWe received your order and are preparing it for delivery.\n\nThank you for choosing I.M.P.M.S.S.!\n\nSincerely,\n I.M.P. Customer Service",
-    group = "Militia",
-    id = "HUDA_OrderPlaced",
-    sender = "shop@imp.net",
-    title = "I.M.P.M.S.S. - Thank you for your order",
-    repeatable = true,
-})

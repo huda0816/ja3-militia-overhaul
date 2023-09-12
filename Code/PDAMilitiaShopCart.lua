@@ -505,22 +505,6 @@ PlaceObj("XTemplate", {
                 "Total"
             }),
             PlaceObj("XTemplateWindow", {
-                "comment",
-                "line",
-                "__class",
-                "XImage",
-                "Margins",
-                box(0, 5, 0, 5),
-                "VAlign",
-                "center",
-                "Transparency",
-                141,
-                "Image",
-                "UI/PDA/separate_line_vertical",
-                "ImageFit",
-                "stretch-x"
-            }),
-            PlaceObj("XTemplateWindow", {
                 "__class",
                 "XText",
                 "__condition",
@@ -528,17 +512,25 @@ PlaceObj("XTemplate", {
                     return next(gv_HUDA_ShopCart.products)
                 end,
                 "TextHAlign",
-                "Right",
+                "center",
                 "Margins",
-                box(0, 0, 0, 0),
+                box(0, 5, 0, 5),
+                "Padding",
+                box(2, 5, 2, 5),
+                "BorderWidth",
+                1,
+                "BorderColor",
+                RGBA(255, 255, 255, 255),
+                "Background",
+                RGBA(88, 92, 68, 255),
+                "RolloverBorderColor",
+                RGBA(65, 65, 65, 255),
                 "MouseCursor",
                 "UI/Cursors/Pda_Hand.tga",
                 "TextStyle",
-                "PDAIMPHyperLink",
-                "Translate",
-                true,
+                "PDABrowserColaCopyright",
                 "Text",
-                "<underline>Order now</underline>"
+                "Order now"
             }, {
                 PlaceObj("XTemplateFunc", {
                     "name",
@@ -567,7 +559,7 @@ PlaceObj("XTemplate", {
                 "MouseCursor",
                 "UI/Cursors/Pda_Hand.tga",
                 "TextStyle",
-                "Heading4",
+                "PDABrowserThievesBoxLinks",
                 "Translate",
                 true,
                 "Text",

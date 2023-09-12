@@ -76,6 +76,8 @@ PlaceObj("XTemplate", {
                     true,
                     "Padding",
                     box(0, 0, 0, 0),
+                    "Margin",
+                    box(0, 0, 0, 10),
                     "HAlign",
                     "left",
                     "VAlign",
@@ -164,7 +166,7 @@ PlaceObj("XTemplate", {
                         "XText",
                         "__condition",
                         function(parent, context)
-                        return not next(gv_HUDA_ShopOrders)
+                            return not next(gv_HUDA_ShopOrders)
                         end,
                         'Text',
                         "No pending orders",
@@ -339,32 +341,62 @@ PlaceObj("XTemplate", {
                                         "PDAIMPMercBio",
                                     }),
                                     PlaceObj('XTemplateWindow', {
-                                        '__class',
-                                        "XText",
-                                        "MouseCursor",
-                                        "UI/Cursors/Pda_Hand.tga",
-                                        'Text',
-                                        "<underline>Refund</underline>",
+                                        'LayoutMethod',
+                                        "HList",
                                         "Dock",
                                         "bottom",
                                         "HAlign",
                                         "right",
-                                        "TextStyle",
-                                        "PDAIMPHyperLinkSmall",
+                                        'LayoutHSpacing',
+                                        5
                                     }, {
-                                        PlaceObj("XTemplateFunc", {
-                                            "name",
-                                            "OnMouseButtonDown(self, pos, button)",
-                                            "func",
-                                            function(self, pos, button)
-                                                HUDA_ShopController:Refund(self.context)
-                                                ObjModified("order list")
-                                                ObjModified("right panel")
-                                                ObjModified("left panel")
-                                                ObjModified("militia header")
-                                            end
-                                        })
-                                    })
+                                        PlaceObj('XTemplateWindow', {
+                                            '__class',
+                                            "XText",
+                                            "MouseCursor",
+                                            "UI/Cursors/Pda_Hand.tga",
+                                            'Text',
+                                            "<underline>Order again</underline>",
+                                            "TextStyle",
+                                            "PDAIMPHyperLinkSmall",
+                                        }, {
+                                            PlaceObj("XTemplateFunc", {
+                                                "name",
+                                                "OnMouseButtonDown(self, pos, button)",
+                                                "func",
+                                                function(self, pos, button)
+                                                    HUDA_ShopController:OrderToCart(self.context)
+                                                    ObjModified("order list")
+                                                    ObjModified("right panel")
+                                                    ObjModified("left panel")
+                                                    ObjModified("militia header")
+                                                end
+                                            })
+                                        }),
+                                        PlaceObj('XTemplateWindow', {
+                                            '__class',
+                                            "XText",
+                                            "MouseCursor",
+                                            "UI/Cursors/Pda_Hand.tga",
+                                            'Text',
+                                            "<underline>Refund</underline>",
+                                            "TextStyle",
+                                            "PDAIMPHyperLinkSmall",
+                                        }, {
+                                            PlaceObj("XTemplateFunc", {
+                                                "name",
+                                                "OnMouseButtonDown(self, pos, button)",
+                                                "func",
+                                                function(self, pos, button)
+                                                    HUDA_ShopController:Refund(self.context)
+                                                    ObjModified("order list")
+                                                    ObjModified("right panel")
+                                                    ObjModified("left panel")
+                                                    ObjModified("militia header")
+                                                end
+                                            })
+                                        })                                        
+                                    }),
                                 })
                             }),
                         })

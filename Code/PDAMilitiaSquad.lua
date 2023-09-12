@@ -410,7 +410,7 @@ PlaceObj("XTemplate", {
                         end,
                         "run_after",
                         function(child, context, item, i, n, last)
-                            child.idSoldierName:SetText("Name: " .. item.Nick)
+                            child.idSoldierName:SetText(item.Nick)
                             child.idSoldierHome:SetText("Origin: " ..
                                 GetSectorName(HUDA_GetSectorById(item.JoinLocation)))
                             child.idSoldierJoined:SetText("Joined: " ..
@@ -564,8 +564,8 @@ PlaceObj("XTemplate", {
                                         "OnMouseButtonDown(self, pos, button)",
                                         "func",
                                         function(self, pos, button)
-                                            local dlg = GetDialog(self)
-                                            dlg:SetMode("soldier", { selected_soldier = self.context })
+                                            local dlg = GetDialog(self)                                            
+                                            dlg:SetMode("soldier", { soldier = self.context })
                                         end
                                     })
                                 })

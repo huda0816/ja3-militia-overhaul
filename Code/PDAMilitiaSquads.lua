@@ -127,21 +127,8 @@ PlaceObj("XTemplate", {
               RGBA(255, 255, 255, 0),
               "OnPress",
               function(self, gamepad)
-
                 local dlg = GetDialog(self)
-
                 dlg:SetMode("squad", {selected_squad = self.context})
-
-                -- Inspect(dlg)
-
-                -- local popupHost = GetDialog("PDADialog")
-                -- popupHost = popupHost and popupHost:ResolveId("idDisplayPopupHost")
-                -- local mercWindow = XTemplateSpawn("PDAImpGalleryBig", popupHost, {
-                --   name = self.name,
-                --   name_big = self.name_big,
-                --   size = self.size
-                -- })
-                -- mercWindow:Open()
               end,
               "RolloverBackground",
               RGBA(255, 255, 255, 0),

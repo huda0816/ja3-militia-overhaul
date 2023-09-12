@@ -20,7 +20,8 @@ end
 
 function HUDA_GetArrayIndex(array, value)
 	for i, v in ipairs(array) do
-		if v == value then
+		print("ids", v.id, value.id)
+		if v.id == value.id then
 			return i
 		end
 	end

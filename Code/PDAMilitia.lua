@@ -12,7 +12,7 @@ PlaceObj("XTemplate", {
         "InitialMode",
         "start_page",
         "InternalModes",
-        "start_page,home,finances,squads,squad,soldier,login,logout,construction,shop,edit_squad,orders,shop_list,trick"
+        "start_page,home,finances,squads,squad,soldier,login,logout,construction,shop,orders,shop_list,trick"
     }, {
         PlaceObj("XTemplateFunc", {
             "name",
@@ -58,13 +58,17 @@ PlaceObj("XTemplate", {
                     return Untranslated("http://www.gc-militia.org/finances")
                 elseif mode == "squads" then
                     return Untranslated("http://www.gc-militia.org/squads")
+                elseif mode == "squad" then
+                    return Untranslated("http://www.gc-militia.org/squads?id=" .. mode_param.selected_squad.UniqueId)
+                elseif mode == "soldier" then
+                    return Untranslated("http://www.gc-militia.org/squads?soldier=" .. mode_param.soldier.Nick)
                 elseif mode == "construction" then
-                    return Untranslated("http://www.gc-militia.org/bla")
+                    return Untranslated("http://www.gc-militia.org/construction")
                 elseif mode == "shop" then
                     return Untranslated("http://www.gc-militia.org/shop")
                 elseif mode == "shop_list" then
                     return Untranslated("http://www.gc-militia.org/shop" ..
-                    (mode_param.query and HUDA_ShopController:GetQueryUrlParams(mode_param.query) or ""))
+                        (mode_param.query and HUDA_ShopController:GetQueryUrlParams(mode_param.query) or ""))
                 elseif mode == "orders" then
                     return Untranslated("http://www.gc-militia.org/shop?orders=1")
                 end
@@ -384,13 +388,13 @@ PlaceObj("XTemplate", {
                             }),
                             PlaceObj("XTemplateTemplate", {
                                 "comment",
-                                "squads",
+                                "shop",
                                 "__template",
                                 "PDAMilitiaHyperlinkHeader",
                                 "Id",
                                 "idShop",
                                 "LinkId",
-                                "squads",
+                                "shop",
                                 "dlg_mode",
                                 "shop",
                                 "Text",
@@ -754,7 +758,9 @@ PlaceObj("XTemplate", {
                                 "Margins",
                                 box(10, 10, 10, 10),
                                 "LayoutMethod",
-                                "VList"
+                                "VList",
+                                "LayoutVSpacing",
+                                10
                             }, {
                                 PlaceObj("XTemplateMode", {
                                     "mode",
@@ -764,7 +770,11 @@ PlaceObj("XTemplate", {
                                         "__template",
                                         "PDAMilitiaShopNav"
                                     }),
-                                }),                                
+                                    PlaceObj("XTemplateTemplate", {
+                                        "__template",
+                                        "PDAMilitiaShopAddress"
+                                    }),
+                                }),
                                 PlaceObj("XTemplateMode", {
                                     "mode",
                                     "home"
@@ -888,61 +898,6 @@ PlaceObj("XTemplate", {
                                     PlaceObj("XTemplateTemplate", {
                                         "__template",
                                         "PDAMilitiaShopCart"
-                                    }),
-                                    PlaceObj("XTemplateWindow", {
-                                        "__class",
-                                        "XText",
-                                        "__condition",
-                                        function(parent, context)
-                                            return #gv_HUDA_ShopOrders > 0
-                                        end,
-                                        "TextHAlign",
-                                        "center",
-                                        "Margins",
-                                        box(0, 10, 0, 0),
-                                        "Padding",
-                                        box(2, 5, 2, 5),
-                                        "BorderWidth",
-                                        2,
-                                        "BorderColor",
-                                        RGBA(255, 255, 255, 255),
-                                        "Background",
-                                        RGBA(88, 92, 68, 255),
-                                        "RolloverBorderColor",
-                                        RGBA(65, 65, 65, 255),
-                                        "MouseCursor",
-                                        "UI/Cursors/Pda_Hand.tga",
-                                        "TextStyle",
-                                        "DescriptionTextWhite",
-                                        "OnLayoutComplete",
-                                        function(self)
-                                            local dlg = GetDialog(self)
-                                            if dlg.Mode == "shop" then
-                                                self:SetText("orders")
-                                            else
-                                                self:SetText("shop")
-                                            end
-                                        end
-                                    }, {
-                                        PlaceObj("XTemplateFunc", {
-                                            "name",
-                                            "OnMouseButtonDown(self, pos, button)",
-                                            "func",
-                                            function(self, pos, button)
-                                                if button == "L" then
-                                                    local dlg = GetDialog(self)
-
-                                                    if dlg.Mode == "shop" then
-                                                        dlg:SetMode("orders")
-                                                    else
-                                                        dlg:SetMode("shop")
-                                                    end
-                                                end
-                                                ObjModified("right panel")
-                                                -- ObjModified("left panel")
-                                                -- ObjModified("militia header")
-                                            end
-                                        })
                                     })
                                 }),
                                 PlaceObj("XTemplateMode", {
@@ -1161,12 +1116,12 @@ PlaceObj("XTemplate", {
                             "VList",
                             "OnContextUpdate",
                             function(self, context, ...)
-                                XContentTemplate.OnContextUpdate(self, context, ...)
-                                local dlg = GetDialog(self)
-                                if dlg:GetMode() == "test" then
-                                    dlg.mode_param = Untranslated("Question" .. context.question)
-                                    ObjModified("pda_url")
-                                end
+                                -- XContentTemplate.OnContextUpdate(self, context, ...)
+                                -- local dlg = GetDialog(self)
+                                -- if dlg:GetMode() == "test" then
+                                --     dlg.mode_param = Untranslated("Question" .. context.question)
+                                --     ObjModified("pda_url")
+                                -- end
                             end
                         }, {
                             PlaceObj("XTemplateMode", { "mode", "finances" }, {
@@ -1206,6 +1161,15 @@ PlaceObj("XTemplate", {
                                     "PDAMilitiaSquad",
                                     "HeaderButtonId",
                                     "idSquad"
+                                })
+                            }),
+                            PlaceObj("XTemplateMode", {
+                                "mode",
+                                "soldier"
+                            }, {
+                                PlaceObj("XTemplateTemplate", {
+                                    "__template",
+                                    "PDAMilitiaSoldier",
                                 })
                             }),
                             PlaceObj("XTemplateMode", {

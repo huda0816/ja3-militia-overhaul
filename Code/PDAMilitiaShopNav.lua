@@ -62,7 +62,7 @@ PlaceObj("XTemplate", {
                         "MouseCursor",
                         "UI/Cursors/Pda_Hand.tga",
                         "TextStyle",
-                        "PDAIMPHyperLinkSmall",
+                        "PDABrowserThievesBoxLinks",
                         "Translate",
                         true,
                         "Text",
@@ -85,6 +85,61 @@ PlaceObj("XTemplate", {
                             end
                         })
                     })
+                })
+            }),
+            PlaceObj("XTemplateWindow", {
+                "__class",
+                "XText",
+                "__condition",
+                function(parent, context)
+                    return #gv_HUDA_ShopOrders > 0
+                end,
+                "TextHAlign",
+                "center",
+                "Margins",
+                box(0, 10, 0, 0),
+                "Padding",
+                box(2, 5, 2, 5),
+                "BorderWidth",
+                1,
+                "BorderColor",
+                RGBA(255, 255, 255, 255),
+                "Background",
+                RGBA(88, 92, 68, 255),
+                "RolloverBorderColor",
+                RGBA(65, 65, 65, 255),
+                "MouseCursor",
+                "UI/Cursors/Pda_Hand.tga",
+                "TextStyle",
+                "PDABrowserColaCopyright",
+                "OnLayoutComplete",
+                function(self)
+                    local dlg = GetDialog(self)
+                    if dlg.Mode == "orders" then
+                        self:SetText("shop")
+                    else
+                        self:SetText("orders")
+                    end
+                end
+            }, {
+                PlaceObj("XTemplateFunc", {
+                    "name",
+                    "OnMouseButtonDown(self, pos, button)",
+                    "func",
+                    function(self, pos, button)
+                        if button == "L" then
+                            local dlg = GetDialog(self)
+
+                            if dlg.Mode == "orders" then
+                                dlg:SetMode("shop")
+                            else
+                                dlg:SetMode("orders")
+                            end
+                        end
+                        ObjModified("right panel")
+                        -- ObjModified("left panel")
+                        -- ObjModified("militia header")
+                    end
                 })
             })
         })

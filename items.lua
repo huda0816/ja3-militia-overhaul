@@ -84,6 +84,10 @@ PlaceObj('ModItemCode', {
 	'CodeFileName', "Code/MilitiaShopController.lua",
 }),
 PlaceObj('ModItemCode', {
+	'name', "MilitiaShopEmails",
+	'CodeFileName', "Code/MilitiaShopEmails.lua",
+}),
+PlaceObj('ModItemCode', {
 	'name', "MilitiaStoryParts",
 	'CodeFileName', "Code/MilitiaStoryParts.lua",
 }),
@@ -94,6 +98,10 @@ PlaceObj('ModItemCode', {
 PlaceObj('ModItemCode', {
 	'name', "MilitiaUtils",
 	'CodeFileName', "Code/MilitiaUtils.lua",
+}),
+PlaceObj('ModItemCode', {
+	'name', "PDAMilitaShopTrick",
+	'CodeFileName', "Code/PDAMilitaShopTrick.lua",
 }),
 PlaceObj('ModItemCode', {
 	'name', "PDAMilitia",
@@ -116,6 +124,10 @@ PlaceObj('ModItemCode', {
 	'CodeFileName', "Code/PDAMilitiaShop.lua",
 }),
 PlaceObj('ModItemCode', {
+	'name', "PDAMilitiaShopAddress",
+	'CodeFileName', "Code/PDAMilitiaShopAddress.lua",
+}),
+PlaceObj('ModItemCode', {
 	'name', "PDAMilitiaShopCart",
 	'CodeFileName', "Code/PDAMilitiaShopCart.lua",
 }),
@@ -132,6 +144,10 @@ PlaceObj('ModItemCode', {
 	'CodeFileName', "Code/PDAMilitiaShopOrders.lua",
 }),
 PlaceObj('ModItemCode', {
+	'name', "PDAMilitiaShopProduct",
+	'CodeFileName', "Code/PDAMilitiaShopProduct.lua",
+}),
+PlaceObj('ModItemCode', {
 	'name', "PDAMilitiaSquad",
 	'CodeFileName', "Code/PDAMilitiaSquad.lua",
 }),
@@ -144,8 +160,8 @@ PlaceObj('ModItemCode', {
 	'CodeFileName', "Code/PDAMilitiaStartPage.lua",
 }),
 PlaceObj('ModItemCode', {
-	'name', "PDAMilitaShopTrick",
-	'CodeFileName', "Code/PDAMilitaShopTrick.lua",
+	'name', "PDAMilitiaSoldier",
+	'CodeFileName', "Code/PDAMilitiaSoldier.lua",
 }),
 PlaceObj('ModItemMsgDef', {
 	Description = "When a militia soldier gets promoted",
@@ -355,39 +371,5 @@ PlaceObj('ModItemTextStyle', {
 	TextColor = 4291018156,
 	TextFont = T(448189319280, --[[ModItemTextStyle HUDASMALLPDASM TextFont]] "HMGothic Rough A, 10"),
 	id = "HUDASMALLPDASM",
-}),
-PlaceObj('ModItemXTemplate', {
-	id = "Test",
-	PlaceObj('XTemplateWindow', nil, {
-		PlaceObj('XTemplateWindow', nil, {
-			PlaceObj('XTemplateWindow', {
-				'__class', "XText",
-			}),
-			PlaceObj('XTemplateWindow', {
-				'__class', "XText",
-			}),
-			}),
-		PlaceObj('XTemplateWindow', nil, {
-			PlaceObj('XTemplateWindow', nil, {
-				PlaceObj('XTemplateForEach', nil, {
-					PlaceObj('XTemplateWindow', nil, {
-						PlaceObj('XTemplateWindow', {
-							'__class', "XText",
-						}),
-						}),
-					}),
-				}),
-			PlaceObj('XTemplateWindow', nil, {
-				PlaceObj('XTemplateWindow', {
-					'__class', "XText",
-				}),
-				}),
-			}),
-		}),
-}),
-PlaceObj('ModItemXTemplate', {
-	id = "",
-	PlaceObj('XTemplateConditionList', nil),
-	PlaceObj('XTemplateGroup', nil),
 }),
 }
