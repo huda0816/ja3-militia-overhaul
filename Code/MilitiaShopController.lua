@@ -10,30 +10,92 @@ function OnMsg.NewDay()
 end
 
 DefineClass.HUDA_ShopController = {
+    Categories = {
+        {
+            id = "assault",
+            name = "Assault Rifles",
+            description = "Find the best assault rifles here!",
+            weight = 10
+        },
+        {
+            id = "pistols",
+            name = "Pistols",
+            description = "Find the best pistols here!",
+            weight = 20
+        },
+        {
+            id = "armor",
+            name = "Armor",
+            description = "Find the best armor here!",
+            weight = 30
+        },
+        {
+            id = "ammo",
+            name = "Ammo",
+            description = "Find the best ammo here!",
+            weight = 40
+        },
+        {
+            id = "explosives",
+            name = "Explosives",
+            description = "Find the best explosives here!",
+            weight = 50
+        },
+        {
+            id = "tools",
+            name = "Tools",
+            description = "Find the best tools here!",
+            weight = 60
+        },
+        {
+            id = "misc",
+            name = "Misc",
+            description = "Find the best misc items here!",
+            weight = 70
+        }
+    },
     InventoryTemplate = {
         {
             id = "FAMAS",
-            count = 5,
+            stock = 5,
             basePrice = 1000,
             topSeller = true,
+            category = "assault",
+            tier = 1,
+            supply = 100
         },
         {
             id = "KevlarHelmet",
-            count = 2,
+            stock = 2,
             basePrice = 500,
             topSeller = true,
+            category = "armor",
+            tier = 2,
+            supply = 100
         },
         {
             id = "KevlarVest",
-            count = 2,
+            stock = 2,
             basePrice = 500,
-            topSeller = true,
+            category = "armor",
+            tier = 2,
+            supply = 100
         },
         {
             id = "AK47",
-            count = 2,
+            stock = 2,
             basePrice = 1500,
-            topSeller = true,
+            category = "assault",
+            tier = 2,
+            supply = 100
+        },
+        {
+            id = "Glock18",
+            stock = 2,
+            basePrice = 500,
+            category = "pistols",
+            tier = 2,
+            supply = 50
         }
     },
     DeliveryTypes = {
@@ -64,6 +126,36 @@ DefineClass.HUDA_ShopController = {
 
 function HUDA_ShopController:Restock()
     gv_HUDA_ShopInventory = self.InventoryTemplate
+end
+
+function HUDA_ShopController:GetAvailableCategories()
+    if not next(self.Categories) then
+        return {}
+    end
+
+    local products = gv_HUDA_ShopInventory
+
+    local categories = {}
+
+    for _, category in ipairs(self.Categories) do
+        local ps = table.ifilter(products, function(_, product)
+            return product.category == category.id
+        end)
+
+        if next(ps) then
+            local preparedCat = table.copy(category)
+
+            preparedCat.productCount = #ps
+
+            table.insert(categories, preparedCat)
+        end
+    end
+
+    table.sort(categories, function(a, b)
+        return a.weight < b.weight
+    end)
+
+    return categories
 end
 
 function HUDA_ShopController:GetProductPrice()
@@ -135,29 +227,31 @@ function HUDA_ShopController:SetDeliveryType(deliveryType)
 end
 
 function HUDA_ShopController:GetProducts(query)
+    print("HUDA_ShopController:GetProducts", query.topSellers)
+
     local preparedProducts = self:PrepareProducts(gv_HUDA_ShopInventory)
 
+    if query then
+        return table.ifilter(preparedProducts, function(i, product)
+            print(product.name, product.topSeller)
+
+            if query.topSeller and not product.topSeller then
+                return false
+            end
+
+            if query.id and query.id ~= product.id then
+                return false
+            end
+
+            if query.category and query.category ~= product.category then
+                return false
+            end
+
+            return true
+        end)
+    end
+
     return preparedProducts
-
-    -- if query ~= nil then
-    --     return table.ifilter(preparedProducts, function(product)
-    --         if query.topSeller and not product.topSeller then
-    --             return false
-    --         end
-
-    --         if query.id ~= product.id then
-    --             return false
-    --         end
-
-    --         if query.category ~= product.category then
-    --             return false
-    --         end
-
-    --         return true
-    --     end)
-    -- end
-
-    -- return preparedProducts
 end
 
 function HUDA_ShopController:PrepareProducts(products)
@@ -170,6 +264,26 @@ function HUDA_ShopController:PrepareProducts(products)
     end
 
     return preparedProducts
+end
+
+function HUDA_ShopController:GetQueryUrlParams(query)
+    local params = ""
+
+    if query then
+        if query.topSeller then
+            params = params .. "&topSeller=true"
+        end
+
+        if query.id then
+            params = params .. "&id=" .. query.id
+        end
+
+        if query.category then
+            params = params .. "&category=" .. query.category
+        end
+    end
+
+    return params ~= "" and "?" .. params or ""
 end
 
 function HUDA_ShopController:AddToCart(product, count)
@@ -242,7 +356,6 @@ function HUDA_ShopController:PrepareProduct(product)
 end
 
 function HUDA_ShopController:GetDeliveryDuration(order)
-    
     local deliveryDuration = order.deliveryType.duration or 3
 
     return deliveryDuration * 60 * 60 * 24
@@ -261,11 +374,10 @@ function HUDA_ShopController:GetETA(order)
 end
 
 function HUDA_ShopController:DateFromTime(timeStamp)
-    
     local t = GetTimeAsTable(timeStamp or 0)
     local month = string.format("%02d", t and t.month or 1)
-	local day = string.format("%02d", t and t.day or 1)
-	local year = tostring(t and t.year or 1)
+    local day = string.format("%02d", t and t.day or 1)
+    local year = tostring(t and t.year or 1)
 
     return month .. "/" .. day .. "/" .. year
 end
@@ -288,16 +400,14 @@ function HUDA_ShopController:RefreshOrders()
     end
 end
 
-function HUDA_ShopController:Refund(order) 
-
+function HUDA_ShopController:Refund(order)
     gv_HUDA_ShopOrders = table.ifilter(gv_HUDA_ShopOrders, function(i, o)
         return o.id ~= order.id
     end)
 
-    AddMoney(order.total, "I.M.P.S.S.", true)
+    AddMoney(order.total, "I.M.P.M.S.S.", true)
 
     ObjModified(gv_HUDA_ShopOrders)
-
 end
 
 function HUDA_ShopController:Deliver(order)
@@ -354,7 +464,6 @@ function HUDA_ShopController:Order()
 end
 
 function HUDA_ShopController:Pay(cart)
-    
     local total = self:GetTotalPrice(cart)
 
     if Game.Money < total then
@@ -362,7 +471,7 @@ function HUDA_ShopController:Pay(cart)
         return false
     end
 
-    AddMoney(-total, "I.M.P.S.S.", true)
+    AddMoney(-total, "I.M.P.M.S.S.", true)
 
     return total
 end
@@ -390,21 +499,21 @@ end
 
 PlaceObj('Email', {
     body =
-    "Dear customer,\n\nWe are happy to inform you that your order has been delivered to <location>.\n\nThank you for choosing I.M.P.S.S.!\n\nSincerely,\n I.M.P. Customer Service",
+    "Dear customer,\n\nWe are happy to inform you that your order has been delivered to <location>.\n\nThank you for choosing I.M.P.M.S.S.!\n\nSincerely,\n I.M.P. Customer Service",
     group = "Militia",
     label = "Important",
     id = "HUDA_ShipmentArrived",
     sender = "shop@imp.net",
-    title = "I.M.P.S.S. - Order delivered",
+    title = "I.M.P.M.S.S. - Order delivered",
     repeatable = true,
 })
 
 PlaceObj('Email', {
     body =
-    "Dear customer,\n\nWe received your order and are preparing it for delivery.\n\nThank you for choosing I.M.P.S.S.!\n\nSincerely,\n I.M.P. Customer Service",
+    "Dear customer,\n\nWe received your order and are preparing it for delivery.\n\nThank you for choosing I.M.P.M.S.S.!\n\nSincerely,\n I.M.P. Customer Service",
     group = "Militia",
     id = "HUDA_OrderPlaced",
     sender = "shop@imp.net",
-    title = "I.M.P.S.S. - Thank you for your order",
+    title = "I.M.P.M.S.S. - Thank you for your order",
     repeatable = true,
 })

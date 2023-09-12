@@ -1,28 +1,32 @@
 PlaceObj("XTemplate", {
     group = "Zulu PDA",
-    id = "PDAMilitiaShop",
+    id = "PDAMilitiaShopList",
     PlaceObj("XTemplateProperty", {
         "id",
-        "HeaderButtonId",
+        "NavButtonId",
         "editor",
         "text",
         "translate",
         false,
         "Set",
         function(self, value)
-            self.HeaderButtonId = value
+            self.NavButtonId = value
         end,
         "Get",
         function(self)
-            return self.HeaderButtonId
+            return self.NavButtonId
         end,
         "name",
-        T(536912996016, "HeaderButtonId")
+        T(536912996016, "NavButtonId")
     }),
     PlaceObj("XTemplateWindow", {
         "__context",
         function(parent, context)
-            return gv_HUDA_ShopCart.products or {}
+            local dlg = GetDialog(parent)
+            if dlg.mode_param then
+                context = dlg.mode_param
+            end
+            return context
         end,
         "LayoutMethod",
         "VList",
@@ -34,17 +38,9 @@ PlaceObj("XTemplate", {
             "Open",
             "func",
             function(self, ...)
-                XWindow.Open(self, ...)
-                --   PDAImpHeaderEnable(self)
-            end
-        }),
-        PlaceObj("XTemplateFunc", {
-            "name",
-            "OnDelete",
-            "func",
-            function(self, ...)
-                XWindow.OnDelete(self, ...)
-                --   PDAImpHeaderDisable(self)
+                print("PDAMilitiaShopList Open")
+                AddPageToBrowserHistory("banner_page", "PDABrowserAskThieves")
+                PDABrowserTabState.banner_page.mode_param = "PDABrowserAskThieves"
             end
         }),
         PlaceObj("XTemplateWindow", {
@@ -80,12 +76,16 @@ PlaceObj("XTemplate", {
                     "left",
                     "VAlign",
                     "top",
+                    "OnContextUpdate",
+                    function(self, context, ...)
+                        self:SetText(context.item.name)
+                    end,
                     "TextStyle",
                     "PDAIMPContentTitle",
                     "Translate",
                     true,
                     "Text",
-                    T(145135869022, "I.M.P. MILITIA STAFF SHOP")
+                    T(145135869022, "Category bla")
                 }),
                 PlaceObj("XTemplateWindow", {
                     "__class",
@@ -101,7 +101,7 @@ PlaceObj("XTemplate", {
                     "Translate",
                     true,
                     "Text",
-                    "Welcome to the Grand Chien Militia Staff Shop, the one-stop destination for all your militia needs! This place is for bona fide militia members only. Trying to sneak in? Well, let's just say our watchdogs have some rather persuasive ways of ensuring compliance. So, if you're part of the Grand Chien Militia, gear up and get ready to conquer."
+                    "category bla text"
                 })
             })
         }),
@@ -164,9 +164,9 @@ PlaceObj("XTemplate", {
                         end,
                         "array",
                         function(parent, context)
-                            local query = next(gv_HUDA_ShopFilter) and gv_HUDA_ShopFilter or { topSeller = true }
+                            -- local query = next(gv_HUDA_ShopFilter) and gv_HUDA_ShopFilter or { topSeller = true }
 
-                            local products = HUDA_ShopController:GetProducts(query)
+                            local products = HUDA_ShopController:GetProducts(context.query)
 
                             return products
                         end,

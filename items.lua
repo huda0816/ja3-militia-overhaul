@@ -116,6 +116,18 @@ PlaceObj('ModItemCode', {
 	'CodeFileName', "Code/PDAMilitiaShop.lua",
 }),
 PlaceObj('ModItemCode', {
+	'name', "PDAMilitiaShopCart",
+	'CodeFileName', "Code/PDAMilitiaShopCart.lua",
+}),
+PlaceObj('ModItemCode', {
+	'name', "PDAMilitiaShopList",
+	'CodeFileName', "Code/PDAMilitiaShopList.lua",
+}),
+PlaceObj('ModItemCode', {
+	'name', "PDAMilitiaShopNav",
+	'CodeFileName', "Code/PDAMilitiaShopNav.lua",
+}),
+PlaceObj('ModItemCode', {
 	'name', "PDAMilitiaShopOrders",
 	'CodeFileName', "Code/PDAMilitiaShopOrders.lua",
 }),
@@ -130,6 +142,10 @@ PlaceObj('ModItemCode', {
 PlaceObj('ModItemCode', {
 	'name', "PDAMilitiaStartPage",
 	'CodeFileName', "Code/PDAMilitiaStartPage.lua",
+}),
+PlaceObj('ModItemCode', {
+	'name', "PDAMilitaShopTrick",
+	'CodeFileName', "Code/PDAMilitaShopTrick.lua",
 }),
 PlaceObj('ModItemMsgDef', {
 	Description = "When a militia soldier gets promoted",
@@ -368,5 +384,10 @@ PlaceObj('ModItemXTemplate', {
 				}),
 			}),
 		}),
+}),
+PlaceObj('ModItemXTemplate', {
+	id = "",
+	PlaceObj('XTemplateConditionList', nil),
+	PlaceObj('XTemplateGroup', nil),
 }),
 }

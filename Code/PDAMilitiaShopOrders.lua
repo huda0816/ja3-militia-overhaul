@@ -22,8 +22,10 @@ PlaceObj("XTemplate", {
     PlaceObj("XTemplateWindow", {
         "__context",
         function(parent, context)
-            return gv_HUDA_ShopOrders or {}
+            return "order list"
         end,
+        "__class",
+        "XContentTemplate",
         "LayoutMethod",
         "VList",
         "LayoutVSpacing",
@@ -157,6 +159,22 @@ PlaceObj("XTemplate", {
                     "LayoutVSpacing",
                     10
                 }, {
+                    PlaceObj('XTemplateWindow', {
+                        '__class',
+                        "XText",
+                        "__condition",
+                        function(parent, context)
+                        return not next(gv_HUDA_ShopOrders)
+                        end,
+                        'Text',
+                        "No pending orders",
+                        "Id",
+                        "idDate",
+                        "Dock",
+                        "left",
+                        "TextStyle",
+                        "PDAIMPMercBio"
+                    }),
                     PlaceObj("XTemplateForEach", {
                         "__context",
                         function(parent, context, item, i, n)
@@ -164,23 +182,25 @@ PlaceObj("XTemplate", {
                         end,
                         "array",
                         function(parent, context)
-                            return table.ifilter(context, function(i, v)
+                            return table.ifilter(gv_HUDA_ShopOrders, function(i, v)
                                 return v.status == "pending"
                             end)
                         end,
                         "run_after",
                         function(child, context, item, i, n, last)
-                            child[1][1]:SetText(HUDA_ShopController:DateFromTime(item.orderTime))
-                            child[1][2]:SetText(item.id)
-                            child[3][2][1]:SetText((item.total or 0) .. "$")
-                            child[3][2][2]:SetText("ETA: " .. HUDA_ShopController:GetETA(item) .. "d")
+                            -- child[1][1]:SetText("Order date: " .. HUDA_ShopController:DateFromTime(item.orderTime))
+                            child.idDate:SetText("Order date: " .. HUDA_ShopController:DateFromTime(item.orderTime))
+
+                            child.idOrderNumber:SetText("Nr. " .. item.id)
+
+
+                            child.idTotal:SetText((item.total or 0) .. "$")
+                            child.idStatus:SetText("ETA: " .. HUDA_ShopController:GetETA(item) .. "d")
                         end
                     }, {
                         PlaceObj('XTemplateWindow', {
-                            "comment",
-                            "wrapper",
-                            "__class",
-                            "XContextWindow",
+                            "IdNode",
+                            true,
                             "Background",
                             RGBA(255, 255, 255, 255),
                             "LayoutMethod",
@@ -199,7 +219,7 @@ PlaceObj("XTemplate", {
                                     "XText",
                                     'Text',
                                     "Datum",
-                                    "id",
+                                    "Id",
                                     "idDate",
                                     "Dock",
                                     "left",
@@ -211,7 +231,7 @@ PlaceObj("XTemplate", {
                                     "XText",
                                     'Text',
                                     "Ordernummer",
-                                    "id",
+                                    "Id",
                                     "idOrderNumber",
                                     "Dock",
                                     "right",
@@ -262,7 +282,7 @@ PlaceObj("XTemplate", {
                                         end,
                                         "run_after",
                                         function(child, context, item, i, n, last)
-                                            child[1]:SetText(item.name .. " x " .. item.count)
+                                            child.idProductName:SetText(item.name .. " x " .. item.count)
                                         end
                                     }, {
                                         PlaceObj('XTemplateWindow', {
@@ -278,7 +298,7 @@ PlaceObj("XTemplate", {
                                                 "XText",
                                                 'Text',
                                                 "Produktname x 5",
-                                                "id",
+                                                "Id",
                                                 "idProductName",
                                                 "TextStyle",
                                                 "PDAIMPMercBio",
@@ -297,19 +317,7 @@ PlaceObj("XTemplate", {
                                     PlaceObj('XTemplateWindow', {
                                         '__class',
                                         "XText",
-                                        'Text',
-                                        "Total",
-                                        "id",
-                                        "idTotal",
-                                        "HAlign",
-                                        "right",
-                                        "TextStyle",
-                                        "PDAIMPMercBio",
-                                    }),
-                                    PlaceObj('XTemplateWindow', {
-                                        '__class',
-                                        "XText",
-                                        "id",
+                                        "Id",
                                         "idStatus",
                                         'Text',
                                         "Status / Lieferdatum",
@@ -321,6 +329,20 @@ PlaceObj("XTemplate", {
                                     PlaceObj('XTemplateWindow', {
                                         '__class',
                                         "XText",
+                                        'Text',
+                                        "Total",
+                                        "Id",
+                                        "idTotal",
+                                        "HAlign",
+                                        "right",
+                                        "TextStyle",
+                                        "PDAIMPMercBio",
+                                    }),
+                                    PlaceObj('XTemplateWindow', {
+                                        '__class',
+                                        "XText",
+                                        "MouseCursor",
+                                        "UI/Cursors/Pda_Hand.tga",
                                         'Text',
                                         "<underline>Refund</underline>",
                                         "Dock",
@@ -336,6 +358,7 @@ PlaceObj("XTemplate", {
                                             "func",
                                             function(self, pos, button)
                                                 HUDA_ShopController:Refund(self.context)
+                                                ObjModified("order list")
                                                 ObjModified("right panel")
                                                 ObjModified("left panel")
                                                 ObjModified("militia header")
