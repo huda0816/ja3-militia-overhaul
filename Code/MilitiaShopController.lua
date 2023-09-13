@@ -135,13 +135,14 @@ DefineClass.HUDA_ShopController = {
 }
 
 function HUDA_ShopController:Restock()
+
+    Inspect(self.InventoryTemplate)
+
     gv_HUDA_ShopInventory = self.InventoryTemplate
 end
 
 function HUDA_ShopController:CheckAbandonedCart()
     local cart = gv_HUDA_ShopCart
-
-    print("CheckAbandonedCart")
 
     if cart.abandonedCartSent then
         return
@@ -152,8 +153,6 @@ function HUDA_ShopController:CheckAbandonedCart()
     end
 
     local lastModified = cart.lastModified
-
-    print("lastModified", lastModified)
 
     if not lastModified then
         return
@@ -265,14 +264,10 @@ function HUDA_ShopController:SetDeliveryType(deliveryType)
 end
 
 function HUDA_ShopController:GetProducts(query)
-    print("HUDA_ShopController:GetProducts", query.topSellers)
-
     local preparedProducts = self:PrepareProducts(gv_HUDA_ShopInventory)
 
     if query then
         return table.ifilter(preparedProducts, function(i, product)
-            print(product.name, product.topSeller)
-
             if query.topSeller and not product.topSeller then
                 return false
             end
@@ -325,9 +320,31 @@ function HUDA_ShopController:GetQueryUrlParams(query)
 end
 
 function HUDA_ShopController:AddToCart(product, count)
+    local inventory = gv_HUDA_ShopInventory
+
+    local inventoryProduct = HUDA_ArrayFind(inventory, function(i, inventoryProduct)
+        return inventoryProduct.id == product.id
+    end)
+
+    if not inventoryProduct or inventoryProduct.stock == 0 then
+        self:CreateMessageBox("Sold out", "This product is out of stock.")
+
+        return
+    end
+
+    if inventoryProduct.stock < count then
+        self:CreateMessageBox("Not enough in stock",
+            "There are only " .. inventoryProduct.stock .. " items left in stock.")
+
+        count = inventoryProduct.stock
+    end
+
+    inventoryProduct.stock = inventoryProduct.stock - count
+
     local cart = gv_HUDA_ShopCart
 
     cart.lastModified = Game.CampaignTime
+    cart.abandonedCartSent = false
 
     local cartProducts = cart.products or {}
 
@@ -342,40 +359,66 @@ function HUDA_ShopController:AddToCart(product, count)
     end
 
     cart.products = cartProducts
+
+    self:ModifyObjects()
 end
 
 function HUDA_ShopController:RemoveFromCart(product, count)
     local cart = gv_HUDA_ShopCart
 
+    local inventory = gv_HUDA_ShopInventory
+
     if not cart.products or not next(cart.products) then
         return
     end
 
-    local productsInCarts = table.ifilter(cart.products, function(i, cartProduct)
+    local cartProduct = HUDA_ArrayFind(cart.products, function(i, cartProduct)
         return cartProduct.id == product.id
     end)
 
-    if not next(productsInCarts) then
+    if not cartProduct then
         return
     end
 
-    local productInCart = productsInCarts[1]
+    local inventoryProduct = HUDA_ArrayFind(inventory, function(i, inventoryProduct)
+        return inventoryProduct.id == product.id
+    end)
 
-    if productInCart == nil then
-        return
+    if inventoryProduct then
+        inventoryProduct.stock = inventoryProduct.stock + count
     end
 
-    if count and count < productInCart.count then
-        productInCart.count = productInCart.count - count
+    if count and count < cartProduct.count then
+        cartProduct.count = cartProduct.count - count
     else
-        table.remove(cart.products, HUDA_GetArrayIndex(cart.products, productInCart))
+        table.remove(cart.products, HUDA_GetArrayIndex(cart.products, cartProduct))
     end
+
+    self:ModifyObjects()
 end
 
 function HUDA_ShopController:ClearCart()
     local cart = gv_HUDA_ShopCart
 
+    local inventory = gv_HUDA_ShopInventory
+
+    if not cart.products or not next(cart.products) then
+        return
+    end
+
+    for i, cartProduct in ipairs(cart.products) do
+        local inventoryProduct = HUDA_ArrayFind(inventory, function(i, inventoryProduct)
+            return inventoryProduct.id == cartProduct.id
+        end)
+
+        if inventoryProduct then
+            inventoryProduct.stock = inventoryProduct.stock + cartProduct.count
+        end
+    end
+
     cart.products = {}
+
+    self:ModifyObjects()
 end
 
 function HUDA_ShopController:PrepareProduct(product)
@@ -399,8 +442,19 @@ function HUDA_ShopController:GetDeliveryDuration(order)
     return deliveryDuration * 60 * 60 * 24
 end
 
+function HUDA_ShopController:ModifyObjects()
+
+    ObjModified("shop list")
+    ObjModified("shop front")
+
+end
+
 function HUDA_ShopController:OrderToCart(order)
     local cart = gv_HUDA_ShopCart
+
+    local inventory = gv_HUDA_ShopInventory
+
+    local stockMessageArr = {}
 
     local orderProducts = order.products
 
@@ -415,15 +469,43 @@ function HUDA_ShopController:OrderToCart(order)
             return cartProduct.id == orderProduct.id
         end)
 
-        if not next(productsInCart) then
-            table.insert(cartProducts,
-                { id = orderProduct.id, count = orderProduct.count, name = orderProduct.name, price = orderProduct.price })
+        local inventoryProduct = HUDA_ArrayFind(inventory, function(i, inventoryProduct)
+            return inventoryProduct.id == orderProduct.id
+        end)
+
+        if not inventoryProduct or inventoryProduct.stock == 0 then
+            table.insert(stockMessageArr, orderProduct.name .. " is out of stock.")
         else
-            productsInCart[1].count = productsInCart[1].count + orderProduct.count
-        end
+            
+            local count = orderProduct.count
+            
+            if inventoryProduct.stock < orderProduct.count then
+                table.insert(stockMessageArr,
+                    "There " .. ( inventoryProduct.stock > 1 and "are" or "is" )  .. " only " .. inventoryProduct.stock .. " " .. orderProduct.name .. " left in stock.")
+
+                count = inventoryProduct.stock
+            end
+
+            inventoryProduct.stock = inventoryProduct.stock - count
+
+            if not next(productsInCart) then
+                table.insert(cartProducts,
+                    { id = orderProduct.id, count = count, name = orderProduct.name,
+                        price = orderProduct.price })
+            else
+                productsInCart[1].count = productsInCart[1].count + count
+            end
+        end        
     end
 
+    cart.lastModified = Game.CampaignTime
     cart.products = cartProducts
+    cart.abandonedCartSent = false
+
+    if next(stockMessageArr) then
+        self:CreateMessageBox("Sold out", table.concat(stockMessageArr, "\n"))
+    end
+
 end
 
 function HUDA_ShopController:GetETA(order)
@@ -471,6 +553,18 @@ function HUDA_ShopController:Refund(order)
     end)
 
     AddMoney(order.total, "I.M.P.M.S.S.", true)
+
+    local inventory = gv_HUDA_ShopInventory
+
+    for i, product in ipairs(order.products) do
+        local inventoryProduct = HUDA_ArrayFind(inventory, function(i, inventoryProduct)
+            return inventoryProduct.id == product.id
+        end)
+
+        if inventoryProduct then
+            inventoryProduct.stock = inventoryProduct.stock + product.count
+        end
+    end
 
     ObjModified(gv_HUDA_ShopOrders)
 end

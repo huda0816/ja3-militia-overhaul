@@ -5,8 +5,8 @@ PlaceObj('ModItemCharacterEffectCompositeDef', {
 	'msg_reactions', {},
 	'Conditions', {},
 	'Modifiers', {},
-	'DisplayName', T(961555598847, --[[ModItemCharacterEffectCompositeDef FarFromHome DisplayName]] "Far From Home"),
-	'Description', T(752312637169, --[[ModItemCharacterEffectCompositeDef FarFromHome Description]] "Militia soldiers who fight too far from their hometown, especially rookies, face various negative effects such as loss of morale."),
+	'DisplayName', T(156107933262, --[[ModItemCharacterEffectCompositeDef FarFromHome DisplayName]] "Far From Home"),
+	'Description', T(409859626218, --[[ModItemCharacterEffectCompositeDef FarFromHome Description]] "Militia soldiers who fight too far from their hometown, especially rookies, face various negative effects such as loss of morale."),
 	'type', "Debuff",
 	'Icon', "Mod/LXPER6t/Icons/farfromhome.png",
 	'Shown', true,
@@ -16,8 +16,8 @@ PlaceObj('ModItemCharacterEffectCompositeDef', {
 	'Id', "GCMilitia",
 	'object_class', "CharacterEffect",
 	'msg_reactions', {},
-	'DisplayName', T(910546539467, --[[ModItemCharacterEffectCompositeDef GCMilitia DisplayName]] "Grand Chien Militia"),
-	'Description', T(621380007867, --[[ModItemCharacterEffectCompositeDef GCMilitia Description]] "A perk every militia solider gets after bootcamp. Which allows them to clean and maintain their weapons."),
+	'DisplayName', T(397426840120, --[[ModItemCharacterEffectCompositeDef GCMilitia DisplayName]] "Grand Chien Militia"),
+	'Description', T(842211780828, --[[ModItemCharacterEffectCompositeDef GCMilitia Description]] "A perk every militia solider gets after bootcamp. Which allows them to clean and maintain their weapons."),
 }),
 PlaceObj('ModItemCode', {
 	'name', "MilitiaAndSquads",
@@ -148,6 +148,10 @@ PlaceObj('ModItemCode', {
 	'CodeFileName', "Code/PDAMilitiaShopProduct.lua",
 }),
 PlaceObj('ModItemCode', {
+	'name', "PDAMilitiaSoldier",
+	'CodeFileName', "Code/PDAMilitiaSoldier.lua",
+}),
+PlaceObj('ModItemCode', {
 	'name', "PDAMilitiaSquad",
 	'CodeFileName', "Code/PDAMilitiaSquad.lua",
 }),
@@ -158,10 +162,6 @@ PlaceObj('ModItemCode', {
 PlaceObj('ModItemCode', {
 	'name', "PDAMilitiaStartPage",
 	'CodeFileName', "Code/PDAMilitiaStartPage.lua",
-}),
-PlaceObj('ModItemCode', {
-	'name', "PDAMilitiaSoldier",
-	'CodeFileName', "Code/PDAMilitiaSoldier.lua",
 }),
 PlaceObj('ModItemMsgDef', {
 	Description = "When a militia soldier gets promoted",
@@ -369,7 +369,15 @@ PlaceObj('ModItemOptionToggle', {
 PlaceObj('ModItemTextStyle', {
 	RolloverTextColor = 4291018156,
 	TextColor = 4291018156,
-	TextFont = T(448189319280, --[[ModItemTextStyle HUDASMALLPDASM TextFont]] "HMGothic Rough A, 10"),
+	TextFont = T(799239277391, --[[ModItemTextStyle HUDASMALLPDASM TextFont]] "HMGothic Rough A, 10"),
 	id = "HUDASMALLPDASM",
+}),
+PlaceObj('ModItemTextStyle', {
+	RolloverTextColor = 4281612093,
+	ShadowType = "outline",
+	TextColor = 4290724685,
+	TextFont = T(222238852033, --[[ModItemTextStyle HUDAProductOutOfStock TextFont]] "HMGothic Regular A, 16"),
+	group = "Zulu PDA",
+	id = "HUDAProductOutOfStock",
 }),
 }

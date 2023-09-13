@@ -20,188 +20,234 @@ PlaceObj("XTemplate", {
         T(536912996016, "NavButtonId")
     }),
     PlaceObj("XTemplateWindow", {
+        "__class",
+        "XContentTemplate",
         "__context",
         function(parent, context)
-            local dlg = GetDialog(parent)
-            if dlg.mode_param then
-                context = dlg.mode_param
-            end
-            return context
-        end,
-        "LayoutMethod",
-        "VList",
-        "LayoutVSpacing",
-        8
+            return "shop list"
+        end
     }, {
-        PlaceObj("XTemplateFunc", {
-            "name",
-            "Open",
-            "func",
-            function(self, ...)
-                AddPageToBrowserHistory("shop_list")
-            end
-        }),
         PlaceObj("XTemplateWindow", {
-            "__class",
-            "XContextFrame",
-            "Dock",
-            "top",
-            "Image",
-            "UI/PDA/imp_panel",
-            "FrameBox",
-            box(8, 8, 8, 8),
-            "ContextUpdateOnOpen",
-            true
+            "__context",
+            function(parent, context)
+                local dlg = GetDialog(parent)
+                if dlg.mode_param then
+                    context = dlg.mode_param
+                end
+                return context
+            end,
+            "LayoutMethod",
+            "VList",
+            "LayoutVSpacing",
+            8
         }, {
-            PlaceObj("XTemplateWindow", {
-                "Margins",
-                box(20, 20, 20, 20),
-                "LayoutMethod",
-                "VList",
-                "LayoutVSpacing",
-                10,
-            }, {
-                PlaceObj("XTemplateWindow", {
-                    "__class",
-                    "XText",
-                    "Id",
-                    "idTitle",
-                    "FoldWhenHidden",
-                    true,
-                    "Padding",
-                    box(0, 0, 0, 0),
-                    "HAlign",
-                    "left",
-                    "VAlign",
-                    "top",
-                    "TextStyle",
-                    "PDAIMPContentTitle",
-                    "OnLayoutComplete",
-                    function(self)
-                        self:SetText(self.context.item.name)
-                    end,
-                    "Translate",
-                    true,
-                    "Text",
-                    "<name>"
-                }),
-                PlaceObj("XTemplateWindow", {
-                    "__class",
-                    "XText",
-                    "Padding",
-                    box(0, 0, 0, 0),
-                    "HAlign",
-                    "left",
-                    "VAlign",
-                    "top",
-                    "TextStyle",
-                    "PDAIMPContentText",
-                    "OnLayoutComplete",
-                    function(self)
-                        self:SetText(self.context.item.description)
-                    end,
-                    "Translate",
-                    true,
-                    "Text",
-                    "<item<description>>"
-                })
-            })
-        }),
-        PlaceObj("XTemplateWindow", {
-            "__class",
-            "XContextFrame",
-            "Dock",
-            "box",
-            "Image",
-            "UI/PDA/imp_panel",
-            "FrameBox",
-            box(8, 8, 8, 8),
-            "ContextUpdateOnOpen",
-            true
-        }, {
+            PlaceObj("XTemplateFunc", {
+                "name",
+                "Open",
+                "func",
+                function(self, ...)
+                    AddPageToBrowserHistory("shop_list")
+                end
+            }),
             PlaceObj("XTemplateWindow", {
                 "__class",
-                "XScrollArea",
-                "Id",
-                "idScrollArea",
-                "IdNode",
-                false,
-                "Margins",
-                box(20, 20, 0, 20),
-                "VAlign",
+                "XContextFrame",
+                "Dock",
                 "top",
-                "LayoutMethod",
-                "VList",
-                "VScroll",
-                "idScrollbar"
+                "Image",
+                "UI/PDA/imp_panel",
+                "FrameBox",
+                box(8, 8, 8, 8),
+                "ContextUpdateOnOpen",
+                true
             }, {
                 PlaceObj("XTemplateWindow", {
-                    "__class",
-                    "XText",
-                    "Padding",
-                    box(0, 0, 0, 0),
-                    "HAlign",
-                    "left",
-                    "VAlign",
-                    "top",
-                    "HandleMouse",
-                    false,
-                    "TextStyle",
-                    "PDAIMPContentTitle",
-                    "Translate",
-                    true,
-                    "Text",
-                    "Products"
-                }),
-                PlaceObj("XTemplateWindow", {
                     "Margins",
-                    box(0, 0, 20, 0),
+                    box(20, 20, 20, 20),
                     "LayoutMethod",
-                    "VList"
+                    "VList",
+                    "LayoutVSpacing",
+                    10,
                 }, {
-                    PlaceObj("XTemplateForEach", {
-                        "__context",
-                        function(parent, context, item, i, n)
-                            return item
+                    PlaceObj("XTemplateWindow", {
+                        "__class",
+                        "XText",
+                        "Id",
+                        "idTitle",
+                        "FoldWhenHidden",
+                        true,
+                        "Padding",
+                        box(0, 0, 0, 0),
+                        "HAlign",
+                        "left",
+                        "VAlign",
+                        "top",
+                        "TextStyle",
+                        "PDAIMPContentTitle",
+                        "OnLayoutComplete",
+                        function(self)
+                            self:SetText(self.context.item.name)
                         end,
-                        "array",
-                        function(parent, context)
-                            -- local query = next(gv_HUDA_ShopFilter) and gv_HUDA_ShopFilter or { topSeller = true }
-
-                            local products = HUDA_ShopController:GetProducts(context.query)
-
-                            return products
+                        "Translate",
+                        true,
+                        "Text",
+                        "<name>"
+                    }),
+                    PlaceObj("XTemplateWindow", {
+                        "__class",
+                        "XText",
+                        "Padding",
+                        box(0, 0, 0, 0),
+                        "HAlign",
+                        "left",
+                        "VAlign",
+                        "top",
+                        "TextStyle",
+                        "PDAIMPContentText",
+                        "OnLayoutComplete",
+                        function(self)
+                            self:SetText(self.context.item.description)
                         end,
-                        "run_after",
-                        function(child, context, item, i, n, last)
-                            child.idProductName:SetText(item.name)
-                            child.idProductDescription:SetText(item.description or "")
-                            child.idProductPrice:SetText(item.basePrice .. "$")
-                            child.idProductImage:SetImage(item.image)
-                        end
-                    }, {
-                        PlaceObj("XTemplateTemplate", {
-                            "__template",
-                            "PDAMilitiaShopProduct"
-                        })
+                        "Translate",
+                        true,
+                        "Text",
+                        "<item<description>>"
                     })
                 })
             }),
             PlaceObj("XTemplateWindow", {
                 "__class",
-                "XZuluScroll",
-                "Id",
-                "idScrollbar",
-                "Margins",
-                box(0, 0, 10, 0),
+                "XContextFrame",
                 "Dock",
-                "right",
-                "UseClipBox",
-                false,
-                "Target",
-                "idScrollArea",
-                "AutoHide",
+                "box",
+                "Image",
+                "UI/PDA/imp_panel",
+                "FrameBox",
+                box(8, 8, 8, 8),
+                "ContextUpdateOnOpen",
                 true
+            }, {
+                PlaceObj("XTemplateWindow", {
+                    "__class",
+                    "XScrollArea",
+                    "Id",
+                    "idScrollArea",
+                    "IdNode",
+                    false,
+                    "Margins",
+                    box(20, 20, 0, 20),
+                    "VAlign",
+                    "top",
+                    "LayoutMethod",
+                    "VList",
+                    "VScroll",
+                    "idScrollbar"
+                }, {
+                    PlaceObj("XTemplateWindow", {
+                        "__class",
+                        "XText",
+                        "Padding",
+                        box(0, 0, 0, 0),
+                        "HAlign",
+                        "left",
+                        "VAlign",
+                        "top",
+                        "HandleMouse",
+                        false,
+                        "TextStyle",
+                        "PDAIMPContentTitle",
+                        "Translate",
+                        true,
+                        "Text",
+                        "New Arrivals"
+                    }),
+                    PlaceObj("XTemplateWindow", {
+                        "Margins",
+                        box(0, 0, 20, 0),
+                        "LayoutMethod",
+                        "VList"
+                    }, {
+                        PlaceObj("XTemplateForEach", {
+                            "__context",
+                            function(parent, context, item, i, n)
+                                return item
+                            end,
+                            "array",
+                            function(parent, context)
+                                -- local query = next(gv_HUDA_ShopFilter) and gv_HUDA_ShopFilter or { topSeller = true }
+
+                                local products = HUDA_ShopController:GetProducts(context.query)
+
+                                return products
+                            end
+                        }, {
+                            PlaceObj("XTemplateTemplate", {
+                                "__template",
+                                "PDAMilitiaShopProduct"
+                            })
+                        })
+                    }),
+                    PlaceObj("XTemplateWindow", {
+                        "__class",
+                        "XText",
+                        "Padding",
+                        box(0, 0, 0, 0),
+                        "HAlign",
+                        "left",
+                        "VAlign",
+                        "top",
+                        "HandleMouse",
+                        false,
+                        "TextStyle",
+                        "PDAIMPContentTitle",
+                        "Translate",
+                        true,
+                        "Text",
+                        "Products"
+                    }),
+                    PlaceObj("XTemplateWindow", {
+                        "Margins",
+                        box(0, 0, 20, 0),
+                        "LayoutMethod",
+                        "VList"
+                    }, {
+                        PlaceObj("XTemplateForEach", {
+                            "__context",
+                            function(parent, context, item, i, n)
+                                return item
+                            end,
+                            "array",
+                            function(parent, context)
+                                -- local query = next(gv_HUDA_ShopFilter) and gv_HUDA_ShopFilter or { topSeller = true }
+
+                                local products = HUDA_ShopController:GetProducts(context.query)
+
+                                return products
+                            end
+                        }, {
+                            PlaceObj("XTemplateTemplate", {
+                                "__template",
+                                "PDAMilitiaShopProduct"
+                            })
+                        })
+                    })
+                }),
+                PlaceObj("XTemplateWindow", {
+                    "__class",
+                    "XZuluScroll",
+                    "Id",
+                    "idScrollbar",
+                    "Margins",
+                    box(0, 0, 10, 0),
+                    "Dock",
+                    "right",
+                    "UseClipBox",
+                    false,
+                    "Target",
+                    "idScrollArea",
+                    "AutoHide",
+                    true
+                })
             })
         })
     })

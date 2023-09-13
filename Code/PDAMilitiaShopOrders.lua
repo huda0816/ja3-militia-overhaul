@@ -356,9 +356,9 @@ PlaceObj("XTemplate", {
                                             "MouseCursor",
                                             "UI/Cursors/Pda_Hand.tga",
                                             'Text',
-                                            "<underline>Order again</underline>",
+                                            "<underline>Buy again</underline>",
                                             "TextStyle",
-                                            "PDAIMPHyperLinkSmall",
+                                            "PDABrowserThievesBoxLinks",
                                         }, {
                                             PlaceObj("XTemplateFunc", {
                                                 "name",
@@ -381,7 +381,7 @@ PlaceObj("XTemplate", {
                                             'Text',
                                             "<underline>Refund</underline>",
                                             "TextStyle",
-                                            "PDAIMPHyperLinkSmall",
+                                            "PDABrowserThievesBoxLinks",
                                         }, {
                                             PlaceObj("XTemplateFunc", {
                                                 "name",

@@ -311,9 +311,6 @@ PlaceObj("XTemplate", {
                                     local deliveryTypes = HUDA_ShopController:GetDeliveryTypes()
                                     local item_idx = table.find(deliveryTypes, "id",
                                         self.context.id)
-
-                                    print("toggled", toggled)
-
                                     if toggled then
                                         HUDA_ShopController:SetDeliveryType(self.context)
                                         -- for i = 1, #answers do

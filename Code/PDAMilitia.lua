@@ -843,7 +843,7 @@ PlaceObj("XTemplate", {
                                 "Dock",
                                 "box",
                                 "HAlign",
-                                "left",
+                                "center",
                                 "VAlign",
                                 "bottom",
                                 "TextStyle",
@@ -851,7 +851,7 @@ PlaceObj("XTemplate", {
                                 "Translate",
                                 true,
                                 "Text",
-                                "powered by IMP"
+                                "powered by I.M.P."
                             })
                         }),
                         PlaceObj("XTemplateWindow", {

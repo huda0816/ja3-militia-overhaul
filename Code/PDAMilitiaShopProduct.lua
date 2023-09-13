@@ -4,6 +4,12 @@ PlaceObj("XTemplate", {
     PlaceObj("XTemplateWindow", {
         "IdNode",
         true,
+        "id",
+        "idProduct",
+        "OnLayoutComplete",
+        function(self)
+            self.idProductImage:SetImage(self.idProductName.context.image)
+        end,
         "Margins",
         box(0, 10, 0, 10),
         "LayoutMethod",
@@ -22,10 +28,6 @@ PlaceObj("XTemplate", {
             PlaceObj("XTemplateWindow", {
                 "__class",
                 "XImage",
-                "Id",
-                "idItemBG",
-                "IdNode",
-                false,
                 "MinWidth",
                 140,
                 "MinHeight",
@@ -45,13 +47,13 @@ PlaceObj("XTemplate", {
                 "Id",
                 "idProductImage",
                 "MinWidth",
-                140,
+                130,
                 "MinHeight",
-                140,
+                130,
                 "MaxWidth",
-                140,
+                130,
                 "MaxHeight",
-                140,
+                130,
                 "Image",
                 "UI/MercsPortraits/Igor",
                 "VAlign",
@@ -59,7 +61,7 @@ PlaceObj("XTemplate", {
                 "HAlign",
                 "center",
                 "ImageFit",
-                "width"
+                "width",
             })
         }),
         PlaceObj("XTemplateWindow", {
@@ -75,8 +77,6 @@ PlaceObj("XTemplate", {
             PlaceObj("XTemplateWindow", {
                 "Margins",
                 box(0, 0, 0, 0),
-                "HAlign",
-                "left",
                 "VAlign",
                 "center",
                 "Dock",
@@ -96,7 +96,28 @@ PlaceObj("XTemplate", {
                     "TextStyle",
                     "PDAIMPMercName",
                     "TextHAlign",
-                    "left"
+                    "left",
+                    "OnLayoutComplete",
+                    function(self)
+                        self:SetText(self.context.name)
+                    end
+                }),
+                PlaceObj("XTemplateWindow", {
+                    "__class",
+                    "XText",
+                    "Id",
+                    "idProductCount",
+                    "HandleMouse",
+                    false,
+                    "TextStyle",
+                    "PDAIMPMercName",
+                    "TextHAlign",
+                    "left",
+                    "OnLayoutComplete",
+                    function(self)
+                        self:SetTextStyle(self.context.stock > 0 and "PDAIMPMercName" or "HUDAProductOutOfStock")
+                        self:SetText("(" .. (self.context.stock > 0 and self.context.stock or "out of stock") .. ")")
+                    end
                 }),
                 PlaceObj("XTemplateWindow", {
                     "__class",
@@ -106,13 +127,17 @@ PlaceObj("XTemplate", {
                     "HandleMouse",
                     false,
                     "TextStyle",
-                    "PDAIMPGalleryName",
+                    "PDAIMPMercName",
                     "Translate",
                     true,
                     "TextHAlign",
-                    "left",
+                    "right",
                     "TextVAlign",
-                    "center"
+                    "center",
+                    "OnLayoutComplete",
+                    function(self)
+                        self:SetText(self.context.basePrice .. "$")
+                    end,
                 })
             }),
             PlaceObj("XTemplateWindow", {
@@ -131,7 +156,11 @@ PlaceObj("XTemplate", {
                 "Translate",
                 true,
                 "TextHAlign",
-                "left"
+                "left",
+                "OnLayoutComplete",
+                function(self)
+                    self:SetText(self.context.description)
+                end,
             }),
             PlaceObj("XTemplateWindow", {
                 "Margins",
@@ -158,6 +187,14 @@ PlaceObj("XTemplate", {
                     "PDABrowserThievesBoxLinks",
                     "Translate",
                     true,
+                    "OnLayoutComplete",
+                    function(self)
+                        if (self.context.stock == 0) then
+                            self:SetTransparency(150)
+                            self:SetMouseCursor("UI/Cursors/Pda_Cursor.tga")
+                            return
+                        end
+                    end,
                     "Text",
                     "<underline>Add to cart</underline>"
                 }, {
@@ -176,6 +213,10 @@ PlaceObj("XTemplate", {
                 PlaceObj("XTemplateWindow", {
                     "__class",
                     "XText",
+                    "__condition",
+                    function(parent, context)
+                        return context.stock > 1
+                    end,
                     "Id",
                     "idAdd5ToCart",
                     "TextHAlign",
@@ -186,6 +227,12 @@ PlaceObj("XTemplate", {
                     "PDABrowserThievesBoxLinks",
                     "Translate",
                     true,
+                    "OnLayoutComplete",
+                    function(self)
+                        if (self.context.stock < 5) then
+                            self:SetText("<underline>Add " .. self.context.stock .. "x to cart</underline>")
+                        end
+                    end,
                     "Text",
                     "<underline>Add 5x to cart</underline>"
                 }, {
@@ -194,7 +241,7 @@ PlaceObj("XTemplate", {
                         "OnMouseButtonDown(self, pos, button)",
                         "func",
                         function(self, pos, button)
-                            HUDA_ShopController:AddToCart(self.context, 5)
+                            HUDA_ShopController:AddToCart(self.context, Min(5, self.context.stock))
                             ObjModified("right panel")
                             ObjModified("left panel")
                             ObjModified("militia header")
