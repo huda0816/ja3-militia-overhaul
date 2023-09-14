@@ -172,7 +172,7 @@ PlaceObj("XTemplate", {
                             end,
                             "array",
                             function(parent, context)
-                                local query = next(gv_HUDA_ShopFilter) and gv_HUDA_ShopFilter or { topSeller = true }
+                                local query = { topSeller = true }
 
                                 local products = HUDA_ShopController:GetProducts(query)
 

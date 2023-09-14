@@ -247,6 +247,47 @@ PlaceObj("XTemplate", {
                             ObjModified("militia header")
                         end
                     })
+                }),
+                PlaceObj("XTemplateWindow", {
+                    "__class",
+                    "XText",
+                    "__condition",
+                    function(parent, context)
+                        return context.category ~= "ammo" and context.caliber ~= nil and HUDA_ShopController:HasAmmo(context.caliber)
+                    end,
+                    "Id",
+                    "idBuyAmmo",
+                    "TextHAlign",
+                    "Right",
+                    "MouseCursor",
+                    "UI/Cursors/Pda_Hand.tga",
+                    "TextStyle",
+                    "PDABrowserThievesBoxLinks",
+                    "Translate",
+                    true,
+                    "Text",
+                    "<underline>Buy ammo</underline>"
+                }, {
+                    PlaceObj("XTemplateFunc", {
+                        "name",
+                        "OnMouseButtonDown(self, pos, button)",
+                        "func",
+                        function(self, pos, button)
+
+                            print("buy ammo click")
+
+                            local dlg = GetDialog(self.parent)
+
+                            dlg:SetMode("trick",
+                                { query = { category = "ammo", caliber = self.context.caliber },
+                                    item = { name = self.context.caliberName .. " ammunition", description = "Get " .. self.context.caliberName .. " ammunition" } })
+                            ObjModified(dlg)
+                            ObjModified("right panel")
+                            ObjModified("left panel")
+                            ObjModified("militia header")
+                            ObjModified("pda_url")
+                        end
+                    })
                 })
             })
         })

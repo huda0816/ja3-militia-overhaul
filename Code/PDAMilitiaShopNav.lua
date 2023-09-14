@@ -34,6 +34,10 @@ PlaceObj("XTemplate", {
             3,
         }, {
             PlaceObj("XTemplateForEach", {
+                "__context",
+                function(parent, context, item, i, n)
+                    return item
+                end,
                 "array",
                 function(parent, context)
                     return HUDA_ShopController:GetAvailableCategories()
@@ -41,7 +45,9 @@ PlaceObj("XTemplate", {
                 "run_after",
                 function(child, context, item, i, n, last)
                     child.idNavItem:SetText("<underline>" .. item.name .. "(" .. item.productCount .. ")</underline>")
-                    child.idNavItem:SetContext(item)
+                    if (gv_HUDA_ShopQuery.category == item.id) then
+                        child.idNavItem:SetTextStyle("PDABrowserThievesBoxLinksVisited")
+                    end
                 end
             }, {
                 PlaceObj("XTemplateWindow", {
@@ -49,12 +55,18 @@ PlaceObj("XTemplate", {
                     "XContextWindow",
                     "LayoutMethod",
                     "VList",
+                    "LayoutVSpacing",
+                    0,
                     "IdNode",
                     true,
                 }, {
                     PlaceObj("XTemplateWindow", {
                         "__class",
                         "XText",
+                        "__context",
+                        function(parent, context)
+                            return context
+                        end,
                         "Margins",
                         box(0, 0, 0, 0),
                         "Id",
@@ -63,6 +75,8 @@ PlaceObj("XTemplate", {
                         "UI/Cursors/Pda_Hand.tga",
                         "TextStyle",
                         "PDABrowserThievesBoxLinks",
+                        "IdNode",
+                        true,
                         "Translate",
                         true,
                         "Text",
@@ -73,10 +87,9 @@ PlaceObj("XTemplate", {
                             "OnMouseButtonDown(self, pos, button)",
                             "func",
                             function(self, pos, button)
-
                                 local dlg = GetDialog(self)
 
-                                dlg:SetMode("trick", {query = {category = self.context.id}, item = self.context})
+                                dlg:SetMode("trick", { query = { category = self.context.id }, item = self.context })
                                 ObjModified(dlg)
                                 ObjModified("right panel")
                                 ObjModified("left panel")
@@ -84,7 +97,17 @@ PlaceObj("XTemplate", {
                                 ObjModified("pda_url")
                             end
                         })
-                    })
+                    }),
+                    PlaceObj("XTemplateTemplate", {
+                        "__condition",
+                        function(parent, context)
+                            return context.id == "ammo" and gv_HUDA_ShopQuery.category == "ammo"
+                        end,
+                        "Id",
+                        "idAmmoNav",
+                        "__template",
+                        "PDAMilitiaShopAmmoNav"
+                    }),
                 })
             }),
             PlaceObj("XTemplateWindow", {

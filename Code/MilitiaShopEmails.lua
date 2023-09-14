@@ -54,6 +54,18 @@ end
 
 PlaceObj('Email', {
     body =
+    "Dear customer,\n\nHold onto your helmets, because the Grand Chien Militia Staff Shop has just received a top-secret shipment of game-changing gear!\n\nPrepare for action with our latest additions:\n\n<equipment>\n\n<h OpenShopPage><underline><em>Equip Now</em></underline></h>\n\nSincerely,\n I.M.P.M.S.S. Customer Service",
+    group = "Militia",
+    label = "Important",
+    id = "HUDA_NewArrivals",
+    sender = "shop@imp.net",
+    title = "I.M.P.M.S.S. - Incoming Tactical Advancements",
+    repeatable = true,
+})
+
+
+PlaceObj('Email', {
+    body =
     "Dear customer,\n\nWe are happy to inform you that your order has been delivered to <h OpenSectorInventory><underline><em><location></em></underline></h>.\n\nThank you for choosing I.M.P.M.S.S.!\n\nSincerely,\n I.M.P.M.S.S. Customer Service",
     group = "Militia",
     label = "Important",

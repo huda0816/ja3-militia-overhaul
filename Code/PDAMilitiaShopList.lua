@@ -144,90 +144,128 @@ PlaceObj("XTemplate", {
                     "idScrollbar"
                 }, {
                     PlaceObj("XTemplateWindow", {
-                        "__class",
-                        "XText",
-                        "Padding",
-                        box(0, 0, 0, 0),
-                        "HAlign",
-                        "left",
-                        "VAlign",
-                        "top",
-                        "HandleMouse",
-                        false,
-                        "TextStyle",
-                        "PDAIMPContentTitle",
-                        "Translate",
-                        true,
-                        "Text",
-                        "New Arrivals"
-                    }),
-                    PlaceObj("XTemplateWindow", {
+                        "__condition",
+                        function(parent, context)
+                            local query = table.copy(context.query)
+
+                            query.new = true
+
+                            local products = HUDA_ShopController:GetProducts(query)
+
+                            return #products > 0
+                        end,
                         "Margins",
                         box(0, 0, 20, 0),
                         "LayoutMethod",
                         "VList"
                     }, {
-                        PlaceObj("XTemplateForEach", {
-                            "__context",
-                            function(parent, context, item, i, n)
-                                return item
-                            end,
-                            "array",
-                            function(parent, context)
-                                -- local query = next(gv_HUDA_ShopFilter) and gv_HUDA_ShopFilter or { topSeller = true }
-
-                                local products = HUDA_ShopController:GetProducts(context.query)
-
-                                return products
-                            end
+                        PlaceObj("XTemplateWindow", {
+                            "__class",
+                            "XText",
+                            "Padding",
+                            box(0, 0, 0, 0),
+                            "HAlign",
+                            "left",
+                            "VAlign",
+                            "top",
+                            "HandleMouse",
+                            false,
+                            "TextStyle",
+                            "PDAIMPContentTitle",
+                            "Translate",
+                            true,
+                            "Text",
+                            "New Arrivals"
+                        }),
+                        PlaceObj("XTemplateWindow", {
+                            "Margins",
+                            box(0, 0, 20, 0),
+                            "LayoutMethod",
+                            "VList"
                         }, {
-                            PlaceObj("XTemplateTemplate", {
-                                "__template",
-                                "PDAMilitiaShopProduct"
+                            PlaceObj("XTemplateForEach", {
+                                "__context",
+                                function(parent, context, item, i, n)
+                                    return item
+                                end,
+                                "array",
+                                function(parent, context)
+                                    local query = table.copy(context.query)
+
+                                    query.new = true
+
+                                    local products = HUDA_ShopController:GetProducts(query)
+
+                                    return products
+                                end
+                            }, {
+                                PlaceObj("XTemplateTemplate", {
+                                    "__template",
+                                    "PDAMilitiaShopProduct"
+                                })
                             })
                         })
                     }),
                     PlaceObj("XTemplateWindow", {
-                        "__class",
-                        "XText",
-                        "Padding",
-                        box(0, 0, 0, 0),
-                        "HAlign",
-                        "left",
-                        "VAlign",
-                        "top",
-                        "HandleMouse",
-                        false,
-                        "TextStyle",
-                        "PDAIMPContentTitle",
-                        "Translate",
-                        true,
-                        "Text",
-                        "Products"
-                    }),
-                    PlaceObj("XTemplateWindow", {
+                        "__condition",
+                        function(parent, context)
+                            local query = table.copy(context.query)
+
+                            query.new = false
+
+                            local products = HUDA_ShopController:GetProducts(query)
+
+                            return #products > 0
+                        end,
                         "Margins",
                         box(0, 0, 20, 0),
                         "LayoutMethod",
                         "VList"
                     }, {
-                        PlaceObj("XTemplateForEach", {
-                            "__context",
-                            function(parent, context, item, i, n)
-                                return item
-                            end,
-                            "array",
-                            function(parent, context)
-                                -- local query = next(gv_HUDA_ShopFilter) and gv_HUDA_ShopFilter or { topSeller = true }
-
-                                local products = HUDA_ShopController:GetProducts(context.query)
-
-                                return products
-                            end
+                        PlaceObj("XTemplateWindow", {
+                            "__class",
+                            "XText",
+                            "Padding",
+                            box(0, 0, 0, 0),
+                            "HAlign",
+                            "left",
+                            "VAlign",
+                            "top",
+                            "HandleMouse",
+                            false,
+                            "TextStyle",
+                            "PDAIMPContentTitle",
+                            "Translate",
+                            true,
+                            "Text",
+                            "Products"
+                        }),
+                        PlaceObj("XTemplateWindow", {
+                            "Margins",
+                            box(0, 0, 20, 0),
+                            "LayoutMethod",
+                            "VList"
                         }, {
-                            PlaceObj("XTemplateTemplate", {
-                                "__template",
-                                "PDAMilitiaShopProduct"
+                            PlaceObj("XTemplateForEach", {
+                                "__context",
+                                function(parent, context, item, i, n)
+                                    return item
+                                end,
+                                "array",
+                                function(parent, context)
+                                    local query = table.copy(context.query)
+
+                                    query.new = false
+
+                                    local products = HUDA_ShopController:GetProducts(query)
+
+                                    return products
+                                end
+                            }, {
+                                PlaceObj("XTemplateTemplate", {
+                                    "__template",
+                                    "PDAMilitiaShopProduct"
+                                })
                             })
                         })
                     })

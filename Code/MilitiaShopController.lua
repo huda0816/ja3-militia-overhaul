@@ -1,8 +1,9 @@
 GameVar("gv_HUDA_ShopInventory", {})
 GameVar("gv_HUDA_ShopOrders", {})
 GameVar("gv_HUDA_ShopCart", {})
-GameVar("gv_HUDA_ShopFilter", {})
-GameVar("gv_HUDA_ShopSelectedDeliveryType", "standard")
+GameVar("gv_HUDA_ShopQuery", {})
+GameVar("gv_HUDA_ShopTierStatus", 1)
+GameVar("gv_HUDA_ShopArrived", {})
 
 function OnMsg.NewDay()
     HUDA_ShopController:Restock()
@@ -12,133 +13,56 @@ end
 
 DefineClass.HUDA_ShopController = {
     AbandonedCartTimeout = 1,
-    Categories = {
-        {
-            id = "assault",
-            name = "Assault Rifles",
-            description = "Find the best assault rifles here!",
-            weight = 10
-        },
-        {
-            id = "pistols",
-            name = "Pistols",
-            description = "Find the best pistols here!",
-            weight = 20
-        },
-        {
-            id = "armor",
-            name = "Armor",
-            description = "Find the best armor here!",
-            weight = 30
-        },
-        {
-            id = "ammo",
-            name = "Ammo",
-            description = "Find the best ammo here!",
-            weight = 40
-        },
-        {
-            id = "explosives",
-            name = "Explosives",
-            description = "Find the best explosives here!",
-            weight = 50
-        },
-        {
-            id = "tools",
-            name = "Tools",
-            description = "Find the best tools here!",
-            weight = 60
-        },
-        {
-            id = "misc",
-            name = "Misc",
-            description = "Find the best misc items here!",
-            weight = 70
-        }
-    },
-    InventoryTemplate = {
-        {
-            id = "FAMAS",
-            stock = 5,
-            basePrice = 1000,
-            topSeller = true,
-            category = "assault",
-            tier = 1,
-            supply = 100
-        },
-        {
-            id = "KevlarHelmet",
-            stock = 2,
-            basePrice = 500,
-            topSeller = true,
-            category = "armor",
-            tier = 2,
-            supply = 100
-        },
-        {
-            id = "KevlarVest",
-            stock = 2,
-            basePrice = 500,
-            category = "armor",
-            tier = 2,
-            supply = 100
-        },
-        {
-            id = "AK47",
-            stock = 2,
-            basePrice = 1500,
-            category = "assault",
-            tier = 2,
-            supply = 100
-        },
-        {
-            id = "Glock18",
-            stock = 2,
-            basePrice = 500,
-            category = "pistols",
-            tier = 2,
-            supply = 50
-        },
-        {
-            id = "_762WP_AP",
-            stock = 2,
-            basePrice = 200,
-            category = "ammo",
-            tier = 2,
-            supply = 50
-        }
-    },
-    DeliveryTypes = {
-        {
-            id = "standard",
-            name = "Standard",
-            duration = 3,
-            pricePerItem = 50,
-            pricePerKilogram = 50,
-            default = true
-        },
-        {
-            id = "express",
-            name = "Express",
-            duration = 1,
-            pricePerItem = 300,
-            pricePerKilogram = 300
-        },
-        {
-            id = "overnight",
-            name = "Overnight",
-            duration = 0,
-            pricePerItem = 600,
-            pricePerKilogram = 600
-        }
-    },
+    Categories = HUDA_MilitiaShopCategories,
+    InventoryTemplate = HUDA_MilitiaShopInventoryTemplate,
+    DeliveryTypes = HUDA_MilitiaShopDeliveryTypes,
 }
 
+function HUDA_ShopController:SetInventoryTemplate(template)
+    self.InventoryTemplate = template
+end
+
+function HUDA_ShopController:SetShopCategories(categories)
+    self.Categories = categories
+end
+
+function HUDA_ShopController:SetDeliveryTypes(deliveryTypes)
+    self.DeliveryTypes = deliveryTypes
+end
+
 function HUDA_ShopController:Restock()
+    local tier = gv_HUDA_ShopTierStatus or 1
 
-    Inspect(self.InventoryTemplate)
+    local filteredProducts = table.ifilter(self.InventoryTemplate, function(_, product)
+        return (product.tier or 1) <= tier
+    end)
 
-    gv_HUDA_ShopInventory = self.InventoryTemplate
+    local products = {}
+
+    for _, product in ipairs(filteredProducts) do
+        local roll = InteractionRand(100, "HUDA_ShopAvailability")
+
+        print("Rolling for " ..
+            product.id .. " with " .. roll .. " vs " .. product.availability + ((tier - product.tier) * 10))
+
+        if roll < (product.availability or 100) + ((tier - product.tier) * 10) then
+            local prod = table.copy(product)
+
+            local tierBonus = 1 + ((tier - product.tier) * 0.5)
+
+            print("Tier bonus for " .. product.id .. " is " .. tierBonus)
+
+            local stock = round(product.stock * tierBonus, 1)
+
+            print("Restocking " .. product.id .. " to " .. stock)
+
+            prod.stock = stock
+
+            table.insert(products, prod)
+        end
+    end
+
+    gv_HUDA_ShopInventory = self:PrepareProducts(products)
 end
 
 function HUDA_ShopController:CheckAbandonedCart()
@@ -263,12 +187,34 @@ function HUDA_ShopController:SetDeliveryType(deliveryType)
     gv_HUDA_ShopCart.deliveryType = deliveryType
 end
 
-function HUDA_ShopController:GetProducts(query)
-    local preparedProducts = self:PrepareProducts(gv_HUDA_ShopInventory)
+function HUDA_ShopController:HasAmmo(caliber)
+    return HUDA_ArrayFind(gv_HUDA_ShopInventory, function(i, product)
+        return product.category == "ammo" and product.caliber == caliber and product.stock > 0
+    end) ~= nil
+end
+
+function HUDA_ShopController:GetProducts(query, noqueryupdate)
+    if not noqueryupdate then
+        gv_HUDA_ShopQuery = query
+    end
+
+    local preparedProducts = gv_HUDA_ShopInventory
 
     if query then
         return table.ifilter(preparedProducts, function(i, product)
+            if query.new and not product.new then
+                return false
+            end
+
+            if query.new == false and product.new then
+                return false
+            end
+
             if query.topSeller and not product.topSeller then
+                return false
+            end
+
+            if query.caliber and query.caliber ~= product.caliber then
                 return false
             end
 
@@ -290,13 +236,71 @@ end
 function HUDA_ShopController:PrepareProducts(products)
     local preparedProducts = {}
 
+    if not next(gv_HUDA_ShopArrived) then
+        gv_HUDA_ShopArrived = {}
+        for i, product in ipairs(products) do
+            table.insert(gv_HUDA_ShopArrived, product.id)
+        end
+    end
+
     for i, product in ipairs(products) do
         product = self:PrepareProduct(product)
 
         table.insert(preparedProducts, product)
     end
 
+    self:CheckNewArrivals(preparedProducts)
+
     return preparedProducts
+end
+
+function HUDA_ShopController:CheckNewArrivals(products) 
+
+    local newProducts = table.ifilter(products, function(i, product)
+        return product.new
+    end)
+
+    if not next(newProducts) then
+        return
+    end
+
+    local newProductsStr = ""
+
+    for i, product in ipairs(newProducts) do
+        newProductsStr = newProductsStr .. TDevModeGetEnglishText(product.name) .. ", "
+    end
+
+    newProductsStr = string.sub(newProductsStr, 1, -3)
+
+    self:SendMails("NewArrivals", {equipment = newProductsStr})
+end
+
+function HUDA_ShopController:PrepareProduct(product)
+    local productData = g_Classes[product.id]
+
+    if productData == nil then
+        return product
+    end
+
+    if not table.find(gv_HUDA_ShopArrived, product.id) then
+        product.new = true
+
+        table.insert(gv_HUDA_ShopArrived, product.id)
+    else
+        product.new = false
+    end
+
+    product.description = product.description or productData.Description or ""
+    product.name = productData.DisplayName
+    product.categories = productData.Group or productData.objext_class
+    product.image = productData.Icon
+
+    if productData.Caliber then
+        product.caliber = productData.Caliber
+        product.caliberName = self:GetCaliberName(productData.Caliber)
+    end
+
+    return product
 end
 
 function HUDA_ShopController:GetQueryUrlParams(query)
@@ -313,6 +317,10 @@ function HUDA_ShopController:GetQueryUrlParams(query)
 
         if query.category then
             params = params .. "&category=" .. query.category
+        end
+
+        if query.caliber then
+            params = params .. "&caliber=" .. query.caliber
         end
     end
 
@@ -421,19 +429,32 @@ function HUDA_ShopController:ClearCart()
     self:ModifyObjects()
 end
 
-function HUDA_ShopController:PrepareProduct(product)
-    local productData = g_Classes[product.id]
+function HUDA_ShopController:GetCaliberName(caliberId)
+    local presetsCalibers = Presets.Caliber.Default
 
-    if productData == nil then
-        return product
+    for k, presetCaliber in pairs(presetsCalibers) do
+        if k == caliberId then
+            return presetCaliber.Name
+        end
     end
 
-    product.description = productData.Description or ""
-    product.name = productData.DisplayName
-    product.categories = productData.Group or productData.objext_class
-    product.image = productData.Icon
+    return "Unknown"
+end
 
-    return product
+function HUDA_ShopController:GetCalibers(products)
+    products = products or gv_HUDA_ShopInventory
+
+    local presetsCalibers = Presets.Caliber.Default
+
+    local calibers = {}
+
+    for i, product in ipairs(products) do
+        if product.caliber and not HUDA_ArrayFind(calibers, function(i, caliber) return product.caliber == caliber.id end) then
+            table.insert(calibers, presetsCalibers[product.caliber])
+        end
+    end
+
+    return calibers
 end
 
 function HUDA_ShopController:GetDeliveryDuration(order)
@@ -443,10 +464,8 @@ function HUDA_ShopController:GetDeliveryDuration(order)
 end
 
 function HUDA_ShopController:ModifyObjects()
-
     ObjModified("shop list")
     ObjModified("shop front")
-
 end
 
 function HUDA_ShopController:OrderToCart(order)
@@ -476,12 +495,13 @@ function HUDA_ShopController:OrderToCart(order)
         if not inventoryProduct or inventoryProduct.stock == 0 then
             table.insert(stockMessageArr, orderProduct.name .. " is out of stock.")
         else
-            
             local count = orderProduct.count
-            
+
             if inventoryProduct.stock < orderProduct.count then
                 table.insert(stockMessageArr,
-                    "There " .. ( inventoryProduct.stock > 1 and "are" or "is" )  .. " only " .. inventoryProduct.stock .. " " .. orderProduct.name .. " left in stock.")
+                    "There " ..
+                    (inventoryProduct.stock > 1 and "are" or "is") ..
+                    " only " .. inventoryProduct.stock .. " " .. orderProduct.name .. " left in stock.")
 
                 count = inventoryProduct.stock
             end
@@ -490,12 +510,16 @@ function HUDA_ShopController:OrderToCart(order)
 
             if not next(productsInCart) then
                 table.insert(cartProducts,
-                    { id = orderProduct.id, count = count, name = orderProduct.name,
-                        price = orderProduct.price })
+                    {
+                        id = orderProduct.id,
+                        count = count,
+                        name = orderProduct.name,
+                        price = orderProduct.price
+                    })
             else
                 productsInCart[1].count = productsInCart[1].count + count
             end
-        end        
+        end
     end
 
     cart.lastModified = Game.CampaignTime
@@ -505,7 +529,6 @@ function HUDA_ShopController:OrderToCart(order)
     if next(stockMessageArr) then
         self:CreateMessageBox("Sold out", table.concat(stockMessageArr, "\n"))
     end
-
 end
 
 function HUDA_ShopController:GetETA(order)

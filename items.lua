@@ -20,6 +20,10 @@ PlaceObj('ModItemCharacterEffectCompositeDef', {
 	'Description', T(842211780828, --[[ModItemCharacterEffectCompositeDef GCMilitia Description]] "A perk every militia solider gets after bootcamp. Which allows them to clean and maintain their weapons."),
 }),
 PlaceObj('ModItemCode', {
+	'name', "MilitiaUtils",
+	'CodeFileName', "Code/MilitiaUtils.lua",
+}),
+PlaceObj('ModItemCode', {
 	'name', "MilitiaAndSquads",
 	'CodeFileName', "Code/MilitiaAndSquads.lua",
 }),
@@ -80,12 +84,20 @@ PlaceObj('ModItemCode', {
 	'CodeFileName', "Code/MilitiaSatelliteConflict.lua",
 }),
 PlaceObj('ModItemCode', {
+	'name', "MilitiaShopCategories",
+	'CodeFileName', "Code/MilitiaShopCategories.lua",
+}),
+PlaceObj('ModItemCode', {
 	'name', "MilitiaShopController",
 	'CodeFileName', "Code/MilitiaShopController.lua",
 }),
 PlaceObj('ModItemCode', {
 	'name', "MilitiaShopEmails",
 	'CodeFileName', "Code/MilitiaShopEmails.lua",
+}),
+PlaceObj('ModItemCode', {
+	'name', "MilitiaShopInventoryTemplate",
+	'CodeFileName', "Code/MilitiaShopInventoryTemplate.lua",
 }),
 PlaceObj('ModItemCode', {
 	'name', "MilitiaStoryParts",
@@ -96,16 +108,16 @@ PlaceObj('ModItemCode', {
 	'CodeFileName', "Code/MilitiaTraining.lua",
 }),
 PlaceObj('ModItemCode', {
-	'name', "MilitiaUtils",
-	'CodeFileName', "Code/MilitiaUtils.lua",
-}),
-PlaceObj('ModItemCode', {
 	'name', "PDAMilitaShopTrick",
 	'CodeFileName', "Code/PDAMilitaShopTrick.lua",
 }),
 PlaceObj('ModItemCode', {
 	'name', "PDAMilitia",
 	'CodeFileName', "Code/PDAMilitia.lua",
+}),
+PlaceObj('ModItemCode', {
+	'name', "PDAMilitiaAmmoNav",
+	'CodeFileName', "Code/PDAMilitiaAmmoNav.lua",
 }),
 PlaceObj('ModItemCode', {
 	'name', "PDAMilitiaFinances",
@@ -162,6 +174,10 @@ PlaceObj('ModItemCode', {
 PlaceObj('ModItemCode', {
 	'name', "PDAMilitiaStartPage",
 	'CodeFileName', "Code/PDAMilitiaStartPage.lua",
+}),
+PlaceObj('ModItemCode', {
+	'name', "MilitiaShopDeliveryTypes",
+	'CodeFileName', "Code/MilitiaShopDeliveryTypes.lua",
 }),
 PlaceObj('ModItemMsgDef', {
 	Description = "When a militia soldier gets promoted",

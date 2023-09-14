@@ -769,7 +769,7 @@ PlaceObj("XTemplate", {
                                     PlaceObj("XTemplateTemplate", {
                                         "__template",
                                         "PDAMilitiaShopNav"
-                                    }),
+                                    }),                                    
                                     PlaceObj("XTemplateTemplate", {
                                         "__template",
                                         "PDAMilitiaShopAddress"
