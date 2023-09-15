@@ -15,7 +15,7 @@ return PlaceObj('ModDef', {
 	'author', "permanent666",
 	'version_major', 1,
 	'version_minor', 2,
-	'version', 2929,
+	'version', 2957,
 	'lua_revision', 233360,
 	'saved_with_revision', 340446,
 	'code', {
@@ -63,7 +63,7 @@ return PlaceObj('ModDef', {
 		"Code/MilitiaShopDeliveryTypes.lua",
 	},
 	'has_options', true,
-	'saved', 1694731068,
-	'code_hash', -2956251579911741607,
+	'saved', 1694816535,
+	'code_hash', 4469579888325539740,
 	'steam_id', "3027227786",
 })

@@ -53,7 +53,6 @@ PlaceObj("XTemplate", {
             "GetURL(self, mode, mode_param)",
             "func",
             function(self, mode, mode_param)
-
                 if mode == "finances" then
                     return Untranslated("http://www.gc-militia.org/finances")
                 elseif mode == "squads" then
@@ -769,7 +768,7 @@ PlaceObj("XTemplate", {
                                     PlaceObj("XTemplateTemplate", {
                                         "__template",
                                         "PDAMilitiaShopNav"
-                                    }),                                    
+                                    }),
                                     PlaceObj("XTemplateTemplate", {
                                         "__template",
                                         "PDAMilitiaShopAddress"
@@ -886,82 +885,43 @@ PlaceObj("XTemplate", {
 
                         }, {
                             PlaceObj("XTemplateWindow", {
+                                "__class",
+                                "XScrollArea",
+                                "Id",
+                                "idScrollArea",
+                                "IdNode",
+                                false,
                                 "Margins",
-                                box(10, 10, 10, 10),
+                                box(0, 0, 0, 0),
+                                "VAlign",
+                                "top",
                                 "LayoutMethod",
-                                "VList"
+                                "VList",
+                                "VScroll",
+                                "idScrollbar"
                             }, {
-                                PlaceObj("XTemplateMode", {
-                                    "mode",
-                                    "shop, orders, shop_list"
+                                PlaceObj("XTemplateWindow", {
+                                    "Margins",
+                                    box(10, 10, 10, 10),
+                                    "LayoutMethod",
+                                    "VList"
                                 }, {
-                                    PlaceObj("XTemplateTemplate", {
-                                        "__template",
-                                        "PDAMilitiaShopCart"
-                                    })
-                                }),
-                                PlaceObj("XTemplateMode", {
-                                    "mode",
-                                    "squads"
-                                }, {
-                                    PlaceObj("XTemplateWindow", {
-                                        "__class",
-                                        "XContextWindow",
-                                        "Margins",
-                                        box(10, 20, 10, 0),
-                                        "Dock",
-                                        "top",
-                                        "HAlign",
-                                        "left",
-                                        "VAlign",
-                                        "top",
-                                        "MinWidth",
-                                        160,
-                                        "MaxWidth",
-                                        160,
-                                        "MouseCursor",
-                                        "UI/Cursors/Pda_Hand.tga",
-                                        "FXMouseIn",
-                                        "buttonRollover",
-                                        "FXPress",
-                                        "buttonPress",
-                                        "FXPressDisabled",
-                                        "IactDisabled",
-                                        "TextStyle",
-                                        "PDAIMPMercBio",
-                                        "Translate",
-                                        true,
-                                        "ContextUpdateOnOpen",
-                                        true,
-                                        "OnContextUpdate",
-                                        function(self, context, ...)
-                                            XContextWindow.OnContextUpdate(self, context, ...)
-                                            local hyperlink = Untranslated("<h Read more>")
-                                            self.idHeadline:SetText(T({
-                                                225920505057,
-                                                "Latest Battle Report"
-                                            }))
-                                            self.idDots:SetText(T({
-                                                312104275561,
-                                                "<hl><underline>...<underline></h>",
-                                                hl = hyperlink
-                                            }))
-                                            -- local dlg = GetDialog(self)
-                                            -- self.idHeadline:SetTextStyle(dlg.clicked_links.month_merc and "PDAIMPHyperLinkClicked" or
-                                            --     "PDAIMPHyperLink")
-                                            local data = ImpMercOfTheMonth()
-                                            if data then
-                                                self.idTitle:SetText("The Battle of bla")
-                                                self.idText:SetText(HUDA_AARGenerator:PrintAAR(gv_HUDA_ConflictTracker
-                                                    [#gv_HUDA_ConflictTracker]))
-                                            end
-                                        end
+                                    PlaceObj("XTemplateMode", {
+                                        "mode",
+                                        "shop, orders, shop_list"
+                                    }, {
+                                        PlaceObj("XTemplateTemplate", {
+                                            "__template",
+                                            "PDAMilitiaShopCart"
+                                        })
+                                    }),
+                                    PlaceObj("XTemplateMode", {
+                                        "mode",
+                                        "squads"
                                     }, {
                                         PlaceObj("XTemplateWindow", {
                                             "__class",
-                                            "XText",
-                                            "Id",
-                                            "idHeadline",
+                                            "XContextWindow",
                                             "Margins",
                                             box(10, 20, 10, 0),
                                             "Dock",
@@ -985,113 +945,186 @@ PlaceObj("XTemplate", {
                                             "TextStyle",
                                             "PDAIMPMercBio",
                                             "Translate",
-                                            true
-                                        }),
-                                        PlaceObj("XTemplateWindow", {
-                                            "__class",
-                                            "XText",
-                                            "Id",
-                                            "idTitle",
-                                            "Margins",
-                                            box(10, 10, 10, 0),
-                                            "Dock",
-                                            "top",
-                                            "MinWidth",
-                                            160,
-                                            "MaxWidth",
-                                            160,
-                                            "TextStyle",
-                                            "PDAIMPMercName",
-                                            "Translate",
-                                            true
-                                        }),
-                                        PlaceObj("XTemplateWindow", {
-                                            "__class",
-                                            "XText",
-                                            "Id",
-                                            "idDots",
-                                            "Margins",
-                                            box(10, -12, 10, 16),
-                                            "Padding",
-                                            box(2, 2, 2, 2),
-                                            "Dock",
-                                            "bottom",
-                                            "HAlign",
-                                            "left",
-                                            "VAlign",
-                                            "top",
-                                            "MinWidth",
-                                            160,
-                                            "MaxWidth",
-                                            160,
-                                            "MouseCursor",
-                                            "UI/Cursors/Pda_Hand.tga",
-                                            "FXMouseIn",
-                                            "buttonRollover",
-                                            "FXPress",
-                                            "buttonPress",
-                                            "FXPressDisabled",
-                                            "IactDisabled",
-                                            "TextStyle",
-                                            "PDAIMPHyperLink",
-                                            "Translate",
                                             true,
-                                            "Text",
-                                            T(804387271590, "...")
+                                            "ContextUpdateOnOpen",
+                                            true,
+                                            "OnContextUpdate",
+                                            function(self, context, ...)
+                                                XContextWindow.OnContextUpdate(self, context, ...)
+                                                local hyperlink = Untranslated("<h Read more>")
+                                                self.idHeadline:SetText(T({
+                                                    225920505057,
+                                                    "Latest Battle Report"
+                                                }))
+                                                self.idDots:SetText(T({
+                                                    312104275561,
+                                                    "<hl><underline>...<underline></h>",
+                                                    hl = hyperlink
+                                                }))
+                                                -- local dlg = GetDialog(self)
+                                                -- self.idHeadline:SetTextStyle(dlg.clicked_links.month_merc and "PDAIMPHyperLinkClicked" or
+                                                --     "PDAIMPHyperLink")
+                                                local data = ImpMercOfTheMonth()
+                                                if data then
+                                                    self.idTitle:SetText("The Battle of bla")
+                                                    self.idText:SetText(HUDA_AARGenerator:PrintAAR(
+                                                        gv_HUDA_ConflictTracker
+                                                        [#gv_HUDA_ConflictTracker]))
+                                                end
+                                            end
                                         }, {
-                                            PlaceObj("XTemplateFunc", {
-                                                "name",
-                                                "OnHyperLink(self, hyperlink, argument, hyperlink_box, pos, button)",
-                                                "func",
-                                                function(self, hyperlink, argument, hyperlink_box, pos, button)
-                                                    if hyperlink == "OpenMonthMerc" then
-                                                        PlayFX("buttonPress", "start")
-                                                        self:SetTextStyle("PDAIMPHyperLinkClicked")
-                                                        local dlg = GetDialog(self)
-                                                        dlg.clicked_links[argument] = true
-                                                        OpenAIMAndSelectMerc(g_ImpTest.month_merc)
+                                            PlaceObj("XTemplateWindow", {
+                                                "__class",
+                                                "XText",
+                                                "Id",
+                                                "idHeadline",
+                                                "Margins",
+                                                box(10, 20, 10, 0),
+                                                "Dock",
+                                                "top",
+                                                "HAlign",
+                                                "left",
+                                                "VAlign",
+                                                "top",
+                                                "MinWidth",
+                                                160,
+                                                "MaxWidth",
+                                                160,
+                                                "MouseCursor",
+                                                "UI/Cursors/Pda_Hand.tga",
+                                                "FXMouseIn",
+                                                "buttonRollover",
+                                                "FXPress",
+                                                "buttonPress",
+                                                "FXPressDisabled",
+                                                "IactDisabled",
+                                                "TextStyle",
+                                                "PDAIMPMercBio",
+                                                "Translate",
+                                                true
+                                            }),
+                                            PlaceObj("XTemplateWindow", {
+                                                "__class",
+                                                "XText",
+                                                "Id",
+                                                "idTitle",
+                                                "Margins",
+                                                box(10, 10, 10, 0),
+                                                "Dock",
+                                                "top",
+                                                "MinWidth",
+                                                160,
+                                                "MaxWidth",
+                                                160,
+                                                "TextStyle",
+                                                "PDAIMPMercName",
+                                                "Translate",
+                                                true
+                                            }),
+                                            PlaceObj("XTemplateWindow", {
+                                                "__class",
+                                                "XText",
+                                                "Id",
+                                                "idDots",
+                                                "Margins",
+                                                box(10, -12, 10, 16),
+                                                "Padding",
+                                                box(2, 2, 2, 2),
+                                                "Dock",
+                                                "bottom",
+                                                "HAlign",
+                                                "left",
+                                                "VAlign",
+                                                "top",
+                                                "MinWidth",
+                                                160,
+                                                "MaxWidth",
+                                                160,
+                                                "MouseCursor",
+                                                "UI/Cursors/Pda_Hand.tga",
+                                                "FXMouseIn",
+                                                "buttonRollover",
+                                                "FXPress",
+                                                "buttonPress",
+                                                "FXPressDisabled",
+                                                "IactDisabled",
+                                                "TextStyle",
+                                                "PDAIMPHyperLink",
+                                                "Translate",
+                                                true,
+                                                "Text",
+                                                T(804387271590, "...")
+                                            }, {
+                                                PlaceObj("XTemplateFunc", {
+                                                    "name",
+                                                    "OnHyperLink(self, hyperlink, argument, hyperlink_box, pos, button)",
+                                                    "func",
+                                                    function(self, hyperlink, argument, hyperlink_box, pos, button)
+                                                        if hyperlink == "OpenMonthMerc" then
+                                                            PlayFX("buttonPress", "start")
+                                                            self:SetTextStyle("PDAIMPHyperLinkClicked")
+                                                            local dlg = GetDialog(self)
+                                                            dlg.clicked_links[argument] = true
+                                                            OpenAIMAndSelectMerc(g_ImpTest.month_merc)
+                                                        end
                                                     end
-                                                end
+                                                })
+                                            }),
+                                            PlaceObj("XTemplateWindow", {
+                                                "__class",
+                                                "XText",
+                                                "Id",
+                                                "idText",
+                                                "Margins",
+                                                box(10, 5, 10, 0),
+                                                "Dock",
+                                                "top",
+                                                "VAlign",
+                                                "top",
+                                                "MinWidth",
+                                                160,
+                                                "MinHeight",
+                                                450,
+                                                "MaxWidth",
+                                                160,
+                                                "MaxHeight",
+                                                450,
+                                                "OnLayoutComplete",
+                                                function(self)
+                                                    local old_height = self.content_box:maxy() - self.content_box:miny()
+                                                    local line_height = self.font_height + self.font_linespace
+                                                    local new_height = floatfloor(old_height / line_height) * line_height
+                                                    if (0.0 + old_height) / line_height % 1 <= 0.9 then
+                                                        local cb = self.content_box
+                                                        self.content_box = box(cb:minx(), cb:miny(), cb:maxx(),
+                                                            cb:miny() + new_height)
+                                                    end
+                                                end,
+                                                "TextStyle",
+                                                "PDAIMPMercBio",
+                                                "Translate",
+                                                true
                                             })
-                                        }),
-                                        PlaceObj("XTemplateWindow", {
-                                            "__class",
-                                            "XText",
-                                            "Id",
-                                            "idText",
-                                            "Margins",
-                                            box(10, 5, 10, 0),
-                                            "Dock",
-                                            "top",
-                                            "VAlign",
-                                            "top",
-                                            "MinWidth",
-                                            160,
-                                            "MinHeight",
-                                            450,
-                                            "MaxWidth",
-                                            160,
-                                            "MaxHeight",
-                                            450,
-                                            "OnLayoutComplete",
-                                            function(self)
-                                                local old_height = self.content_box:maxy() - self.content_box:miny()
-                                                local line_height = self.font_height + self.font_linespace
-                                                local new_height = floatfloor(old_height / line_height) * line_height
-                                                if (0.0 + old_height) / line_height % 1 <= 0.9 then
-                                                    local cb = self.content_box
-                                                    self.content_box = box(cb:minx(), cb:miny(), cb:maxx(),
-                                                        cb:miny() + new_height)
-                                                end
-                                            end,
-                                            "TextStyle",
-                                            "PDAIMPMercBio",
-                                            "Translate",
-                                            true
                                         })
                                     })
                                 })
-                            })
+                            }),
+                            PlaceObj("XTemplateWindow", {
+                                "__class",
+                                "XZuluScroll",
+                                "Id",
+                                "idScrollbar",
+                                "Margins",
+                                box(0, 0, 0, 0),
+                                "Dock",
+                                "right",
+                                "UseClipBox",
+                                false,
+                                "Target",
+                                "idScrollArea",
+                                "AutoHide",
+                                true
+                            }),
                         }),
                         PlaceObj("XTemplateWindow", {
                             "comment",

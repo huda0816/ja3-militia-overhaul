@@ -135,7 +135,7 @@ PlaceObj("XTemplate", {
                     "IdNode",
                     false,
                     "Margins",
-                    box(20, 20, 0, 20),
+                    box(20, 20, 20, 20),
                     "VAlign",
                     "top",
                     "LayoutMethod",
@@ -155,7 +155,7 @@ PlaceObj("XTemplate", {
                             return #products > 0
                         end,
                         "Margins",
-                        box(0, 0, 20, 0),
+                        box(0, 0, 0, 0),
                         "LayoutMethod",
                         "VList"
                     }, {
@@ -179,7 +179,7 @@ PlaceObj("XTemplate", {
                         }),
                         PlaceObj("XTemplateWindow", {
                             "Margins",
-                            box(0, 0, 20, 0),
+                            box(0, 0, 0, 0),
                             "LayoutMethod",
                             "VList"
                         }, {
@@ -218,7 +218,7 @@ PlaceObj("XTemplate", {
                             return #products > 0
                         end,
                         "Margins",
-                        box(0, 0, 20, 0),
+                        box(0, 0, 0, 0),
                         "LayoutMethod",
                         "VList"
                     }, {
@@ -242,7 +242,7 @@ PlaceObj("XTemplate", {
                         }),
                         PlaceObj("XTemplateWindow", {
                             "Margins",
-                            box(0, 0, 20, 0),
+                            box(0, 0, 0, 0),
                             "LayoutMethod",
                             "VList"
                         }, {
@@ -276,7 +276,7 @@ PlaceObj("XTemplate", {
                     "Id",
                     "idScrollbar",
                     "Margins",
-                    box(0, 0, 10, 0),
+                    box(0, 0, 0, 0),
                     "Dock",
                     "right",
                     "UseClipBox",

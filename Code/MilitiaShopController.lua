@@ -37,6 +37,8 @@ function HUDA_ShopController:Restock()
         return (product.tier or 1) <= tier
     end)
 
+    Inspect(filteredProducts)
+
     local products = {}
 
     for _, product in ipairs(filteredProducts) do
