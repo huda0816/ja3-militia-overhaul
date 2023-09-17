@@ -85,8 +85,6 @@ function SpawnMilitia(trainAmount, sector, bFromOperation)
 
 	local militia_squad, count_trained = HUDAOriginalSpawnMilitia(trainAmount, sector, bFromOperation)
 
-	print("Militia spawned")
-
 	HUDA_MilitiaPersonalization:PersonalizeSquad(militia_squad.UniqueId)
 
 	local unit_data = gv_UnitData

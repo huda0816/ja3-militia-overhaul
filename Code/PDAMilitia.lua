@@ -14,7 +14,7 @@ PlaceObj("XTemplate", {
         "InitialMode",
         "home",
         "InternalModes",
-        "home,finances,squads,squad,soldier,construction,shop,orders,shop_list,trick,shop_closed, conditions"
+        "home,finances,squads,squad,soldier,construction,shop,orders,shop_list,trick,shop_closed, conditions, aar, shop_unavailable, shop_order, shop_address, shop_order_confirm, shop_order_success, shop_order_fail, shop_order_cancel, shop_order_cancel_confirm, shop_order_cancel_succe"
     }, {
         PlaceObj("XTemplateFunc", {
             "name",
@@ -65,7 +65,7 @@ PlaceObj("XTemplate", {
                     return Untranslated("http://www.gc-militia.org/squads?soldier=" .. mode_param.soldier.Nick)
                 elseif mode == "construction" then
                     return Untranslated("http://www.gc-militia.org/construction")
-                elseif mode == "shop" then
+                elseif mode == "shop" or "shop_unavailable" then
                     return Untranslated("http://www.gc-militia.org/shop")
                 elseif mode == "shop_list" then
                     return Untranslated("http://www.gc-militia.org/shop" ..
@@ -111,6 +111,20 @@ PlaceObj("XTemplate", {
                 end
             end
         }),
+        PlaceObj("XTemplateFunc", {
+            "name",
+            "OnDialogModeChange(self, mode, dialog)",
+            "func",
+            function(self, mode, dialog)
+              
+              if (mode == "shop" or mode == "shop_list") and not gv_HUDA_ShopStatus.open then
+                self:SetMode("shop_unavailable")
+                return
+              end
+              
+              ObjModified("pda_url")
+            end
+          }),
         PlaceObj("XTemplateWindow", {
             "__class",
             "XImage",
@@ -753,6 +767,26 @@ PlaceObj("XTemplate", {
                             "Background",
                             RGBA(230, 222, 202, 255)
                         }, {
+                            PlaceObj("XTemplateFunc", {
+                                "name",
+                                "RespawnContent(self)",
+                                "func",
+                                function(self)
+                                    local scroll = self.idScrollbar
+
+                                    local lastScrollPos = scroll and scroll:GetScroll()
+
+                                    XContentTemplate.RespawnContent(self)
+                                    RunWhenXWindowIsReady(self, function()
+                                        if self.idScroll and lastScrollPos then
+                                            self.idScroll:SetScroll(lastScrollPos)
+                                        end
+                                        if self.idScrollLeft and lastScrollPos then
+                                            self.idScrollLeft:ScrollTo(0, lastScrollPos)
+                                        end
+                                    end)
+                                end
+                            }),
                             PlaceObj("XTemplateWindow", {
                                 "__class",
                                 "XScrollArea",
@@ -788,7 +822,7 @@ PlaceObj("XTemplate", {
                                     }),
                                     PlaceObj("XTemplateMode", {
                                         "mode",
-                                        "home, squads, squad"
+                                        "home, squads, squad, aar"
                                     }, {
                                         PlaceObj("XTemplateTemplate", {
                                             "__template",
@@ -850,8 +884,6 @@ PlaceObj("XTemplate", {
                                 "RespawnContent(self)",
                                 "func",
                                 function(self)
-                                    print("RespawnContent")
-
                                     local scroll = self.idScrollbar
 
                                     local list = self.idScrollArea
@@ -917,16 +949,16 @@ PlaceObj("XTemplate", {
                                     }),
                                     PlaceObj("XTemplateMode", {
                                         "mode",
-                                        "home"
+                                        "home, aar"
                                     }, {
                                         PlaceObj("XTemplateTemplate", {
                                             "__template",
-                                            "PDAMilitiaSidebarPromotions"
+                                            "PDAMilitiaSidebarNewbies"
                                         }),
                                         PlaceObj("XTemplateTemplate", {
                                             "__template",
-                                            "PDAMilitiaSidebarNewbies"
-                                        })
+                                            "PDAMilitiaSidebarPromotions"
+                                        })                                        
                                     })
                                 })
                             }),
@@ -984,6 +1016,15 @@ PlaceObj("XTemplate", {
                                 PlaceObj("XTemplateTemplate", {
                                     "__template",
                                     "PDAMilitiaShopTrick"
+                                }),
+                            }),
+                            PlaceObj("XTemplateMode", {
+                                "mode",
+                                "aar"
+                            }, {
+                                PlaceObj("XTemplateTemplate", {
+                                    "__template",
+                                    "PDAMilitiaAAR"
                                 }),
                             }),
                             PlaceObj("XTemplateMode", {
@@ -1048,6 +1089,17 @@ PlaceObj("XTemplate", {
                                     "PDAMilitiaShopOrders",
                                     "HeaderButtonId",
                                     "idShopOrders"
+                                })
+                            }),
+                            PlaceObj("XTemplateMode", {
+                                "mode",
+                                "shop_unavailable"
+                            }, {
+                                PlaceObj("XTemplateTemplate", {
+                                    "__template",
+                                    "PDAMilitiaShopUnavailable",
+                                    "HeaderButtonId",
+                                    "idShop"
                                 })
                             }),
                             PlaceObj("XTemplateMode", { "mode", "home" }, {

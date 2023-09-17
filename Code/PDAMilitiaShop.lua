@@ -50,13 +50,9 @@ PlaceObj("XTemplate", {
             "RespawnContent(self)",
             "func",
             function(self)
-                local scroll = self.idScrollbar
+                local scrollBar = self.idScrollbar
 
-                local list = self.idScrollArea
-
-                local lastScrollPos = scroll and scroll:GetScroll()
-
-                local lastSelected = list and list.selection and #list.selection >= 1 and list.selection
+                local lastScrollPos = scrollBar and scrollBar:GetScroll()
 
                 XContentTemplate.RespawnContent(self)
                 RunWhenXWindowIsReady(self, function()
@@ -185,11 +181,11 @@ PlaceObj("XTemplate", {
                         "Translate",
                         true,
                         "Text",
-                        T(157984480848, "TOP SELLERS")
+                        "TOP SELLERS"
                     }),
                     PlaceObj("XTemplateWindow", {
                         "Margins",
-                        box(0, 0, 20, 0),
+                        box(0, 0, 0, 0),
                         "LayoutMethod",
                         "VList"
                     }, {
@@ -200,9 +196,19 @@ PlaceObj("XTemplate", {
                             end,
                             "array",
                             function(parent, context)
-                                local query = { topSeller = true }
+                                local products = {}
 
-                                local products = HUDA_ShopController:GetProducts(query)
+                                if next(gv_HUDA_ShopStatus.topSellers) then
+                                    products = HUDA_ShopController:GetTopSellers(5)
+                                end
+
+                                if next(products) then
+                                    return products
+                                end
+
+                                products = HUDA_ShopController:GetProducts({ topSeller = true, num = 5 })
+
+                                print("top sellers", #products)
 
                                 return products
                             end

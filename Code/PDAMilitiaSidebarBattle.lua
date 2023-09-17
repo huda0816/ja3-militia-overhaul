@@ -20,7 +20,6 @@ PlaceObj("XTemplate", {
             end,
             "__context",
             function(parent, context)
-                
                 local conflicts = table.ifilter(gv_HUDA_ConflictTracker, function(i, v)
                     return v.resolved
                 end)
@@ -54,7 +53,7 @@ PlaceObj("XTemplate", {
                 "Translate",
                 true,
                 "Text",
-                "Latest Battle Report"                
+                "Latest Battle Report"
             }),
             PlaceObj("XTemplateWindow", {
                 "__class",
@@ -119,15 +118,13 @@ PlaceObj("XTemplate", {
             }, {
                 PlaceObj("XTemplateFunc", {
                     "name",
-                    "OnHyperLink(self, hyperlink, argument, hyperlink_box, pos, button)",
+                    "OnMouseButtonDown(self, pos, button)",
                     "func",
-                    function(self, hyperlink, argument, hyperlink_box, pos, button)
-                        if hyperlink == "OpenMonthMerc" then
-                            PlayFX("buttonPress", "start")
-                            self:SetTextStyle("PDAIMPHyperLinkClicked")
+                    function(self, pos, button)
+                        if button == "L" then
                             local dlg = GetDialog(self)
-                            dlg.clicked_links[argument] = true
-                            OpenAIMAndSelectMerc(g_ImpTest.month_merc)
+
+                            dlg:SetMode("aar", { aar = self.context, back = { mode = dlg.Mode, params = dlg.mode_param } })
                         end
                     end
                 })

@@ -45,7 +45,7 @@ PlaceObj("XTemplate", {
                 "Translate",
                 true,
                 "Text",
-                "Militia HQ\nErnie Village\nGrand Chien"
+                Untranslated("Militia HQ\n<CurrentDeliveryAddress()>\nGrand Chien")
             }),
             PlaceObj("XTemplateWindow", {
                 "__class",
@@ -68,7 +68,7 @@ PlaceObj("XTemplate", {
                     "OnMouseButtonDown(self, pos, button)",
                     "func",
                     function(self, pos, button)
-                        HUDA_ShopController:EditAddress()
+                        HUDA_ShopController:ChooseAddress()
                     end
                 })
             })

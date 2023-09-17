@@ -342,8 +342,8 @@ PlaceObj("XTemplate", {
                         "OnLayoutComplete",
                         function(self)
                             local city, distance = HUDA_GetClosestCity(self.context.BornInSector)
-                            self:SetText(Untranslated("<em>Founded " .. (distance > 0 and "near" or "in" ) .. ":</em> " .. city))
-
+                            self:SetText(Untranslated("<em>Founded " ..
+                            (distance > 0 and "near" or "in") .. ":</em> " .. city))
                         end
                     }),
                     PlaceObj("XTemplateWindow", {
@@ -419,8 +419,6 @@ PlaceObj("XTemplate", {
                                 return squad.id == context.UniqueId
                             end)
 
-                            print("squadConflict", squadConflict)
-
                             if squadConflict then
                                 table.insert(squadConflicts, conflict)
                             end
@@ -429,8 +427,6 @@ PlaceObj("XTemplate", {
                                 break
                             end
                         end
-
-                        print("squadConflicts", squadConflicts)
 
                         return squadConflicts
                     end,
@@ -494,13 +490,27 @@ PlaceObj("XTemplate", {
                                 box(0, 0, 0, 0),
                                 "TextStyle",
                                 "PDAIMPGalleryName",
+                                "MouseCursor",
+                                "UI/Cursors/Pda_Hand.tga",
                                 "MinWidth",
                                 200,
                                 "Translate",
                                 true,
                                 "Text",
                                 Untranslated(
-                                    "<ConflictDirection(context)> Battle against <enemy.affiliation> in <ConflictLocation(context)> | <ConflictDaysAgo(context)>d ago | <ConflictResult(conflict)>")
+                                    "<ConflictDirection(context)> Battle against <enemy.affiliation> in <sectorId> | <ConflictDaysAgo(context)>d ago | <ConflictResult(conflict)>")
+                            }, {
+                                PlaceObj("XTemplateFunc", {
+                                    "name",
+                                    "OnMouseButtonDown(self, pos, button)",
+                                    "func",
+                                    function(self, pos, button)
+                                        if button == "L" then
+                                            local dlg = GetDialog(self)
+                                            dlg:SetMode("aar", { aar = self.context, back = { mode = dlg.Mode, params = dlg.mode_param } })
+                                        end
+                                    end
+                                })
                             })
                         })
                     })

@@ -49,11 +49,33 @@ PlaceObj("XTemplate", {
                 --   PDAImpHeaderDisable(self)
             end
         }),
+        PlaceObj("XTemplateFunc", {
+            "name",
+            "RespawnContent(self)",
+            "func",
+            function(self)
+                local scrollBar = self.idScrollbar
+
+                local lastScrollPos = scrollBar and scrollBar:GetScroll()
+
+                XContentTemplate.RespawnContent(self)
+                RunWhenXWindowIsReady(self, function()
+                    if self.idScrollbar and lastScrollPos then
+                        self.idScrollbar:SetScroll(lastScrollPos)
+                    end
+                    if self.idScrollArea and lastScrollPos then
+                        self.idScrollArea:ScrollTo(0, lastScrollPos)
+                    end
+                end)
+            end
+        }),
         PlaceObj("XTemplateWindow", {
             "__class",
             "XContextFrame",
             "Dock",
             "top",
+            "IdNode",
+            false,
             "Image",
             "UI/PDA/imp_panel",
             "FrameBox",
@@ -112,6 +134,8 @@ PlaceObj("XTemplate", {
             "XContextFrame",
             "Dock",
             "box",
+            "IdNode",
+            false,
             "Image",
             "UI/PDA/imp_panel",
             "FrameBox",
@@ -151,11 +175,11 @@ PlaceObj("XTemplate", {
                     "Translate",
                     true,
                     "Text",
-                    T(157984480848, "Pending Orders")
+                    "Pending Orders"
                 }),
                 PlaceObj("XTemplateWindow", {
                     "Margins",
-                    box(0, 0, 20, 0),
+                    box(0, 0, 0, 0),
                     "LayoutMethod",
                     "VList",
                     "LayoutVSpacing",
@@ -166,7 +190,9 @@ PlaceObj("XTemplate", {
                         "XText",
                         "__condition",
                         function(parent, context)
-                            return not next(gv_HUDA_ShopOrders)
+                            return not HUDA_ArrayFind(gv_HUDA_ShopOrders, function(i, v)
+                                return v.status == "pending"
+                            end)
                         end,
                         'Text',
                         "No pending orders",
@@ -184,221 +210,88 @@ PlaceObj("XTemplate", {
                         end,
                         "array",
                         function(parent, context)
-                            return table.ifilter(gv_HUDA_ShopOrders, function(i, v)
+                            local pendingOrders = table.ifilter(gv_HUDA_ShopOrders, function(i, v)
                                 return v.status == "pending"
                             end)
-                        end,
-                        "run_after",
-                        function(child, context, item, i, n, last)
-                            -- child[1][1]:SetText("Order date: " .. HUDA_ShopController:DateFromTime(item.orderTime))
-                            child.idDate:SetText("Order date: " .. HUDA_ShopController:DateFromTime(item.orderTime))
 
-                            child.idOrderNumber:SetText("Nr. " .. item.id)
+                            table.sort(pendingOrders, function(a, b)
+                                return a.id > b.id
+                            end)
 
-
-                            child.idTotal:SetText((item.total or 0) .. "$")
-                            child.idStatus:SetText("ETA: " .. HUDA_ShopController:GetETA(item) .. "d")
+                            return pendingOrders
                         end
                     }, {
-                        PlaceObj('XTemplateWindow', {
-                            "IdNode",
-                            true,
-                            "Background",
-                            RGBA(255, 255, 255, 255),
-                            "LayoutMethod",
-                            "VList",
-                        }, {
-                            PlaceObj('XTemplateWindow', {
-                                "comment",
-                                "header",
-                                "LayoutMethod",
-                                "HList",
-                                "Margins",
-                                box(5, 5, 5, 5),
-                            }, {
-                                PlaceObj('XTemplateWindow', {
-                                    '__class',
-                                    "XText",
-                                    'Text',
-                                    "Datum",
-                                    "Id",
-                                    "idDate",
-                                    "Dock",
-                                    "left",
-                                    "TextStyle",
-                                    "PDAIMPMercBio",
-                                }),
-                                PlaceObj('XTemplateWindow', {
-                                    '__class',
-                                    "XText",
-                                    'Text',
-                                    "Ordernummer",
-                                    "Id",
-                                    "idOrderNumber",
-                                    "Dock",
-                                    "right",
-                                    "TextStyle",
-                                    "PDAIMPMercBio",
-                                }),
-                            }),
-                            PlaceObj("XTemplateWindow", {
-                                "comment",
-                                "line",
-                                "__class",
-                                "XImage",
-                                "Margins",
-                                box(0, 0, 0, 0),
-                                "VAlign",
-                                "center",
-                                "Transparency",
-                                141,
-                                "Image",
-                                "UI/PDA/separate_line_vertical",
-                                "ImageFit",
-                                "stretch-x"
-                            }),
-                            PlaceObj('XTemplateWindow', {
-                                "comment",
-                                "content",
-                                "LayoutMethod",
-                                "HList",
-                                "Margins",
-                                box(5, 5, 5, 5),
-                            }, {
-                                PlaceObj('XTemplateWindow', {
-                                    "comment",
-                                    "produkte",
-                                    "Dock",
-                                    "left",
-                                    "LayoutMethod",
-                                    "VList",
-                                }, {
-                                    PlaceObj('XTemplateForEach', {
-                                        "__context",
-                                        function(parent, context, item, i, n)
-                                            return item
-                                        end,
-                                        "array",
-                                        function(parent, context)
-                                            return context.products
-                                        end,
-                                        "run_after",
-                                        function(child, context, item, i, n, last)
-                                            child.idProductName:SetText(item.name .. " x " .. item.count)
-                                        end
-                                    }, {
-                                        PlaceObj('XTemplateWindow', {
-                                            "comment",
-                                            "produkt",
-                                            "IdNode",
-                                            true,
-                                            "LayoutMethod",
-                                            "HList"
-                                        }, {
-                                            PlaceObj('XTemplateWindow', {
-                                                '__class',
-                                                "XText",
-                                                'Text',
-                                                "Produktname x 5",
-                                                "Id",
-                                                "idProductName",
-                                                "TextStyle",
-                                                "PDAIMPMercBio",
-                                            }),
-                                        }),
-                                    }),
-                                }),
-                                PlaceObj('XTemplateWindow', {
-                                    "comment",
-                                    "rightbox",
-                                    "Dock",
-                                    "right",
-                                    "LayoutMethod",
-                                    "VList",
-                                }, {
-                                    PlaceObj('XTemplateWindow', {
-                                        '__class',
-                                        "XText",
-                                        "Id",
-                                        "idStatus",
-                                        'Text',
-                                        "Status / Lieferdatum",
-                                        "HAlign",
-                                        "right",
-                                        "TextStyle",
-                                        "PDAIMPMercBio",
-                                    }),
-                                    PlaceObj('XTemplateWindow', {
-                                        '__class',
-                                        "XText",
-                                        'Text',
-                                        "Total",
-                                        "Id",
-                                        "idTotal",
-                                        "HAlign",
-                                        "right",
-                                        "TextStyle",
-                                        "PDAIMPMercBio",
-                                    }),
-                                    PlaceObj('XTemplateWindow', {
-                                        'LayoutMethod',
-                                        "HList",
-                                        "Dock",
-                                        "bottom",
-                                        "HAlign",
-                                        "right",
-                                        'LayoutHSpacing',
-                                        5
-                                    }, {
-                                        PlaceObj('XTemplateWindow', {
-                                            '__class',
-                                            "XText",
-                                            "MouseCursor",
-                                            "UI/Cursors/Pda_Hand.tga",
-                                            'Text',
-                                            "<underline>Buy again</underline>",
-                                            "TextStyle",
-                                            "PDABrowserThievesBoxLinks",
-                                        }, {
-                                            PlaceObj("XTemplateFunc", {
-                                                "name",
-                                                "OnMouseButtonDown(self, pos, button)",
-                                                "func",
-                                                function(self, pos, button)
-                                                    HUDA_ShopController:OrderToCart(self.context)
-                                                    ObjModified("order list")
-                                                    ObjModified("right panel")
-                                                    ObjModified("left panel")
-                                                    ObjModified("militia header")
-                                                end
-                                            })
-                                        }),
-                                        PlaceObj('XTemplateWindow', {
-                                            '__class',
-                                            "XText",
-                                            "MouseCursor",
-                                            "UI/Cursors/Pda_Hand.tga",
-                                            'Text',
-                                            "<underline>Refund</underline>",
-                                            "TextStyle",
-                                            "PDABrowserThievesBoxLinks",
-                                        }, {
-                                            PlaceObj("XTemplateFunc", {
-                                                "name",
-                                                "OnMouseButtonDown(self, pos, button)",
-                                                "func",
-                                                function(self, pos, button)
-                                                    HUDA_ShopController:Refund(self.context)
-                                                    ObjModified("order list")
-                                                    ObjModified("right panel")
-                                                    ObjModified("left panel")
-                                                    ObjModified("militia header")
-                                                end
-                                            })
-                                        })
-                                    }),
-                                })
-                            }),
+                        PlaceObj("XTemplateTemplate", {
+                            "__template",
+                            "PDAMilitiaShopOrder"
+                        })
+                    })
+                }),
+                PlaceObj("XTemplateWindow", {
+                    "__class",
+                    "XText",
+                    "Padding",
+                    box(0, 20, 0, 10),
+                    "HAlign",
+                    "left",
+                    "VAlign",
+                    "top",
+                    "HandleMouse",
+                    false,
+                    "TextStyle",
+                    "PDAIMPContentTitle",
+                    "Translate",
+                    true,
+                    "Text",
+                    "Order Archive"
+                }),
+                PlaceObj("XTemplateWindow", {
+                    "Margins",
+                    box(0, 0, 0, 0),
+                    "LayoutMethod",
+                    "VList",
+                    "LayoutVSpacing",
+                    10
+                }, {
+                    PlaceObj('XTemplateWindow', {
+                        '__class',
+                        "XText",
+                        "__condition",
+                        function(parent, context)
+                            return not HUDA_ArrayFind(gv_HUDA_ShopOrders, function(i, v)
+                                return v.status ~= "pending"
+                            end)
+                        end,
+                        'Text',
+                        "No archived orders",
+                        "Id",
+                        "idDate",
+                        "Dock",
+                        "left",
+                        "TextStyle",
+                        "PDAIMPMercBio"
+                    }),
+                    PlaceObj("XTemplateForEach", {
+                        "__context",
+                        function(parent, context, item, i, n)
+                            return item
+                        end,
+                        "array",
+                        function(parent, context)
+                            local archiveOrders = table.ifilter(gv_HUDA_ShopOrders, function(i, v)
+                                return v.status ~= "pending"
+                            end)
+
+                            table.sort(archiveOrders, function(a, b)
+                                return a.deliveryTime < b.deliveryTime
+                            end)
+
+                            return archiveOrders
+                        end
+                    }, {
+                        PlaceObj("XTemplateTemplate", {
+                            "__template",
+                            "PDAMilitiaShopOrder"
                         })
                     })
                 })

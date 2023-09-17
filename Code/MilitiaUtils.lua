@@ -109,6 +109,32 @@ function HUDA_GetSectorByUnitId(unit_id)
 	return HUDA_GetSector(unit)
 end
 
+function HUDA_GetSectorIdByUnitId(unit_id)
+	local unit = gv_UnitData[unit_id]
+	return HUDA_GetSectorId(unit)
+end
+
+function HUDA_GetEnglishString(v)
+
+	if type(v) == "string" then
+		return v
+	else
+		return TDevModeGetEnglishText(v)
+	end
+
+end
+
+function HUDA_T(text, replace)
+
+	for k, v in pairs(replace) do
+
+		text = string.gsub(text,"<" .. k  .. ">", HUDA_GetEnglishString(v) )
+	end
+
+	return text
+
+end
+
 function HUDA_GetSectorId(unit)
 	local squad = gv_Squads[unit.Squad]
 	return squad and squad.CurrentSector or "H2"
@@ -462,7 +488,7 @@ function HUDA_GetSquadName(squadId)
 	
 	local squad = gv_Squads[squadId]
 	
-	if squad.Name ~= "" then
+	if squad and squad.Name ~= "" then
 		return squad.Name
 	end
 

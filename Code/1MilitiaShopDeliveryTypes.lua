@@ -2,7 +2,7 @@ HUDA_MilitiaShopDeliveryTypes = {
     {
         id = "standard",
         name = "Standard",
-        duration = 3,
+        duration = 4,
         pricePerItem = 50,
         pricePerKilogram = 50,
         default = true
@@ -10,7 +10,7 @@ HUDA_MilitiaShopDeliveryTypes = {
     {
         id = "express",
         name = "Express",
-        duration = 1,
+        duration = 2,
         pricePerItem = 300,
         pricePerKilogram = 300
     },

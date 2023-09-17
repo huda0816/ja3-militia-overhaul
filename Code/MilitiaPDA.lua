@@ -1,3 +1,7 @@
+GameVar("gv_HUDA_Website_Status", {})
+
+
+
 if FirstLoad then
     local pda_mode_container = CustomSettingsMod.Utils.XTemplate_FindElementsByProp(XTemplates["PDABrowser"],
         "__template",
@@ -26,13 +30,26 @@ if PDABrowserTabData and not table.find(PDABrowserTabData, "id", "militia") then
     })
 end
 
-DefineClass.PDAMilitia = {
-    __parents = { "XDialog" },
-}
 
-function PDAMilitia:Open()
-    print("I got opened")
+function OnMsg.SquadSpawned(id) 
+    local squad = gv_Squads[id]
+
+    if not squad or not squad.militia then
+        return
+    end
+
+    if gv_HUDA_Website_Status.inaugurated then
+        return
+    end
+
+    -- ReceiveEmail(id)
+
+    -- PublishNews(id)
+
 end
+
+
+
 
 function OpenMilitiaPDA(mode)
     local full_screen = GetDialog("FullscreenGameDialogs")
@@ -77,8 +94,7 @@ function TFormat.PDAUrl(context_obj)
 
         local url = browserContent:GetURL(mode, mode_param)
 
-        return url or
-            T(846448600633, "http://www.gc-militia.org/")
+        return url or "http://www.gc-militia.org/"
     end
 
     return HUDA_OriginalPDAUrl(context_obj)
@@ -151,15 +167,11 @@ function TFormat.MilitiaStatus(item)
 end
 
 function TFormat.NewsMeta(item)
-    local sector, date
+    local date, city = HUDA_NewsController:GetNewsMeta(item)
 
-    if (item.sector) then
-        sector = GetSectorName(HUDA_GetSectorById(item.sector))
-    end
+    return date .. (date and city and " - ") .. city
+end
 
-    if (item.date) then
-        date = HUDA_GetDateFromTime(item.date)
-    end
-
-    return date .. (date and sector and " - ") .. sector
+function TFormat.GetDateFromTime(time)
+    return HUDA_GetDateFromTime(time)
 end

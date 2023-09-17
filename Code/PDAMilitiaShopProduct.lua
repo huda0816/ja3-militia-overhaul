@@ -275,9 +275,6 @@ PlaceObj("XTemplate", {
                         "OnMouseButtonDown(self, pos, button)",
                         "func",
                         function(self, pos, button)
-
-                            print("buy ammo click")
-
                             local dlg = GetDialog(self.parent)
 
                             dlg:SetMode("trick",

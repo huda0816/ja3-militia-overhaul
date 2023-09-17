@@ -87,7 +87,7 @@ PlaceObj("XTemplate", {
           "Translate",
           true,
           "Text",
-          T(361347984095, "MILITIA SQUADS")
+          "MILITIA SQUADS"
         }),
         PlaceObj("XTemplateWindow", {
           "Margins",

@@ -435,71 +435,247 @@ PlaceObj("XTemplate", {
             }),
             PlaceObj("XTemplateWindow", {
                 "__class",
-                "XText",
+                "XFrame",
                 "Margins",
-                box(0, 0, 0, 0),
-                "HAlign",
-                "left",
+                box(0, 5, 0, 5),
+                "Id",
+                "idCouponFrame",
                 "VAlign",
-                "top",
-                "TextStyle",
-                "PDAIMPMercBio",
-                "Translate",
-                true,
-                "OnLayoutComplete",
-                function(self)
-                    self:SetText("Products: " .. HUDA_ShopController:GetProductPrice() .. "$")
-                end,
-                "Text",
-                "Products"
+                "center",
+                "MinHeight",
+                30,
+                "Image",
+                "UI/PDA/imp_bar",
+                "FrameBox",
+                box(5, 5, 5, 5)
+            }, {
+                PlaceObj("XTemplateWindow", {
+                    "__class",
+                    "XEdit",
+                    "Margins",
+                    box(5, 0, 5, 0),
+                    "BorderWidth",
+                    0,
+                    "HAlign",
+                    "stretch",
+                    "VAlign",
+                    "center",
+                    "Background",
+                    RGBA(240, 240, 240, 0),
+                    "MouseCursor",
+                    "UI/Cursors/Pda_Hand.tga",
+                    "FocusOrder",
+                    point(0, 0),
+                    "FocusedBorderColor",
+                    RGBA(240, 240, 240, 0),
+                    "FocusedBackground",
+                    RGBA(240, 240, 240, 0),
+                    "DisabledBorderColor",
+                    RGBA(240, 240, 240, 0),
+                    "DisabledBackground",
+                    RGBA(240, 240, 240, 0),
+                    "TextStyle",
+                    "PDAMilitiaShopCouponCode",
+                    "OnContextUpdate",
+                    function(self, context, ...)
+                        if gv_HUDA_ShopCart.coupon then
+                            self:SetText(gv_HUDA_ShopCart.coupon.id)
+                        end
+                    end,
+                    "OnTextChanged",
+                    function(self)
+                        local text = self:GetText()
+
+                        if HUDA_ShopController:VerifyCoupon(text) then
+                            self:SetTextStyle("PDAMilitiaShopCouponCodeValid")
+                            self:SetFocus(false)
+                            HUDA_ShopController:AddCouponToCart(text)
+                        else
+                            self:SetTextStyle("PDAMilitiaShopCouponCode")
+                            HUDA_ShopController:RemoveCouponFromCart()
+                        end
+
+                        PlayFX("Typing", "start")
+                    end,
+                    "MaxLen",
+                    16,
+                    "Hint",
+                    "Coupon Code"
+                })
             }),
             PlaceObj("XTemplateWindow", {
                 "__class",
                 "XText",
-                "__context",
-                function()
-                    return HUDA_ShopController:GetDeliveryCosts()
-                end,
                 "Margins",
-                box(0, 0, 0, 0),
+                box(0, -5, 0, 0),
                 "HAlign",
                 "left",
+                "Visible",
+                false,
+                "FoldWhenHidden",
+                true,
                 "VAlign",
                 "top",
                 "TextStyle",
-                "PDAIMPMercBio",
+                "PDABrowserThievesBoxLinksSuffix",
                 "Translate",
                 true,
                 "OnLayoutComplete",
                 function(self)
-                    self:SetText("Delivery: " .. HUDA_ShopController:GetDeliveryCosts() .. "$")
+                    if gv_HUDA_ShopCart.coupon then
+                        self:SetText("Discount: ".. gv_HUDA_ShopCart.coupon.discount .. "%")
+                        self:SetVisible(true)
+                    end
                 end,
                 "Text",
-                "Delivery"
+                "Discout"
             }),
             PlaceObj("XTemplateWindow", {
-                "__class",
-                "XText",
-                "__context",
-                function()
-                    return "total price"
-                end,
-                "Margins",
-                box(0, 0, 0, 0),
-                "HAlign",
-                "left",
-                "VAlign",
-                "top",
-                "TextStyle",
-                "PDAIMPMercName",
-                "Translate",
-                true,
-                "OnLayoutComplete",
-                function(self)
-                    self:SetText("Total: " .. HUDA_ShopController:GetTotalPrice() .. "$")
-                end,
-                "Text",
-                "Total"
+                "LayoutMethod",
+                "Grid",
+            }, {
+                PlaceObj("XTemplateWindow", {
+                    "__class",
+                    "XText",
+                    "Margins",
+                    box(0, 0, 0, 0),
+                    "HAlign",
+                    "left",
+                    "VAlign",
+                    "top",
+                    "TextStyle",
+                    "PDAIMPMercBio",
+                    "GridX",
+                    1,
+                    "GridY",
+                    1,
+                    "Translate",
+                    true,
+                    "Text",
+                    "Products:"
+                }),
+                PlaceObj("XTemplateWindow", {
+                    "__class",
+                    "XText",
+                    "__context",
+                    function()
+                        return "shop product cost"
+                    end,
+                    "Margins",
+                    box(0, 0, 0, 0),
+                    "HAlign",
+                    "right",
+                    "VAlign",
+                    "top",
+                    "TextStyle",
+                    "PDAIMPMercBio",
+                    "GridX",
+                    2,
+                    "GridY",
+                    1,
+                    "Translate",
+                    true,
+                    "OnLayoutComplete",
+                    function(self)
+                        self:SetText(HUDA_ShopController:GetProductPrice() .. "$")
+                    end,
+                    "Text",
+                    "Products"
+                }),
+                PlaceObj("XTemplateWindow", {
+                    "__class",
+                    "XText",
+                    "Margins",
+                    box(0, 0, 0, 0),
+                    "HAlign",
+                    "left",
+                    "VAlign",
+                    "top",
+                    "TextStyle",
+                    "PDAIMPMercBio",
+                    "GridX",
+                    1,
+                    "GridY",
+                    2,
+                    "Translate",
+                    true,
+                    "Text",
+                    "Delivery:"
+                }),
+                PlaceObj("XTemplateWindow", {
+                    "__class",
+                    "XText",
+                    "__context",
+                    function()
+                        return "shop delivery cost"
+                    end,
+                    "Margins",
+                    box(0, 0, 0, 0),
+                    "HAlign",
+                    "right",
+                    "VAlign",
+                    "top",
+                    "TextStyle",
+                    "PDAIMPMercBio",
+                    "GridX",
+                    2,
+                    "GridY",
+                    2,
+                    "Translate",
+                    true,
+                    "OnLayoutComplete",
+                    function(self)
+                        self:SetText(HUDA_ShopController:GetDeliveryCosts() .. "$")
+                    end,
+                    "Text",
+                    "Delivery"
+                }),
+                PlaceObj("XTemplateWindow", {
+                    "__class",
+                    "XText",
+                    "Margins",
+                    box(0, 0, 0, 0),
+                    "HAlign",
+                    "left",
+                    "VAlign",
+                    "top",
+                    "TextStyle",
+                    "PDAIMPMercName",
+                    "GridX",
+                    1,
+                    "GridY",
+                    3,
+                    "Translate",
+                    true,
+                    "Text",
+                    "Total:"
+                }),
+                PlaceObj("XTemplateWindow", {
+                    "__class",
+                    "XText",
+                    "__context",
+                    function()
+                        return "total price"
+                    end,
+                    "Margins",
+                    box(0, 0, 0, 0),
+                    "HAlign",
+                    "right",
+                    "VAlign",
+                    "top",
+                    "TextStyle",
+                    "PDAIMPMercName",
+                    "GridX",
+                    2,
+                    "GridY",
+                    3,
+                    "Translate",
+                    true,
+                    "OnLayoutComplete",
+                    function(self)
+                        self:SetText(HUDA_ShopController:GetTotalPrice() .. "$")
+                    end
+                })
             }),
             PlaceObj("XTemplateWindow", {
                 "__class",

@@ -5,8 +5,8 @@ PlaceObj('ModItemCharacterEffectCompositeDef', {
 	'msg_reactions', {},
 	'Conditions', {},
 	'Modifiers', {},
-	'DisplayName', T(182194371198, --[[ModItemCharacterEffectCompositeDef FarFromHome DisplayName]] "Far From Home"),
-	'Description', T(803340073508, --[[ModItemCharacterEffectCompositeDef FarFromHome Description]] "Militia soldiers who fight too far from their hometown, especially rookies, face various negative effects such as loss of morale."),
+	'DisplayName', T(215892752703, --[[ModItemCharacterEffectCompositeDef FarFromHome DisplayName]] "Far From Home"),
+	'Description', T(896795480820, --[[ModItemCharacterEffectCompositeDef FarFromHome Description]] "Militia soldiers who fight too far from their hometown, especially rookies, face various negative effects such as loss of morale."),
 	'type', "Debuff",
 	'Icon', "Mod/LXPER6t/Icons/farfromhome.png",
 	'Shown', true,
@@ -16,8 +16,28 @@ PlaceObj('ModItemCharacterEffectCompositeDef', {
 	'Id', "GCMilitia",
 	'object_class', "CharacterEffect",
 	'msg_reactions', {},
-	'DisplayName', T(536678008843, --[[ModItemCharacterEffectCompositeDef GCMilitia DisplayName]] "Grand Chien Militia"),
-	'Description', T(469649990452, --[[ModItemCharacterEffectCompositeDef GCMilitia Description]] "A perk every militia solider gets after bootcamp. Which allows them to clean and maintain their weapons."),
+	'DisplayName', T(769204758850, --[[ModItemCharacterEffectCompositeDef GCMilitia DisplayName]] "Grand Chien Militia"),
+	'Description', T(317123105118, --[[ModItemCharacterEffectCompositeDef GCMilitia Description]] "A perk every militia solider gets after bootcamp. Which allows them to clean and maintain their weapons."),
+}),
+PlaceObj('ModItemCode', {
+	'name', "1MilitiaShopCategories",
+	'CodeFileName', "Code/1MilitiaShopCategories.lua",
+}),
+PlaceObj('ModItemCode', {
+	'name', "1MilitiaShopCouponCodes",
+	'CodeFileName', "Code/1MilitiaShopCouponCodes.lua",
+}),
+PlaceObj('ModItemCode', {
+	'name', "1MilitiaShopDeliveryTypes",
+	'CodeFileName', "Code/1MilitiaShopDeliveryTypes.lua",
+}),
+PlaceObj('ModItemCode', {
+	'name', "1MilitiaShopInventoryTemplate",
+	'CodeFileName', "Code/1MilitiaShopInventoryTemplate.lua",
+}),
+PlaceObj('ModItemCode', {
+	'name', "1Options",
+	'CodeFileName', "Code/1Options.lua",
 }),
 PlaceObj('ModItemCode', {
 	'name', "MilitiaAARGenerator",
@@ -112,6 +132,10 @@ PlaceObj('ModItemCode', {
 	'CodeFileName', "Code/PDAMilitia.lua",
 }),
 PlaceObj('ModItemCode', {
+	'name', "PDAMilitiaAAR",
+	'CodeFileName', "Code/PDAMilitiaAAR.lua",
+}),
+PlaceObj('ModItemCode', {
 	'name', "PDAMilitiaAmmoNav",
 	'CodeFileName', "Code/PDAMilitiaAmmoNav.lua",
 }),
@@ -140,6 +164,10 @@ PlaceObj('ModItemCode', {
 	'CodeFileName', "Code/PDAMilitiaShopAddress.lua",
 }),
 PlaceObj('ModItemCode', {
+	'name', "PDAMilitiaShopAddressPicker",
+	'CodeFileName', "Code/PDAMilitiaShopAddressPicker.lua",
+}),
+PlaceObj('ModItemCode', {
 	'name', "PDAMilitiaShopCart",
 	'CodeFileName', "Code/PDAMilitiaShopCart.lua",
 }),
@@ -154,6 +182,10 @@ PlaceObj('ModItemCode', {
 PlaceObj('ModItemCode', {
 	'name', "PDAMilitiaShopNav",
 	'CodeFileName', "Code/PDAMilitiaShopNav.lua",
+}),
+PlaceObj('ModItemCode', {
+	'name', "PDAMilitiaShopOrder",
+	'CodeFileName', "Code/PDAMilitiaShopOrder.lua",
 }),
 PlaceObj('ModItemCode', {
 	'name', "PDAMilitiaShopOrders",
@@ -192,20 +224,8 @@ PlaceObj('ModItemCode', {
 	'CodeFileName', "Code/PDAMilitiaSquads.lua",
 }),
 PlaceObj('ModItemCode', {
-	'name', "_MilitiaShopCategories",
-	'CodeFileName', "Code/_MilitiaShopCategories.lua",
-}),
-PlaceObj('ModItemCode', {
-	'name', "_MilitiaShopDeliveryTypes",
-	'CodeFileName', "Code/_MilitiaShopDeliveryTypes.lua",
-}),
-PlaceObj('ModItemCode', {
-	'name', "_MilitiaShopInventoryTemplate",
-	'CodeFileName', "Code/_MilitiaShopInventoryTemplate.lua",
-}),
-PlaceObj('ModItemCode', {
-	'name', "_Options",
-	'CodeFileName', "Code/_Options.lua",
+	'name', "PDAMilitiaShopUnavailable",
+	'CodeFileName', "Code/PDAMilitiaShopUnavailable.lua",
 }),
 PlaceObj('ModItemMsgDef', {
 	Description = "When a militia soldier gets promoted",
@@ -413,15 +433,29 @@ PlaceObj('ModItemOptionToggle', {
 PlaceObj('ModItemTextStyle', {
 	RolloverTextColor = 4291018156,
 	TextColor = 4291018156,
-	TextFont = T(550204882869, --[[ModItemTextStyle HUDASMALLPDASM TextFont]] "HMGothic Rough A, 10"),
+	TextFont = T(136501526624, --[[ModItemTextStyle HUDASMALLPDASM TextFont]] "HMGothic Rough A, 10"),
 	id = "HUDASMALLPDASM",
 }),
 PlaceObj('ModItemTextStyle', {
 	RolloverTextColor = 4281612093,
 	ShadowType = "outline",
 	TextColor = 4290724685,
-	TextFont = T(665177605877, --[[ModItemTextStyle HUDAProductOutOfStock TextFont]] "HMGothic Regular A, 16"),
+	TextFont = T(975961077996, --[[ModItemTextStyle HUDAProductOutOfStock TextFont]] "HMGothic Regular A, 16"),
 	group = "Zulu PDA",
 	id = "HUDAProductOutOfStock",
+}),
+PlaceObj('ModItemTextStyle', {
+	RolloverTextColor = 4290132532,
+	ShadowType = "outline",
+	TextColor = 4290132532,
+	TextFont = T(972058113481, --[[ModItemTextStyle PDAMilitiaShopCouponCode TextFont]] "HMGothic Regular A, 14"),
+	id = "PDAMilitiaShopCouponCode",
+}),
+PlaceObj('ModItemTextStyle', {
+	RolloverTextColor = 4286349920,
+	ShadowType = "outline",
+	TextColor = 4286349920,
+	TextFont = T(454956470660, --[[ModItemTextStyle PDAMilitiaShopCouponCodeValid TextFont]] "HMGothic Regular A, 14"),
+	id = "PDAMilitiaShopCouponCodeValid",
 }),
 }

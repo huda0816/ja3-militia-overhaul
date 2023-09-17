@@ -2,21 +2,215 @@ GameVar("gv_HUDA_ShopInventory", {})
 GameVar("gv_HUDA_ShopOrders", {})
 GameVar("gv_HUDA_ShopCart", {})
 GameVar("gv_HUDA_ShopQuery", {})
-GameVar("gv_HUDA_ShopTierStatus", 1)
-GameVar("gv_HUDA_ShopArrived", {})
+GameVar("gv_HUDA_ShopCouponCodes", {})
+GameVar("gv_HUDA_ShopStatus", {})
+
+
+-- TFormat
+
+function TFormat.CurrentDeliveryAddress()
+    return HUDA_ShopController:GetCurrentDeliveryAddress()
+end
+
+-- Hooks
 
 function OnMsg.NewDay()
-    HUDA_ShopController:Restock()
-    HUDA_ShopController:RefreshOrders()
+    HUDA_ShopController:MaybeRestock()
     HUDA_ShopController:CheckAbandonedCart()
 end
+
+function OnMsg.NewHour()
+    local t = GetTimeAsTable(Game.CampaignTime)
+
+    if t.hour > 7 and t.hour < 13 then
+        HUDA_ShopController:RefreshOrders(t)
+    end
+
+    if t.hour == 18 then
+        HUDA_ShopController:UpdateTopSellers()
+    end
+    
+    if t.hour == 21 then
+        HUDA_ShopController:CheckTierStatus()
+    end
+end
+
+function OnMsg.SectorSideChanged(sectorId, oldSide, newSide)
+    if newSide ~= "player1" then
+        HUDA_ShopController:CheckSectorLost()
+    end
+end
+
+function OnMsg.ZuluGameLoaded(game)
+    HUDA_ShopController:Init()
+end
+
+-- Functions
 
 DefineClass.HUDA_ShopController = {
     AbandonedCartTimeout = 1,
     Categories = HUDA_MilitiaShopCategories,
     InventoryTemplate = HUDA_MilitiaShopInventoryTemplate,
     DeliveryTypes = HUDA_MilitiaShopDeliveryTypes,
+    CouponCodes = HUDA_MilitiaShopCouponCodes,
+    ValidDeliverySectors = { "H2", "K9" },
+    ShopStatus = {
+        tier = 1,
+        lastRestock = 0,
+        open = false,
+        deliverySector = "H2",
+        topSellers = {},
+        arrived = {}
+    }
 }
+
+function HUDA_ShopController:Init()
+    if not next(gv_HUDA_ShopInventory) then
+        self:Restock()
+    end
+
+    if not next(gv_HUDA_ShopStatus) then
+        gv_HUDA_ShopStatus = self.ShopStatus
+    end
+
+    self:UpdateCouponCodes()
+end
+
+function HUDA_ShopController:CheckSectorLost(sectorId)
+    local ernieSide = gv_Sectors["H2"].Side
+
+    if ernieSide ~= "player1" then
+        if sectorId == "H2" and gv_HUDA_ShopStatus.open then
+            self:CreateMessageBox("We lost Ernie",
+                "Without control of Ernie, we can't run the shop. We need to get it back.")
+
+            Msg("HUDA_ShopClosed", { reason = "ernie" })
+        end
+
+        gv_HUDA_ShopStatus.open = false
+    end
+end
+
+function HUDA_ShopController:UpdateTopSellers()
+    local orders = gv_HUDA_ShopOrders
+
+    if not next(orders) then
+        return
+    end
+
+    if orders[#orders].orderTime < GameTime() - (24 * 60 * 60) then
+        return
+    end
+
+    local sold = {}
+
+    for _, order in ipairs(orders) do
+        for _, item in ipairs(order.products) do
+            if not sold[item.id] then
+                sold[item.id] = 0
+            end
+
+            sold[item.id] = sold[item.id] + item.count
+        end
+    end
+
+    local top = {}
+
+    for id, count in pairs(sold) do
+        table.insert(top, { id = id, count = count })
+    end
+
+    table.sort(top, function(a, b) return a.count > b.count end)
+
+    gv_HUDA_ShopStatus.topSellers = top
+end
+
+function HUDA_ShopController:GetTopSellers(number)
+    local top = gv_HUDA_ShopStatus.topSellers
+
+    local preparedProducts = gv_HUDA_ShopInventory
+
+    local products = {}
+
+    for _, item in ipairs(top) do
+        local product = HUDA_ArrayFind(preparedProducts, function(i, p) return p.id == item.id and p.stock > 0 end)
+
+        if product then
+            table.insert(products, product)
+
+            if number and #products >= number then
+                break
+            end
+        end
+    end
+
+    return products
+end
+
+function HUDA_ShopController:UpdateCouponCodes()
+    local codes = self.CouponCodes
+
+    if not next(gv_HUDA_ShopCouponCodes) then
+        gv_HUDA_ShopCouponCodes = table.copy(codes)
+        return
+    end
+
+    for k, code in pairs(codes) do
+        if not gv_HUDA_ShopCouponCodes[k] then
+            gv_HUDA_ShopCouponCodes[k] = code
+        end
+    end
+end
+
+function HUDA_ShopController:VerifyCoupon(id)
+    local coupon = gv_HUDA_ShopCouponCodes[string.lower(id)]
+
+    if not coupon then
+        return false
+    end
+
+    if coupon.used and not coupon.multi then
+        self:CreateMessageBox("Coupon already used", "This coupon has already been used.")
+        return false
+    end
+
+    return true
+end
+
+function HUDA_ShopController:AddCouponToCart(id)
+    if not id then
+        return
+    end
+
+    id = string.lower(id)
+
+    if gv_HUDA_ShopCart.coupon and gv_HUDA_ShopCart.coupon.id == id then
+        return
+    end
+
+    local code = gv_HUDA_ShopCouponCodes[id]
+
+    if not code then
+        return
+    end
+
+    gv_HUDA_ShopCart.coupon = {
+        id = id,
+        discount = code.discount
+    }
+
+    ObjModified("shop cart")
+end
+
+function HUDA_ShopController:RemoveCouponFromCart()
+    if not gv_HUDA_ShopCart.coupon then
+        return
+    end
+
+    gv_HUDA_ShopCart.coupon = nil
+
+    ObjModified("shop cart")
+end
 
 function HUDA_ShopController:SetInventoryTemplate(template)
     self.InventoryTemplate = template
@@ -26,37 +220,54 @@ function HUDA_ShopController:SetShopCategories(categories)
     self.Categories = categories
 end
 
+function HUDA_ShopController:GetCurrentDeliveryAddress()
+    local id = gv_HUDA_ShopCart.sector or gv_HUDA_ShopStatus.deliverySector or "H2"
+
+    return GetSectorName(gv_Sectors[id])
+end
+
 function HUDA_ShopController:SetDeliveryTypes(deliveryTypes)
     self.DeliveryTypes = deliveryTypes
 end
 
-function HUDA_ShopController:Restock(force)
-    local tier = gv_HUDA_ShopTierStatus or 1
+function HUDA_ShopController:MaybeRestock(sectors)
+    local daysSinceLastRestock = gv_HUDA_ShopStatus.lastRestock or 0
+
+    gv_HUDA_ShopStatus.lastRestock = daysSinceLastRestock + 1
+
+    if not daysSinceLastRestock or daysSinceLastRestock < 1 then
+        return
+    end
+
+    local restockRoll = InteractionRand(6, "HUDA_ShopRestock")
+
+    if restockRoll > daysSinceLastRestock then
+        return
+    end
+
+    gv_HUDA_ShopStatus.lastRestock = 0
+
+    self:Restock()
+end
+
+function HUDA_ShopController:Restock()
+    local tier = gv_HUDA_ShopStatus.tier or 1
 
     local filteredProducts = table.ifilter(self.InventoryTemplate, function(_, product)
         return (product.tier or 1) <= tier
     end)
-
-    Inspect(filteredProducts)
 
     local products = {}
 
     for _, product in ipairs(filteredProducts) do
         local roll = InteractionRand(100, "HUDA_ShopAvailability")
 
-        print("Rolling for " ..
-            product.id .. " with " .. roll .. " vs " .. product.availability + ((tier - product.tier) * 10))
-
         if roll < (product.availability or 100) + ((tier - product.tier) * 10) then
             local prod = table.copy(product)
 
             local tierBonus = 1 + ((tier - product.tier) * 0.5)
 
-            print("Tier bonus for " .. product.id .. " is " .. tierBonus)
-
             local stock = round(product.stock * tierBonus, 1)
-
-            print("Restocking " .. product.id .. " to " .. stock)
 
             prod.stock = stock
 
@@ -134,6 +345,10 @@ function HUDA_ShopController:GetProductPrice()
         price = price + product.price * product.count
     end
 
+    if cart.coupon then
+        price = price - MulDivRound(price, cart.coupon.discount, 100)
+    end
+
     return price
 end
 
@@ -203,7 +418,7 @@ function HUDA_ShopController:GetProducts(query, noqueryupdate)
     local preparedProducts = gv_HUDA_ShopInventory
 
     if query then
-        return table.ifilter(preparedProducts, function(i, product)
+        preparedProducts = table.ifilter(preparedProducts, function(i, product)
             if query.new and not product.new then
                 return false
             end
@@ -232,16 +447,20 @@ function HUDA_ShopController:GetProducts(query, noqueryupdate)
         end)
     end
 
+    if query.num then
+        return table.move(preparedProducts, 1, query.num, 1, {})
+    end
+
     return preparedProducts
 end
 
 function HUDA_ShopController:PrepareProducts(products)
     local preparedProducts = {}
 
-    if not next(gv_HUDA_ShopArrived) then
-        gv_HUDA_ShopArrived = {}
+    if not next(gv_HUDA_ShopStatus.arrived) then
+        gv_HUDA_ShopStatus.arrived = {}
         for i, product in ipairs(products) do
-            table.insert(gv_HUDA_ShopArrived, product.id)
+            table.insert(gv_HUDA_ShopStatus.arrived, product.id)
         end
     end
 
@@ -256,8 +475,7 @@ function HUDA_ShopController:PrepareProducts(products)
     return preparedProducts
 end
 
-function HUDA_ShopController:CheckNewArrivals(products) 
-
+function HUDA_ShopController:CheckNewArrivals(products)
     local newProducts = table.ifilter(products, function(i, product)
         return product.new
     end)
@@ -274,7 +492,7 @@ function HUDA_ShopController:CheckNewArrivals(products)
 
     newProductsStr = string.sub(newProductsStr, 1, -3)
 
-    self:SendMails("NewArrivals", {equipment = newProductsStr})
+    self:SendMails("NewArrivals", { equipment = newProductsStr })
 end
 
 function HUDA_ShopController:PrepareProduct(product)
@@ -284,10 +502,10 @@ function HUDA_ShopController:PrepareProduct(product)
         return product
     end
 
-    if not table.find(gv_HUDA_ShopArrived, product.id) then
+    if not table.find(gv_HUDA_ShopStatus.arrived, product.id) then
         product.new = true
 
-        table.insert(gv_HUDA_ShopArrived, product.id)
+        table.insert(gv_HUDA_ShopStatus.arrived, product.id)
     else
         product.new = false
     end
@@ -428,6 +646,8 @@ function HUDA_ShopController:ClearCart()
 
     cart.products = {}
 
+    cart.coupon = nil
+
     self:ModifyObjects()
 end
 
@@ -554,21 +774,37 @@ function HUDA_ShopController:DateFromTime(timeStamp)
     return month .. "/" .. day .. "/" .. year
 end
 
-function HUDA_ShopController:RefreshOrders()
+function HUDA_ShopController:RefreshOrders(t)
     local orders = gv_HUDA_ShopOrders
 
-    local time = Game.CampaignTime
+    local pendingOrders = table.ifilter(orders, function(i, order)
+        return order.status == "pending"
+    end)
 
-    for i, order in ipairs(orders) do
-        if order.status == "pending" then
-            local deliveryDuration = self:GetDeliveryDuration(order)
+    if not next(pendingOrders) then
+        return
+    end
 
-            local deliveryTime = order.orderTime + deliveryDuration
+    for i, order in ipairs(pendingOrders) do
+        local deliveryDuration = self:GetDeliveryDuration(order)
 
-            if time >= deliveryTime then
+        local deliveryTime = order.orderTime + deliveryDuration
+
+        local orderTimeObj = GetTimeAsTable(order.orderTime)
+
+        if Game.CampaignTime >= deliveryTime and orderTimeObj.day ~= t.day then
+            if self:RollDelivery(t.hour) then
                 HUDA_ShopController:Deliver(order)
             end
         end
+    end
+end
+
+function HUDA_ShopController:RollDelivery(hour)
+    local roll = InteractionRand(120, "HUDA_ShopDelivery")
+
+    if roll < (10 * hour) then
+        return true
     end
 end
 
@@ -591,11 +827,15 @@ function HUDA_ShopController:Refund(order)
         end
     end
 
-    ObjModified(gv_HUDA_ShopOrders)
-end
+    if order.coupon then
+        local coupon = gv_HUDA_ShopCouponCodes[order.coupon.id]
 
-function HUDA_ShopController:EditAddress()
-    self:CreateMessageBox("Edit Address", "Editing the delivery address is not possible at the moment.")
+        if coupon then
+            coupon.used = false
+        end
+    end
+
+    ObjModified(gv_HUDA_ShopOrders)
 end
 
 function HUDA_ShopController:Deliver(order)
@@ -617,8 +857,9 @@ function HUDA_ShopController:Deliver(order)
     AddToSectorInventory(order.sector, items)
 
     order.status = "delivered"
+    order.deliveryTime = Game.CampaignTime
 
-    self:SendMails("delivered", { location = order.location or "H2" })
+    self:SendMails("delivered", { sector = order.sector or "H2" })
 end
 
 function HUDA_ShopController:Order()
@@ -633,14 +874,26 @@ function HUDA_ShopController:Order()
     local orders = gv_HUDA_ShopOrders;
 
     local order = {
-        id = "order_" .. #orders + 1,
+        id = "order_" .. string.format("%05d", (#orders + 1)),
         products = cart.products,
         status = "pending",
         total = total,
-        sector = "H2",
+        sector = cart.sector or "H2",
         orderTime = Game.CampaignTime,
-        deliveryType = cart.deliveryType
+        deliveryType = cart.deliveryType,
     }
+
+    if cart.coupon then
+        order.coupon = cart.coupon
+
+        if not cart.coupon.multiple then
+            local coupon = gv_HUDA_ShopCouponCodes[cart.coupon.id]
+
+            if coupon then
+                coupon.used = true
+            end
+        end
+    end
 
     gv_HUDA_ShopCart = {}
 
@@ -649,6 +902,37 @@ function HUDA_ShopController:Order()
     self:CreateMessageBox("Order placed", "Your order has been placed. You will receive a notification when it arrives.")
 
     self:SendMails("orderPlaced")
+end
+
+function HUDA_ShopController:ChooseAddress()
+    local sector_posibilities = {}
+    for i, sectorId in ipairs(self.ValidDeliverySectors) do
+        local sector = gv_Sectors[sectorId]
+
+        if sector.Side == "player1" then
+            sector_posibilities[#sector_posibilities + 1] = sectorId
+        end
+    end
+    if #sector_posibilities <= 1 then
+        self:CreateMessageBox("Edit Delivery Address", "There are no sectors available for delivery.")
+        return
+    end
+    local popupHost = GetDialog("PDADialog")
+    popupHost = popupHost and popupHost:ResolveId("idDisplayPopupHost")
+    if not popupHost then
+        self:CreateMessageBox("Edit Address", "Editing the delivery address is not possible at the moment.")
+    end
+    local pickDlg = XTemplateSpawn("PDAMilitiaShopAddressPicker", popupHost, {
+        sectors = sector_posibilities
+    })
+    pickDlg:Open()
+    return pickDlg
+end
+
+function HUDA_ShopController:ChangeDeliveryAddress(sectorId)
+    gv_HUDA_ShopCart.sector = sectorId
+    gv_HUDA_ShopStatus.deliverySector = sectorId
+    ObjModified("shop address")
 end
 
 function HUDA_ShopController:Pay(cart)
@@ -664,6 +948,43 @@ function HUDA_ShopController:Pay(cart)
     return total
 end
 
+function HUDA_ShopController:CheckTierStatus()
+    local currentTier = gv_HUDA_ShopStatus.tier
+
+
+    if currentTier == 5 then
+        return
+    end
+
+    local militiaUnits = table.filter(gv_UnitData, function(k, unit)
+        return unit.militia and unit.HireStatus ~= "Dead"
+    end)
+
+    local militiaNum = #militiaUnits
+
+    local newTier = currentTier
+
+    if militiaNum >= 64 then
+        newTier = 5
+    elseif militiaNum >= 48 then
+        newTier = 4
+    elseif militiaNum >= 32 then
+        newTier = 3
+    elseif militiaNum >= 16 then
+        newTier = 2
+    elseif militiaNum >= 4 then
+        newTier = 1
+    end
+
+    if newTier > currentTier then
+        gv_HUDA_ShopStatus.tier = newTier
+        
+        self:SendMails("newTier", { tier = newTier })
+
+    end
+
+end
+
 function HUDA_ShopController:CreateMessageBox(title, text)
     local popupHost = GetDialog("PDADialog")
     popupHost = popupHost and popupHost:ResolveId("idPDAContainer")
@@ -676,7 +997,7 @@ function HUDA_ShopController:SendMails(internalId, context)
 
     if internalId == "delivered" then
         id = "HUDA_ShipmentArrived"
-        context = { location = GetSectorName(gv_Sectors[context.location]) or context.location }
+        context = { location = GetSectorName(gv_Sectors[context.sector]) or context.sector }
     elseif internalId == "orderPlaced" then
         id = "HUDA_OrderPlaced"
     else

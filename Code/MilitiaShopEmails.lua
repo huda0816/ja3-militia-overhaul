@@ -1,21 +1,21 @@
-if FirstLoad then
-    local HUDA_hyperlink_function = CustomSettingsMod.Utils.XTemplate_FindElementsByProp(XTemplates["PDAQuests_Email"],
-        "name", "OnHyperLink(self, hyperlink, argument, hyperlink_box, pos, button)")
+-- if FirstLoad then
+local HUDA_hyperlink_function = CustomSettingsMod.Utils.XTemplate_FindElementsByProp(XTemplates["PDAQuests_Email"],
+    "name", "OnHyperLink(self, hyperlink, argument, hyperlink_box, pos, button)")
 
-    if HUDA_hyperlink_function then
-        HUDA_hyperlink_function.element.func = function(self, hyperlink, argument, hyperlink_box, pos, button)
-            if hyperlink == "OpenIMPPage" then
-                OpenIMPPage()
-            end
-            if hyperlink == "OpenShopPage" then
-                HUDA_OpenShopPage()
-            end
-            if hyperlink == "OpenSectorInventory" then
-                HUDA_OpenSectorInventory()
-            end
+if HUDA_hyperlink_function then
+    HUDA_hyperlink_function.element.func = function(self, hyperlink, argument, hyperlink_box, pos, button)
+        if hyperlink == "OpenIMPPage" then
+            OpenIMPPage()
+        end
+        if hyperlink == "OpenShopPage" then
+            HUDA_OpenShopPage()
+        end
+        if hyperlink == "OpenSectorInventory" then
+            HUDA_OpenSectorInventory(self.context.context.location)
         end
     end
 end
+-- end
 
 
 function HUDA_OpenShopPage()
@@ -34,19 +34,29 @@ function HUDA_OpenShopPage()
     end
 end
 
-function HUDA_OpenSectorInventory()
-    local sectorId = "H2"
+function HUDA_OpenSectorInventory(sectorName)
+    local sectorId = sectorName[3][1] or "H2"
 
     local unitsInSector = GetPlayerSectorUnits(sectorId)
 
-    if not next(unitsInSector) then
+    local militiaInSector = next(gv_Sectors[sectorId].militia_squads) and next(gv_Sectors[sectorId].militia_squads[1].units) and true or false
+
+    if not next(unitsInSector) and not militiaInSector then
         local popupHost = GetDialog("PDADialog")
         popupHost = popupHost and popupHost:ResolveId("idPDAContainer")
 
         local dlg = CreateMessageBox(popupHost, "No Units in sector",
             "Move units to sector " .. sectorId .. ", to open the inventory.")
     else
-        local unit = unitsInSector[1]
+        local unit
+
+        if next(unitsInSector) then
+            unit = unitsInSector[1]
+        else
+            local unitId = gv_Sectors[sectorId].militia_squads[1].units[1]
+
+            unit = gv_UnitData[unitId]
+        end
 
         OpenInventory(unit, GetSectorInventory(sectorId))
     end
@@ -66,7 +76,7 @@ PlaceObj('Email', {
 
 PlaceObj('Email', {
     body =
-    "Dear customer,\n\nWe are happy to inform you that your order has been delivered to <h OpenSectorInventory><underline><em><location></em></underline></h>.\n\nThank you for choosing I.M.P.M.S.S.!\n\nSincerely,\n I.M.P.M.S.S. Customer Service",
+    "Dear customer,\n\nWe are happy to inform you that your order has been delivered to <h OpenSectorInventory location><underline><em><location></em></underline></h>.\n\nThank you for choosing I.M.P.M.S.S.!\n\nSincerely,\n I.M.P.M.S.S. Customer Service",
     group = "Militia",
     label = "Important",
     id = "HUDA_ShipmentArrived",
@@ -93,5 +103,16 @@ PlaceObj('Email', {
     id = "HUDA_AbandonedCart",
     sender = "shop@imp.net",
     title = "I.M.P.M.S.S. - Don't Let Your Gear Slip Away!",
+    repeatable = true,
+})
+
+PlaceObj('Email', {
+    body =
+    "bla",
+    group = "Militia",
+    label = "Important",
+    id = "HUDA_Website_Inauguration",
+    sender = "shop@imp.net",
+    title = "Welcome to the bla!",
     repeatable = true,
 })

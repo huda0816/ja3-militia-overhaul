@@ -17,7 +17,7 @@ PlaceObj("XTemplate", {
             "__context",
             function(parent, context)
                 local newbieMilitia = table.filter(gv_UnitData, function(k, v)
-                    return v.militia and string.gmatch(v.session_id, "Rookie")
+                    return v.militia and string.gmatch(v.session_id, "Rookie") and v.HireStatus ~= "Dead" and v.Squad
                 end)
 
                 newbieMilitia = HUDA_ReindexTable(newbieMilitia)

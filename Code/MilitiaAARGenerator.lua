@@ -1,88 +1,3 @@
--- Battle Introduction:
--- <sectorName>
--- <enemyAffiliation>
-
--- Militia Promotions:
--- <promotedMilitiaSodierNames>
-
--- Statistics at the Conclusion:
--- <enemyWoundedNum>
--- <ownWoundedNum>
--- <enemyKilledNum>
--- <ownKilledNum>
-
--- Enemy Introduction in Defensive Battle:
--- <enemyLeader>
--- Enemy Introduction in Offensive Battle:
--- <enemyLeader>
-
--- Militia Forces Introduction:
--- <militiaLeader>
--- <squadName>
--- <militiaNumber>
-
--- Player Forces in Defensive Battle:
--- <mercNames>
--- <mercNumber>
-
--- Optional Allied Forces Mention:
--- <squadNum>
-
--- Optional "Panicked" Status Effect:
--- <name>
-
--- Optional "Berserk" Status Effect:
--- <name>
-
--- Optional "Heroic" Status Effect:
--- <name>
-
--- Optional Lightly Wounded Mention:
--- <name>
-
--- Optional Heavily Wounded Mention:
--- <name>
-
--- Optional Killed Mention:
--- <name>
-
--- Optional Battle Won Sentence:
-
--- N/A
-
--- Optional Battle Lost Sentence:
-
--- N/A
-
--- Optional Militia Promotions:
--- <promotedMilitiaSodierNames>
-
--- local conflict = {
---     sectorId = sectorId,
---     squads = self:GetConflictSquads(sectorId),
---     militiaUnits = self:GetUnitIds(sectorId, "militia"),
---     enemyUnits = self:GetUnitIds(sectorId, "enemy"),
---     playerUnits = self:GetUnitIds(sectorId, "player"),
---     allyUnits = self:GetUnitIds(sectorId, "ally"),
---     militiaKilled = {},
---     enemyKilled = {},
---     playerKilled = {},
---     allyKilled = {},
---     civKilled = {},
---     kills = {},
---     wounds = {},
---     specialEvents = {},
---     promotions = {},
---     playerWon = false,
---     autoResolve = false,
---     playerAttacked = false,
---     retreat = false,
---     resolved = false,
---     startTime = Game.CampaignTime,
---     endTime = 0,
--- }
-
-
 DefineClass.HUDA_AARGenerator = {
     victoryOffensiveTitles = {
         "Victory in <sectorName>",
@@ -777,11 +692,11 @@ function HUDA_AARGenerator:GetResultString(conflict)
     local ownKilledNum = self:GetConclusionNums(conflict, "killed", "player")
 
     if ownWoundedNum > 0 then
-        table.insert(results, self:NtW(ownWoundedNum) .. " wounded")
+        table.insert(results, self:NtW(ownWoundedNum) .. " " .. (ownWoundedNum > 1 and "soldiers" or "soldier") .. " wounded")
     end
 
     if ownKilledNum > 0 then
-        table.insert(results, self:NtW(ownKilledNum) .. " killed")
+        table.insert(results, self:NtW(ownKilledNum) .. " " .. (ownKilledNum > 1 and "soldiers" or "soldier") .. " killed")
     end
 
     if enemyWoundedNum > 0 then
@@ -808,6 +723,13 @@ function HUDA_AARGenerator:GetResultString(conflict)
 
     return string
 end
+
+function HUDA_AARGenerator:RegenerateAARs(conflicts)
+    for i, v in ipairs(conflicts) do
+        self:RegenerateAAR(v)
+    end
+end
+
 
 function HUDA_AARGenerator:RegenerateAAR(conflict)
     local aar = {}
@@ -960,12 +882,11 @@ function HUDA_AARGenerator:GenerateEnemyIntro(conflict)
 end
 
 function HUDA_AARGenerator:GenerateMilitiaIntro(conflict)
+
     local intro = {}
     intro.militiaLeader = conflict.militia.leader and conflict.militia.leader.name or "The one and only"
-    intro.squadName = '"' .. TDevModeGetEnglishText(conflict.militia.leader and conflict.militia.leader.squadName or "The Bastards") .. '"'
+    intro.squadName = '"' .. (conflict.militia.leader and conflict.militia.leader.squadName or "Top Secret") .. '"'
     intro.militiaNumber = self:NtW(#conflict.militia.units)
-
-    print("name", intro.squadName)
 
     local introVariant = self:GetRandomVariant(conflict.playerAttacked and self.militiaOffensiveVariants or
         self.militiaDefensiveVariants)
