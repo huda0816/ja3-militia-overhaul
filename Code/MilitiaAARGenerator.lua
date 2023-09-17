@@ -23,7 +23,7 @@
 
 -- Player Forces in Defensive Battle:
 -- <mercNames>
--- <mercNum>
+-- <mercNumber>
 
 -- Optional Allied Forces Mention:
 -- <squadNum>
@@ -84,6 +84,110 @@
 
 
 DefineClass.HUDA_AARGenerator = {
+    victoryOffensiveTitles = {
+        "Victory in <sectorName>",
+        "Triumphs in <sectorName>",
+        "Breaking: <sectorName> Victory!",
+        "<sectorName> Battle Report",
+        "<sectorName> Showdown",
+        "Triumphant Day at <sectorName>",
+        "The <sectorName> Triumph",
+        "Victorious Campaign in <sectorName>",
+        "Legendary Victory in <sectorName>",
+        "Epic Triumphs in <sectorName>",
+        "Dominating <sectorName> Victory",
+        "Triumphant Return from <sectorName>",
+        "The Day <sectorName> Stood Tall",
+        "Triumph at <sectorName>",
+        "Conquering <sectorName> Victory",
+        "<sectorName> Victory Euphoria",
+        "Glorious Offensive at <sectorName>",
+        "Battles of <sectorName>",
+        "<sectorName>: War Recap",
+        "Frontline Dispatch: <sectorName>",
+        "News Flash: <sectorName> Battle",
+        "<sectorName> Conflict Update",
+        "In the Trenches: <sectorName>",
+        "<sectorName> War Diary",
+        "Frontlines of <sectorName>",
+        "War Reports from <sectorName>",
+        "Inside <sectorName> Conflict",
+        "The Fight at <sectorName>",
+        "Engagements in <sectorName>",
+        "<sectorName> War Journal",
+        "Covering <sectorName> Battles",
+        "Dispatches from <sectorName>",
+        "Field Notes on <sectorName>",
+        "<sectorName> Battle Highlights",
+        "War Chronicles: <sectorName>",
+        "Stories from <sectorName>",
+        "War Front in <sectorName>",
+        "<sectorName> Offensive Insights",
+    },
+    victoryDefensiveTitles = {
+        "Defensive Victory at <sectorName>",
+        "<sectorName> Defense Report",
+        "<sectorName> Fortress Stand",
+        "Triumphant Defense of <sectorName>",
+        "<sectorName> Siege Triumph",
+        "Defending <sectorName>: A Victory",
+        "Lasting Defense in <sectorName>",
+        "The <sectorName> Stronghold",
+        "<sectorName> Defense Glory",
+        "Stalwart Defense of <sectorName>",
+        "Defensive Masterstroke in <sectorName>",
+        "<sectorName> Invaders Repelled",
+        "Fortified Victory in <sectorName>",
+        "Protecting <sectorName> Success",
+        "<sectorName> Strong Defense",
+        "Withstanding <sectorName> Siege",
+        "Valiant Defense of <sectorName>",
+        "<sectorName> Victory and Valor",
+        "Defensive Excellence at <sectorName>",
+        "The Triumph of <sectorName> Defense",
+    },
+    defeatOffensiveTitles = {
+        "<sectorName> Offensive Failures",
+        "Retreat from <sectorName>",
+        "Defeats in <sectorName>",
+        "Breaking News: <sectorName> Losses",
+        "<sectorName> Retreat Report",
+        "Frontline Challenges: <sectorName>",
+        "Bitter Defeat at <sectorName>",
+        "<sectorName> Defeat Diary",
+        "Suffering Losses in <sectorName>",
+        "Dark Days at <sectorName>",
+        "The Retreat from <sectorName>",
+        "<sectorName> Defeat Analysis",
+        "Defeat in <sectorName> Campaign",
+        "The Battle of <sectorName>: Lost",
+        "Resisting <sectorName> Defeat",
+        "Struggles at <sectorName>",
+        "Setbacks in <sectorName> Conflict",
+        "Reeling from <sectorName> Defeat",
+    },
+    defeatDefensiveTitles = {
+        "Defensive Defeat at <sectorName>",
+        "<sectorName> Defense Collapse",
+        "<sectorName> Fortress Breached",
+        "Failed Defense of <sectorName>",
+        "<sectorName> Siege Disaster",
+        "Falling <sectorName>: A Defeat",
+        "Crumbled Defense in <sectorName>",
+        "The <sectorName> Breach",
+        "<sectorName> Defense in Shambles",
+        "Collapse of <sectorName> Defense",
+        "Failed Defense in <sectorName>",
+        "<sectorName> Invaders Prevail",
+        "Disastrous Stand in <sectorName>",
+        "Futile Defense of <sectorName>",
+        "<sectorName> Defense Overwhelmed",
+        "Battling Losses in <sectorName>",
+        "<sectorName> Defensive Setback",
+        "The Collapse of <sectorName> Defense",
+        "Defensive Deficiency at <sectorName>",
+        "The Fall of <sectorName>",
+    },
     introVariants = {
         "The battle for <sectorName> ignited as our forces clashed with the formidable <enemyAffiliation>.",
         "Amidst the landscape of <sectorName>, a fierce battle erupted, pitting our forces against the relentless <enemyAffiliation>.",
@@ -201,7 +305,7 @@ DefineClass.HUDA_AARGenerator = {
         "In a daring offensive, <mercNames> from AIM led the charge. Their reputation as elite warriors preceded them.",
         "With the offensive underway, the hired guns from AIM, including <mercNames>, took point. Their skills were a force to be reckoned with.",
         "As the offensive campaign began, <mercNames> from AIM stepped forward as the elite strike team, ready to overcome all obstacles.",
-        "Taking the offensive, the <mercNum> AIM mercenaries, <mercNames>, advanced with unwavering determination and unmatched combat expertise.",
+        "Taking the offensive, the <mercNumber> AIM mercenaries, <mercNames>, advanced with unwavering determination and unmatched combat expertise.",
         "In the heat of battle, <mercNames> from AIM were the tip of the spear, leading the offensive charge with their renowned skills.",
         "With victory as their aim, the AIM mercenaries <mercNames> spearheaded the offensive, ready to outmatch any opposition.",
         "As the offensive strategy unfolded, <mercNames> from AIM stood tall, their elite status well-deserved, poised for a relentless advance.",
@@ -209,11 +313,11 @@ DefineClass.HUDA_AARGenerator = {
         "Leading the charge in the offensive campaign were the AIM mercenaries <mercNames>, their names synonymous with victory.",
     },
     playerDefensiveVariants = {
-        "Amidst the defense, <mercNum> renowned AIM mercenaries emerged as the stalwarts: <mercNames>. Their skills were unmatched.",
+        "Amidst the defense, <mercNumber> renowned AIM mercenaries emerged as the stalwarts: <mercNames>. Their skills were unmatched.",
         "In a steadfast defense, <mercNames> from AIM stood their ground. Their reputation as elite warriors preceded them.",
         "With the defense in place, the hired guns from AIM, including <mercNames>, formed an unbreakable line. Their skills were a force to be reckoned with.",
         "As the defensive campaign began, <mercNames> from AIM were the bastion of resilience, ready to repel all threats.",
-        "Defending their position, the <mercNum> AIM mercenaries, <mercNames>, held their ground with unwavering determination and unmatched combat expertise.",
+        "Defending their position, the <mercNumber> AIM mercenaries, <mercNames>, held their ground with unwavering determination and unmatched combat expertise.",
         "In the face of adversity, <mercNames> from AIM were the steadfast defenders, standing firm with their renowned skills.",
         "With victory as their aim, the AIM mercenaries <mercNames> anchored the defense, ready to outmatch any opposition.",
         "As the defense strategy unfolded, <mercNames> from AIM stood tall, their elite status well-deserved, poised for an unyielding stand.",
@@ -330,6 +434,28 @@ DefineClass.HUDA_AARGenerator = {
         "The battlefield witnessed <name>'s sacrifice, a solemn reminder of the price paid in the pursuit of freedom.",
         "<name> met their fate on the battlefield, leaving behind a legacy of courage and dedication."
     },
+    greatPerformanceVariants = {
+        "During the fierce battle, <soldierName> showcased remarkable courage and determination, securing an impressive <killNumber> enemy casualties, earning the respect of their comrades.",
+        "Amidst the chaos of battle, <soldierName> stood as an unstoppable force, achieving the remarkable feat of taking down <killNumber> enemy combatants, a feat that would be remembered for generations.",
+        "Heroic deeds unfolded on the battlefield as <soldierName> fought valiantly, achieving an outstanding <killNumber> enemy kills, becoming a true hero of the conflict.",
+        "<soldierName> delivered exemplary service during the battle, resulting in a staggering <killNumber> enemy casualties, solidifying their reputation as a formidable warrior.",
+        "The battlefield witnessed the emergence of <soldierName> as a true hero, achieving an outstanding <killNumber> enemy kills, leaving an indelible mark on the annals of history.",
+        "Epic feats were accomplished by <soldierName> during the intense battle, securing an impressive <killNumber> enemy casualties, earning the admiration of all who fought alongside them.",
+        "The legendary warrior <soldierName> earned their title on the battlefield, with <killNumber> enemy kills, demonstrating unmatched prowess and valor.",
+        "A masterful performance by <soldierName> led to a total of <killNumber> enemy casualties, underscoring their exceptional skills and unwavering commitment.",
+        "The unparalleled skill of <soldierName> on the battlefield resulted in a remarkable <killNumber> enemy kills, turning the tide of battle.",
+        "Exceptional contribution to the battle was made by <soldierName>, achieving <killNumber> enemy casualties, earning the highest accolades from their fellow soldiers.",
+        "Outstanding achievements marked <soldierName>'s actions, with <killNumber> enemy kills, turning the tide of battle.",
+        "Incredible bravery was on full display as <soldierName> fought on the front lines, resulting in the elimination of <killNumber> enemy combatants, a testament to their courage.",
+        "During the battle, <soldierName> delivered a remarkable performance, securing <killNumber> enemy casualties, contributing significantly to the battle's outcome.",
+        "The peerless skill of <soldierName> on the battlefield led to a total of <killNumber> enemy kills, setting an example of unwavering dedication and valor.",
+        "Unwavering resolve defined <soldierName>'s actions on the battlefield, achieving <killNumber> enemy casualties, inspiring all who fought alongside them.",
+        "Heroic valor was evident in <soldierName>'s actions, securing <killNumber> enemy kills, leaving an indelible mark on the history of the conflict.",
+        "An exceptional performance was delivered by <soldierName> on the battlefield, achieving <killNumber> enemy casualties, showcasing unmatched dedication.",
+        "Fearless fighting characterized <soldierName>'s role in the battle, eliminating <killNumber> enemy foes and proving to be an invaluable asset to their comrades.",
+        "In the heat of battle, <soldierName>'s actions were nothing short of extraordinary, accounting for <killNumber> enemy casualties, demonstrating unwavering commitment.",
+        "The tenacity displayed by <soldierName> during the conflict resulted in a significant <killNumber> enemy kills, establishing them as a true warrior of renown.",
+    },
     battleWonVariants = {
         "After a hard-fought battle, victory was achieved, bringing a sense of relief and accomplishment to all.",
         "The resilience and determination of the forces prevailed, securing a hard-earned triumph in the face of adversity.",
@@ -419,26 +545,26 @@ DefineClass.HUDA_AARGenerator = {
         "Amidst celebrations, <promotedMilitiaSodierNames> earned their place among the honored leaders with a promotion in the militia."
     },
     battleConclusionVariants = {
-        "The aftermath of the battle revealed the toll of conflict, with <enemyWoundedNum> enemy soldiers wounded, <enemyKilledNum> killed, and <ownWoundedNum> of our own wounded, <ownKilledNum> of our own lost in the struggle.",
-        "As the dust settled, the battlefield bore witness to the costs of war: <enemyWoundedNum> enemy soldiers wounded, <enemyKilledNum> killed, and <ownWoundedNum> of our own wounded, <ownKilledNum> of our own sacrificed in the name of victory.",
-        "The battle's conclusion painted a somber picture, with <enemyWoundedNum> enemy soldiers wounded, <enemyKilledNum> killed, and <ownWoundedNum> of our own wounded, <ownKilledNum> of our own making the ultimate sacrifice.",
-        "Amidst the remnants of the battlefield, the numbers spoke of the price paid for victory: <enemyWoundedNum> enemy soldiers wounded, <enemyKilledNum> killed, and <ownWoundedNum> of our own wounded, <ownKilledNum> of our own fallen heroes.",
-        "The toll of battle became evident, with <enemyWoundedNum> enemy soldiers wounded, <enemyKilledNum> killed, and <ownWoundedNum> of our own wounded, <ownKilledNum> of our own brave souls who gave everything for the cause.",
-        "The aftermath revealed the true cost of conflict: <enemyWoundedNum> enemy soldiers wounded, <enemyKilledNum> killed, and <ownWoundedNum> of our own wounded, <ownKilledNum> of our own who will forever be remembered as heroes.",
-        "As the smoke cleared, the battlefield told a sobering story, with <enemyWoundedNum> enemy soldiers wounded, <enemyKilledNum> killed, and <ownWoundedNum> of our own wounded, <ownKilledNum> of our own making the ultimate sacrifice.",
-        "The numbers etched on the battlefield were a stark reminder of the sacrifices made: <enemyWoundedNum> enemy soldiers wounded, <enemyKilledNum> killed, and <ownWoundedNum> of our own wounded, <ownKilledNum> of our own who fought valiantly until the end.",
-        "In the aftermath, the battle's toll was clear: <enemyWoundedNum> enemy soldiers wounded, <enemyKilledNum> killed, and <ownWoundedNum> of our own wounded, <ownKilledNum> of our own who gave their all for the cause.",
-        "The price of victory was evident in the numbers: <enemyWoundedNum> enemy soldiers wounded, <enemyKilledNum> killed, and <ownWoundedNum> of our own wounded, <ownKilledNum> of our own who will forever be honored for their sacrifice.",
-        "The battle's aftermath spoke of the challenges faced, with <enemyWoundedNum> enemy soldiers wounded, <enemyKilledNum> killed, and <ownWoundedNum> of our own wounded, <ownKilledNum> of our own who stood their ground with unwavering resolve.",
-        "As the dust settled, the battlefield revealed the costs incurred: <enemyWoundedNum> enemy soldiers wounded, <enemyKilledNum> killed, and <ownWoundedNum> of our own wounded, <ownKilledNum> of our own who fought valiantly until the end.",
-        "The numbers on the battlefield were a testament to the sacrifices made: <enemyWoundedNum> enemy soldiers wounded, <enemyKilledNum> killed, and <ownWoundedNum> of our own wounded, <ownKilledNum> of our own who gave their all for the cause.",
-        "In the wake of battle, the toll became clear, with <enemyWoundedNum> enemy soldiers wounded, <enemyKilledNum> killed, and <ownWoundedNum> of our own wounded, <ownKilledNum> of our own who stood as a beacon of bravery.",
-        "The aftermath painted a vivid picture of the battle's costs: <enemyWoundedNum> enemy soldiers wounded, <enemyKilledNum> killed, and <ownWoundedNum> of our own wounded, <ownKilledNum> of our own who will forever be remembered for their sacrifice.",
-        "As the smoke cleared, the battlefield revealed the price paid for victory: <enemyWoundedNum> enemy soldiers wounded, <enemyKilledNum> killed, and <ownWoundedNum> of our own wounded, <ownKilledNum> of our own who fought with unwavering determination.",
-        "The numbers etched on the battlefield told the story of valor and sacrifice: <enemyWoundedNum> enemy soldiers wounded, <enemyKilledNum> killed, and <ownWoundedNum> of our own wounded, <ownKilledNum> of our own who gave everything for the cause.",
-        "In the aftermath, the battle's toll stood as a testament to the courage displayed, with <enemyWoundedNum> enemy soldiers wounded, <enemyKilledNum> killed, and <ownWoundedNum> of our own wounded, <ownKilledNum> of our own who stood their ground until the end.",
-        "The price of victory was etched in the numbers: <enemyWoundedNum> enemy soldiers wounded, <enemyKilledNum> killed, and <ownWoundedNum> of our own wounded, <ownKilledNum> of our own who will forever be honored as heroes.",
-        "The battle's aftermath told a tale of challenges faced and sacrifices made: <enemyWoundedNum> enemy soldiers wounded, <enemyKilledNum> killed, and <ownWoundedNum> of our own wounded, <ownKilledNum> of our own who fought with unwavering resolve."
+        "The aftermath of the battle revealed the toll of conflict, with: <result>.",
+        "As the dust settled, the battlefield bore witness to the costs of war, with: <result>.",
+        "The battle's conclusion painted a somber picture, with: <result>.",
+        "Amidst the remnants of the battlefield, the numbers spoke of the price paid for victory, with: <result>.",
+        "The toll of battle became evident, with: <result>.",
+        "The aftermath revealed the true cost of conflict, with: <result>.",
+        "As the smoke cleared, the battlefield told a sobering story, with: <result>.",
+        "The numbers etched on the battlefield were a stark reminder of the sacrifices made, with: <result>.",
+        "In the aftermath, the battle's toll was clear, with: <result>.",
+        "The price of victory was evident in the numbers, with: <result>.",
+        "The battle's aftermath spoke of the challenges faced, with: <result>.",
+        "As the dust settled, the battlefield revealed the costs incurred, with: <result>.",
+        "The numbers on the battlefield were a testament to the sacrifices made, with: <result>.",
+        "In the wake of battle, the toll became clear, with: <result>.",
+        "The aftermath painted a vivid picture of the battle's costs, with: <result>.",
+        "As the smoke cleared, the battlefield revealed the price paid for victory, with: <result>.",
+        "The numbers etched on the battlefield told the story of valor and sacrifice, with: <result>.",
+        "In the aftermath, the battle's toll stood as a testament to the courage displayed, with: <result>.",
+        "The price of victory was etched in the numbers, with: <result>",
+        "The battle's aftermath told a tale of challenges faced and sacrifices made, with: <result>."
     },
     events = {
         "Berserk",
@@ -470,7 +596,6 @@ DefineClass.HUDA_AARGenerator = {
 }
 
 function HUDA_AARGenerator:NtW(num)
-
     num = num or 0
 
     if num == 0 then
@@ -485,25 +610,26 @@ function HUDA_AARGenerator:NtW(num)
 end
 
 function HUDA_AARGenerator:Em(string)
-    return "<em>" .. string .. "</em>"
+    return "<color 0 0 0 255>" .. string .. "</color>"
+    -- return string
 end
 
 function HUDA_AARGenerator:GetConclusionNums(conflict, type, side)
     if type == "wounded" then
         if side == "enemy" then
-            return self:NtW(#table.filter(conflict.wounds, function(i, v)
+            return #table.filter(conflict.wounds, function(i, v)
                 return v.side == "enemy"
-            end))
+            end)
         else
-            return self:NtW(#table.filter(conflict.wounds, function(i, v)
+            return #table.filter(conflict.wounds, function(i, v)
                 return v.side ~= "enemy"
-            end))
+            end)
         end
     elseif type == "killed" then
         if side == "enemy" then
-            return self:NtW(#conflict.enemyKilled)
+            return #conflict.enemy.killed
         else
-            return self:NtW(#conflict.militiaKilled + #conflict.playerKilled + #conflict.allyKilled)
+            return #conflict.militia.killed + #conflict.player.killed + #conflict.ally.killed
         end
     end
 end
@@ -565,13 +691,21 @@ function HUDA_AARGenerator:HasWoundedOrKilled(conflict)
 end
 
 function HUDA_AARGenerator:GetMercNames(conflict)
-    local mercNames = {}
-    for i, v in ipairs(conflict.playerUnits) do
+    local mercNames = ""
+    for i, v in ipairs(conflict.player.units) do
         local unit = getUnits and g_Units[v] or gv_UnitData[v]
 
         local name = unit.Name or unit.Nick
 
-        table.insert(name)
+        local seperator = ""
+        if i == 1 then
+        elseif i ~= 1 and i ~= #conflict.player.units then
+            seperator = ", "
+        elseif i ~= 1 and i == #conflict.player.units then
+            seperator = " and "
+        end
+
+        mercNames = mercNames .. seperator .. TDevModeGetEnglishText(name)
     end
 
     return mercNames
@@ -606,13 +740,90 @@ function HUDA_AARGenerator:GetMostWounded(conflict)
     return woundedUnitsArray[1]
 end
 
+function HUDA_AARGenerator:GetSpecialKiller(conflict)
+    local kills = conflict.kills
+
+    local killers = {}
+
+    for _, kill in ipairs(kills) do
+        if kill.attacker and kill.side == "enemy" then
+            table.insert(killers, kill.attacker)
+        end
+    end
+
+    if #killers == 0 then
+        return
+    end
+
+    local killer, kills = HUDA_ArrayMost(killers)
+
+    if kills > 1 then
+        return killer, kills
+    end
+end
+
 function HUDA_AARGenerator:GetSectorName(sectorId)
     local sector = gv_Sectors[sectorId]
 
     return TDevModeGetEnglishText(sector.display_name or "") .. " (" .. sectorId .. ")"
 end
 
+function HUDA_AARGenerator:GetResultString(conflict)
+    local results = {}
+
+    local enemyWoundedNum = self:GetConclusionNums(conflict, "wounded", "enemy")
+    local enemyKilledNum = self:GetConclusionNums(conflict, "killed", "enemy")
+    local ownWoundedNum = self:GetConclusionNums(conflict, "wounded", "player")
+    local ownKilledNum = self:GetConclusionNums(conflict, "killed", "player")
+
+    if ownWoundedNum > 0 then
+        table.insert(results, self:NtW(ownWoundedNum) .. " wounded")
+    end
+
+    if ownKilledNum > 0 then
+        table.insert(results, self:NtW(ownKilledNum) .. " killed")
+    end
+
+    if enemyWoundedNum > 0 then
+        table.insert(results,
+            self:NtW(enemyWoundedNum) .. " " .. (enemyWoundedNum > 1 and "enemies" or "enemy") .. " wounded")
+    end
+
+    if enemyKilledNum > 0 then
+        table.insert(results,
+            self:NtW(enemyKilledNum) .. " " .. (enemyKilledNum > 1 and "enemies" or "enemy") .. " killed")
+    end
+
+    local string = ""
+
+    for i, v in ipairs(results) do
+        if i == 1 then
+            string = v
+        elseif i == #results then
+            string = string .. " and " .. v
+        else
+            string = string .. ", " .. v
+        end
+    end
+
+    return string
+end
+
+function HUDA_AARGenerator:RegenerateAAR(conflict)
+    local aar = {}
+
+    aar.title = self:PrintAARTitle(conflict)
+
+    aar.text = self:PrintAAR(conflict)
+
+    conflict.aar = aar
+end
+
 function HUDA_AARGenerator:PrintAAR(conflict)
+    if not conflict then
+        return
+    end
+
     local aar = self:GenerateAAR(conflict)
 
     local aarText = ""
@@ -620,19 +831,31 @@ function HUDA_AARGenerator:PrintAAR(conflict)
         aarText = aarText .. v .. "\n"
     end
 
-    return aarText
+    return Untranslated(aarText)
+end
+
+function HUDA_AARGenerator:PrintAARTitle(conflict)
+    if not conflict then
+        return
+    end
+
+    local title = self:GenerateAARTitle(conflict)
+
+    return Untranslated(title)
 end
 
 function HUDA_AARGenerator:GenerateAAR(conflict)
-    local militia = #conflict.militiaUnits > 0 and true or false
-    local enemy = #conflict.enemyUnits > 0 and true or false
-    local mercs = #conflict.playerUnits > 0 and true or false
-    local allies = #conflict.allyUnits > 0 and true or false
+    local militia = #conflict.militia.units > 0 and true or false
+    local enemy = #conflict.enemy.units > 0 and true or false
+    local mercs = #conflict.player.units > 0 and true or false
+    local allies = #conflict.ally.units > 0 and true or false
     local specialEvents = #self:GetSpecialEvents(conflict) > 0 and true or false
     local woundedOrKilled = self:HasWoundedOrKilled(conflict)
-    local villain = conflict.enemyLeader.villain
+    local villain = conflict.enemy.leader and conflict.enemy.leader.villain or false
+    local killer, kills = self:GetSpecialKiller(conflict)
 
     local aar = {}
+
     aar[#aar + 1] = self:GenerateBattleIntro(conflict)
 
     if villain then
@@ -661,6 +884,10 @@ function HUDA_AARGenerator:GenerateAAR(conflict)
         aar[#aar + 1] = self:GenerateWoundedAndKilled(conflict)
     end
 
+    if killer then
+        aar[#aar + 1] = self:GenerateSpecialKiller(conflict, killer, kills)
+    end
+
     aar[#aar + 1] = self:GenerateFinale(conflict)
 
     if (militia and #conflict.promotions > 0) then
@@ -684,41 +911,61 @@ function HUDA_AARGenerator:GetRandomVariant(variants)
     return variants[rand]
 end
 
+function HUDA_AARGenerator:GenerateAARTitle(conflict)
+    local intro = {}
+    intro.sectorName = self:GetSectorName(conflict.sectorId)
+
+    local titleVariant
+
+    if conflict.playerWon then
+        titleVariant = conflict.playerAttacked and self:GetRandomVariant(self.victoryOffensiveTitles) or
+            self:GetRandomVariant(self.victoryDefensiveTitles)
+    else
+        titleVariant = conflict.playerAttacked and self:GetRandomVariant(self.defeatOffensiveTitles) or
+            self:GetRandomVariant(self.defeatDefensiveTitles)
+    end
+
+    return titleVariant:gsub("<sectorName>", intro.sectorName)
+end
+
 function HUDA_AARGenerator:GenerateBattleIntro(conflict)
     local intro = {}
     intro.sectorName = self:GetSectorName(conflict.sectorId)
-    intro.enemyAffiliation = conflict.enemyLeader.affiliation
+    intro.enemyAffiliation = conflict.enemy.leader and conflict.enemy.leader.affiliation or "enemy"
 
     local introVariant = self:GetRandomVariant(self.introVariants)
 
-    return introVariant:gsub("<sectorName>", self:Em(intro.sectorName)):gsub("<enemyAffiliation>", self:Em(intro.enemyAffiliation))
+    return introVariant:gsub("<sectorName>", self:Em(intro.sectorName)):gsub("<enemyAffiliation>",
+        self:Em(intro.enemyAffiliation))
 end
 
 function HUDA_AARGenerator:GenerateVillainIntro(conflict)
     local intro = {}
-    intro.enemyLeader = conflict.enemyLeader.name
+    intro.enemyLeader = conflict.enemy.leader.name or "Francis"
 
     local introVariant = self:GetRandomVariant(self.enemyLeaderVariants)
 
-    return introVariant:gsub("<enemyLeader>", self:Em(intro.sectorName))
+    return introVariant:gsub("<enemyLeader>", intro.enemyLeader)
 end
 
 function HUDA_AARGenerator:GenerateEnemyIntro(conflict)
     local intro = {}
-    intro.enemyForcesName = conflict.enemyLeader.affiliation or "enemy"
-    intro.enemyNumber = self:NtW(#conflict.enemyUnits)
+    intro.enemyForcesName = conflict.enemy.leader and conflict.enemy.leader.affiliation or "enemy"
+    intro.enemyNumber = self:NtW(#conflict.enemy.units)
 
     local introVariant = self:GetRandomVariant(conflict.playerAttacked and self.enemyOffensiveVariants or
         self.enemyDefensiveVariants)
 
-    return introVariant:gsub("<enemyNumber>", self:Em(intro.enemyNumber)):gsub("<enemyForcesName>", intro.enemyForcesName)
+    return introVariant:gsub("<enemyNumber>", intro.enemyNumber):gsub("<enemyForcesName>", intro.enemyForcesName)
 end
 
 function HUDA_AARGenerator:GenerateMilitiaIntro(conflict)
     local intro = {}
-    intro.militiaLeader = conflict.militiaLeader.name
-    intro.squadName = '"' .. conflict.militiaLeader.squadName .. '"'
-    intro.militiaNumber = self:NtW(#conflict.militiaUnits)
+    intro.militiaLeader = conflict.militia.leader and conflict.militia.leader.name or "The one and only"
+    intro.squadName = '"' .. TDevModeGetEnglishText(conflict.militia.leader and conflict.militia.leader.squadName or "The Bastards") .. '"'
+    intro.militiaNumber = self:NtW(#conflict.militia.units)
+
+    print("name", intro.squadName)
 
     local introVariant = self:GetRandomVariant(conflict.playerAttacked and self.militiaOffensiveVariants or
         self.militiaDefensiveVariants)
@@ -730,12 +977,12 @@ end
 function HUDA_AARGenerator:GenerateMercsIntro(conflict)
     local intro = {}
     intro.mercNames = self:GetMercNames(conflict)
-    intro.mercsNumber = #conflict.playerUnits
+    intro.mercNumber = #conflict.player.units
 
     local introVariant = self:GetRandomVariant(conflict.playerAttacked and self.playerOffensiveVariants or
         self.playerDefensiveVariants)
 
-    return introVariant:gsub("<mercNames>", intro.mercNames):gsub("<mercsNumber>", intro.mercsNumber)
+    return introVariant:gsub("<mercNames>", intro.mercNames):gsub("<mercNumber>", intro.mercNumber)
 end
 
 function HUDA_AARGenerator:GenerateAlliesIntro(conflict)
@@ -809,6 +1056,12 @@ function HUDA_AARGenerator:GenerateWoundedAndKilled(conflict)
     return wkString
 end
 
+function HUDA_AARGenerator:GenerateSpecialKiller(conflict, killer, kills)
+    local eventVariant = self:GetRandomVariant(self.greatPerformanceVariants)
+
+    return eventVariant:gsub("<soldierName>", killer):gsub("<killNumber>", kills)
+end
+
 function HUDA_AARGenerator:GenerateMilitiaPromotions(conflict)
     local militiaPromotionsNumber = #conflict.promotions
 
@@ -833,15 +1086,7 @@ function HUDA_AARGenerator:GenerateFinale(conflict)
 end
 
 function HUDA_AARGenerator:GenerateBattleConclusion(conflict)
-    local conclusion = {}
-    conclusion.enemyWoundedNum = self:GetConclusionNums(conflict, "wounded", "enemy")
-    conclusion.enemyKilledNum = self:GetConclusionNums(conflict, "killed", "enemy")
-    conclusion.ownWoundedNum = self:GetConclusionNums(conflict, "wounded", "player")
-    conclusion.ownKilledNum = self:GetConclusionNums(conflict, "killed", "player")
-
     local conclusionVariant = self:GetRandomVariant(self.battleConclusionVariants)
 
-    return conclusionVariant:gsub("<enemyWoundedNum>", conclusion.enemyWoundedNum):gsub("<enemyKilledNum>",
-        conclusion.enemyKilledNum):gsub("<ownWoundedNum>", conclusion.ownWoundedNum):gsub("<ownKilledNum>",
-        conclusion.ownKilledNum)
+    return conclusionVariant:gsub("<result>", self:GetResultString(conflict))
 end

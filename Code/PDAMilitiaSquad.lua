@@ -39,7 +39,7 @@ PlaceObj("XTemplate", {
             "func",
             function(self, ...)
                 XWindow.Open(self, ...)
-                --   PDAImpHeaderEnable(self)
+                PDAImpHeaderEnable(self)
             end
         }),
         PlaceObj("XTemplateFunc", {
@@ -48,7 +48,7 @@ PlaceObj("XTemplate", {
             "func",
             function(self, ...)
                 XWindow.OnDelete(self, ...)
-                --   PDAImpHeaderDisable(self)
+                PDAImpHeaderDisable(self)
             end
         }),
         PlaceObj("XTemplateWindow", {
@@ -73,9 +73,7 @@ PlaceObj("XTemplate", {
                     "Margins",
                     box(0, 0, 0, 0),
                     "LayoutMethod",
-                    "HList",
-                    "LayoutHSpacing",
-                    5,
+                    "HList"
                 }, {
                     PlaceObj("XTemplateWindow", {
                         "__class",
@@ -86,6 +84,8 @@ PlaceObj("XTemplate", {
                         true,
                         "Padding",
                         box(0, 0, 0, 0),
+                        "Margins",
+                        box(0, 0, 5, 10),
                         "HAlign",
                         "left",
                         "VAlign",
@@ -104,6 +104,8 @@ PlaceObj("XTemplate", {
                     PlaceObj("XTemplateWindow", {
                         "__class",
                         "XFrame",
+                        "Margins",
+                        box(0, 0, 5, 10),
                         "Visible",
                         false,
                         "FoldWhenHidden",
@@ -169,7 +171,14 @@ PlaceObj("XTemplate", {
                             "OnTextChanged",
                             function(self)
                                 local squad = gv_Squads[self.context.UniqueId]
-                                squad.Name = self:GetText()
+                                local text = self:GetText()
+                                local len = string.len(text[1] or "")
+
+                                if len > 0 and len < 30 then
+                                    squad.Name = text
+                                else
+                                    self:SetText(squad.Name)
+                                end
                                 PlayFX("Typing", "start")
                                 ObjModified(self.context)
                                 ObjModified(gv_Squads)
@@ -189,16 +198,11 @@ PlaceObj("XTemplate", {
                                     if GetUIStyleGamepad() then
                                         return "break"
                                     end
-                                    if shortcut == "Enter" or shortcut == "Tab" or shortcut == "Shift-Tab" then
-                                        local dir = shortcut == "Shift-Tab" and "prev" or "next"
-                                        local focus = self:ResolveId("node"):GetRelativeFocus(
-                                            self.desktop:GetKeyboardFocus():GetFocusOrder(), dir)
-                                        self:SetFocus(false)
-                                        if focus then
-                                            focus:SetFocus()
-                                        end
-                                        return "break"
-                                    elseif shortcut == "Escape" then
+                                    if shortcut == "Enter" or shortcut == "Escape" then
+                                        self.parent:ResolveId("idEditToggle"):SetVisible(true)
+                                        self.parent:ResolveId("idEditToggleEnd"):SetVisible(false)
+                                        self.parent:ResolveId("idEditNameWrapper"):SetVisible(false)
+                                        self.parent:ResolveId("idTitle"):SetVisible(true)
                                     else
                                         return XEdit.OnShortcut(self, shortcut, source)
                                     end
@@ -257,7 +261,7 @@ PlaceObj("XTemplate", {
                         "MouseCursor",
                         "UI/Cursors/Pda_Hand.tga",
                         "TextStyle",
-                        "PDAIMPHyperLinkSmall",
+                        "PDABrowserThievesBoxLinks",
                         "Translate",
                         true,
                         "Text",
@@ -294,7 +298,7 @@ PlaceObj("XTemplate", {
                         "MouseCursor",
                         "UI/Cursors/Pda_Hand.tga",
                         "TextStyle",
-                        "PDAIMPHyperLinkSmall",
+                        "PDABrowserThievesBoxLinks",
                         "Translate",
                         true,
                         "Text",
@@ -315,24 +319,191 @@ PlaceObj("XTemplate", {
                     }),
                 }),
                 PlaceObj("XTemplateWindow", {
-                    "__class",
-                    "XText",
-                    "Padding",
-                    box(0, 0, 0, 0),
-                    "HAlign",
-                    "left",
-                    "HandleMouse",
-                    false,
-                    "TextStyle",
-                    "PDAIMPMercName",
-                    "Translate",
-                    true,
-                    "OnLayoutComplete",
-                    function(self)
-                        self:SetText("Homebase: " .. HUDA_GetClosestCity(self.context.BornInSector))
+                    "LayoutMethod",
+                    "Grid",
+                }, {
+                    PlaceObj("XTemplateWindow", {
+                        "__class",
+                        "XText",
+                        "Padding",
+                        box(0, 0, 0, 0),
+                        "HAlign",
+                        "left",
+                        "HandleMouse",
+                        false,
+                        "TextStyle",
+                        "PDAIMPMercName",
+                        "Translate",
+                        true,
+                        "GridX",
+                        1,
+                        "GridY",
+                        1,
+                        "OnLayoutComplete",
+                        function(self)
+                            local city, distance = HUDA_GetClosestCity(self.context.BornInSector)
+                            self:SetText(Untranslated("<em>Founded " .. (distance > 0 and "near" or "in" ) .. ":</em> " .. city))
+
+                        end
+                    }),
+                    PlaceObj("XTemplateWindow", {
+                        "__class",
+                        "XText",
+                        "Padding",
+                        box(0, 0, 0, 0),
+                        "HAlign",
+                        "left",
+                        "HandleMouse",
+                        false,
+                        "TextStyle",
+                        "PDAIMPMercName",
+                        "Translate",
+                        true,
+                        "GridX",
+                        1,
+                        "GridY",
+                        2,
+                        "Text",
+                        Untranslated("<em>Current Location:</em> <CurrentSector>")
+                    }),
+                    PlaceObj("XTemplateWindow", {
+                        "__class",
+                        "XText",
+                        "Padding",
+                        box(0, 0, 0, 0),
+                        "HAlign",
+                        "left",
+                        "HandleMouse",
+                        false,
+                        "TextStyle",
+                        "PDAIMPMercName",
+                        "Translate",
+                        true,
+                        "GridX",
+                        2,
+                        "GridY",
+                        1,
+                        "Text",
+                        Untranslated("<em>Costs per Day:</em> <MilitiaSquadCosts(context)>$")
+                    }),
+                    PlaceObj("XTemplateWindow", {
+                        "__class",
+                        "XText",
+                        "Padding",
+                        box(0, 0, 0, 0),
+                        "HAlign",
+                        "left",
+                        "HandleMouse",
+                        false,
+                        "TextStyle",
+                        "PDAIMPMercName",
+                        "Translate",
+                        true,
+                        "GridX",
+                        2,
+                        "GridY",
+                        2,
+                        "Text",
+                        Untranslated("<em>Status:</em> <MilitiaStatus(context)>")
+                    }),
+                }),
+                PlaceObj("XTemplateWindow", {
+                    "__context",
+                    function(parent, context)
+                        local conflicts = gv_HUDA_ConflictTracker
+
+                        local squadConflicts = {}
+
+                        for i, conflict in ipairs(conflicts) do
+                            local squadConflict = HUDA_ArrayFind(conflict.squads, function(i, squad)
+                                return squad.id == context.UniqueId
+                            end)
+
+                            print("squadConflict", squadConflict)
+
+                            if squadConflict then
+                                table.insert(squadConflicts, conflict)
+                            end
+
+                            if (#squadConflicts >= 3) then
+                                break
+                            end
+                        end
+
+                        print("squadConflicts", squadConflicts)
+
+                        return squadConflicts
                     end,
-                    "Text",
-                    T(157984480848, "Homebase")
+                    "__condition",
+                    function(parent, context)
+                        return next(context)
+                    end,
+                    "LayoutMethod",
+                    "VList",
+                }, {
+                    PlaceObj("XTemplateWindow", {
+                        "comment",
+                        "line",
+                        "__class",
+                        "XImage",
+                        "Margins",
+                        box(0, 10, 0, 10),
+                        "VAlign",
+                        "center",
+                        "Transparency",
+                        141,
+                        "Image",
+                        "UI/PDA/separate_line_vertical",
+                        "ImageFit",
+                        "stretch-x"
+                    }),
+                    PlaceObj("XTemplateWindow", {
+                        "__class",
+                        "XText",
+                        "Padding",
+                        box(0, 0, 0, 0),
+                        "Margins",
+                        box(0, 0, 0, 10),
+                        "HAlign",
+                        "left",
+                        "HandleMouse",
+                        false,
+                        "TextStyle",
+                        "PDAIMPMercName",
+                        "Translate",
+                        true,
+                        "Text",
+                        "Latest Battles"
+                    }),
+                    PlaceObj("XTemplateWindow", {
+                        "LayoutMethod",
+                        "VList",
+                        "LayoutVSpacing",
+                        5
+                    }, {
+                        PlaceObj("XTemplateForEach", {
+                            "__context",
+                            function(parent, context, item, i, n)
+                                return item
+                            end
+                        }, {
+                            PlaceObj("XTemplateWindow", {
+                                "__class",
+                                "XText",
+                                "Padding",
+                                box(0, 0, 0, 0),
+                                "TextStyle",
+                                "PDAIMPGalleryName",
+                                "MinWidth",
+                                200,
+                                "Translate",
+                                true,
+                                "Text",
+                                Untranslated(
+                                    "<ConflictDirection(context)> Battle against <enemy.affiliation> in <ConflictLocation(context)> | <ConflictDaysAgo(context)>d ago | <ConflictResult(conflict)>")
+                            })
+                        })
+                    })
                 })
             })
         }),
@@ -356,7 +527,7 @@ PlaceObj("XTemplate", {
                 "IdNode",
                 false,
                 "Margins",
-                box(20, 20, 0, 20),
+                box(20, 20, 20, 20),
                 "VAlign",
                 "top",
                 "LayoutMethod",
@@ -414,7 +585,7 @@ PlaceObj("XTemplate", {
                             child.idSoldierHome:SetText("Origin: " ..
                                 GetSectorName(HUDA_GetSectorById(item.JoinLocation)))
                             child.idSoldierJoined:SetText("Joined: " ..
-                                HUDA_GetDaysSinceJoin(item.JoinDate) .. " days ago")
+                                HUDA_GetDaysSinceTime(item.JoinDate) .. " days ago")
                             child.idSoldierSpecialty:SetText("Role: " ..
                                 HUDA_GetSpecializationName(item.Specialization) .. (i == 1 and " / Squad Leader" or ""))
                             child.idPortrait:SetImage(item.Portrait)
@@ -548,6 +719,10 @@ PlaceObj("XTemplate", {
                                 PlaceObj("XTemplateWindow", {
                                     "__class",
                                     "XText",
+                                    "__condition",
+                                    function(parent, context)
+                                        return false
+                                    end,
                                     "Id",
                                     "idSoldierMode",
                                     "MouseCursor",
@@ -564,7 +739,7 @@ PlaceObj("XTemplate", {
                                         "OnMouseButtonDown(self, pos, button)",
                                         "func",
                                         function(self, pos, button)
-                                            local dlg = GetDialog(self)                                            
+                                            local dlg = GetDialog(self)
                                             dlg:SetMode("soldier", { soldier = self.context })
                                         end
                                     })
@@ -580,7 +755,7 @@ PlaceObj("XTemplate", {
                 "Id",
                 "idScrollbar",
                 "Margins",
-                box(0, 0, 10, 0),
+                box(0, 5, 5, 5),
                 "Dock",
                 "right",
                 "UseClipBox",

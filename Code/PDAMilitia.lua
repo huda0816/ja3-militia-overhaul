@@ -9,10 +9,12 @@ PlaceObj("XTemplate", {
         RGBA(215, 159, 80, 255),
         "MouseCursor",
         "UI/Cursors/Pda_Cursor.tga",
+        "Id",
+        "idPDAMilitiaDialog",
         "InitialMode",
-        "start_page",
+        "home",
         "InternalModes",
-        "start_page,home,finances,squads,squad,soldier,login,logout,construction,shop,orders,shop_list,trick"
+        "home,finances,squads,squad,soldier,construction,shop,orders,shop_list,trick,shop_closed, conditions"
     }, {
         PlaceObj("XTemplateFunc", {
             "name",
@@ -41,10 +43,10 @@ PlaceObj("XTemplate", {
             "OnDialogModeChange(self, mode, dialog)",
             "func",
             function(self, mode, dialog)
-                if mode == "start_page" then
-                    self:SetMode("home")
-                    return
-                end
+                -- if mode == "start_page" then
+                --     self:SetMode("home")
+                --     return
+                -- end
                 ObjModified("pda_url")
             end
         }),
@@ -99,15 +101,6 @@ PlaceObj("XTemplate", {
                     return "break"
                 end
                 local mode = self:GetMode()
-                if mode == "squad" then
-                    -- local list = self.idContent.idAnswers.idList
-                    -- if shortcut == "DPadUp" or shortcut == "Up" then
-                    --     list:SelPrev()
-                    -- end
-                    -- if shortcut == "DPadDown" or shortcut == "Down" then
-                    --     list:SelNext()
-                    -- end
-                end
                 local actions = self:GetShortcutActions(shortcut)
                 for _, action in ipairs(actions) do
                     local state = action:ActionState(self)
@@ -197,10 +190,6 @@ PlaceObj("XTemplate", {
                         RGBA(88, 92, 68, 255)
                     }, {
                         PlaceObj("XTemplateWindow", {
-                            "__class",
-                            "XText",
-                            "Id",
-                            "idPageTitle",
                             "Margins",
                             box(190, 0, 0, 0),
                             "Padding",
@@ -215,16 +204,41 @@ PlaceObj("XTemplate", {
                             50,
                             "MaxHeight",
                             50,
-                            "TextStyle",
-                            "PDAIMPPageTitle",
-                            "Translate",
-                            true,
-                            "Text",
-                            T(589427374438, "Grand Chien Militia Headquarters"),
-                            "TextHAlign",
-                            "center",
-                            "TextVAlign",
-                            "center"
+                            "LayoutMethod",
+                            "HList"
+                        }, {
+                            PlaceObj("XTemplateWindow", {
+                                "__class",
+                                "XText",
+                                "Id",
+                                "idPageTitle",
+                                "TextStyle",
+                                "PDAIMPPageTitle",
+                                "Translate",
+                                true,
+                                "Text",
+                                "Grand Chien Militia Headquarters",
+                                "TextHAlign",
+                                "center",
+                                "TextVAlign",
+                                "center"
+                            }),
+                            PlaceObj("XTemplateWindow", {
+                                "__class",
+                                "XText",
+                                "Margins",
+                                box(5, 0, 0, 6),
+                                "HAlign",
+                                "left",
+                                "VAlign",
+                                "bottom",
+                                "TextStyle",
+                                "PDAIMPCopyrightText",
+                                "Translate",
+                                true,
+                                "Text",
+                                "powered by I.M.P."
+                            }),
                         }),
                         PlaceObj("XTemplateWindow", {
                             "comment",
@@ -239,16 +253,6 @@ PlaceObj("XTemplate", {
                             2,
                             "Background",
                             RGBA(124, 130, 96, 255)
-                        }),
-                        PlaceObj("XTemplateWindow", {
-                            "Margins",
-                            box(0, 24, 0, 0),
-                            "HAlign",
-                            "right",
-                            "VAlign",
-                            "top",
-                            "LayoutMethod",
-                            "VList"
                         }),
                         PlaceObj("XTemplateWindow", {
                             "comment",
@@ -276,18 +280,7 @@ PlaceObj("XTemplate", {
                             "LayoutHSpacing",
                             6,
                             "ContextUpdateOnOpen",
-                            true,
-                            "OnContextUpdate",
-                            function(self, context, ...)
-                                -- local dlg = GetDialog(self)
-                                -- local test_completed = g_ImpTest and g_ImpTest.confirmed
-                                -- self:ResolveId("idLogIn"):SetEnabled(not dlg.logined and
-                                -- (not test_completed or not g_ImpTest.final.created))
-                                -- self:ResolveId("idIntroduction"):SetEnabled(dlg.logined and not test_completed)
-                                -- self:ResolveId("idTest"):SetEnabled(dlg.logined and not test_completed)
-                                -- self:ResolveId("idProfile"):SetEnabled(dlg.logined and test_completed)
-                                -- self:ResolveId("idHome"):SetEnabled(true)
-                            end
+                            true
                         }, {
                             PlaceObj("XTemplateTemplate", {
                                 "comment",
@@ -301,7 +294,7 @@ PlaceObj("XTemplate", {
                                 "dlg_mode",
                                 "home",
                                 "Text",
-                                T(805144021337, "Home")
+                                "Home"
                             }),
                             PlaceObj("XTemplateWindow", {
                                 "comment",
@@ -333,7 +326,7 @@ PlaceObj("XTemplate", {
                                 "dlg_mode",
                                 "finances",
                                 "Text",
-                                T(126748905760, "FINANCES")
+                                "FINANCES"
                             }),
                             PlaceObj("XTemplateWindow", {
                                 "comment",
@@ -365,7 +358,7 @@ PlaceObj("XTemplate", {
                                 "dlg_mode",
                                 "squads",
                                 "Text",
-                                T(126748905760, "SQUADS")
+                                "SQUADS"
                             }),
                             PlaceObj("XTemplateWindow", {
                                 "comment",
@@ -397,7 +390,7 @@ PlaceObj("XTemplate", {
                                 "dlg_mode",
                                 "shop",
                                 "Text",
-                                T(126748905760, "SHOP")
+                                "SHOP"
                             })
                         }),
                         PlaceObj("XTemplateWindow", {
@@ -439,15 +432,20 @@ PlaceObj("XTemplate", {
                                 "dlg_mode",
                                 "logout",
                                 "Text",
-                                T(761514198458, "Log out")
+                                "Log out"
                             }, {
                                 PlaceObj("XTemplateFunc", {
                                     "name",
                                     "OnClick(self, dlg)",
                                     "func",
                                     function(self, dlg)
-                                        -- g_ImpTest.loggedin = false
-                                        -- dlg:SetMode(self.dlg_mode)
+                                        local pda = GetDialog("PDADialog")
+
+                                        if pda then
+                                            pda:CloseAction()
+                                        end
+
+                                        return "break"
                                     end
                                 })
                             })
@@ -485,6 +483,8 @@ PlaceObj("XTemplate", {
                     end,
                     "Id",
                     "idFooter",
+                    "Margins",
+                    box(0, 10, 0, 15),
                     "Dock",
                     "bottom",
                     "VAlign",
@@ -754,104 +754,65 @@ PlaceObj("XTemplate", {
                             RGBA(230, 222, 202, 255)
                         }, {
                             PlaceObj("XTemplateWindow", {
+                                "__class",
+                                "XScrollArea",
+                                "Id",
+                                "idScrollLeft",
+                                "IdNode",
+                                false,
                                 "Margins",
-                                box(10, 10, 10, 10),
+                                box(0, 0, 0, 0),
+                                "VAlign",
+                                "top",
                                 "LayoutMethod",
                                 "VList",
-                                "LayoutVSpacing",
-                                10
+                                "VScroll",
+                                "idScrollbar"
                             }, {
-                                PlaceObj("XTemplateMode", {
-                                    "mode",
-                                    "shop, orders, shop_list"
+                                PlaceObj("XTemplateWindow", {
+                                    "Margins",
+                                    box(10, 10, 10, 10),
+                                    "LayoutMethod",
+                                    "VList",
+                                    "LayoutVSpacing",
+                                    10
                                 }, {
-                                    PlaceObj("XTemplateTemplate", {
-                                        "__template",
-                                        "PDAMilitiaShopNav"
-                                    }),
-                                    PlaceObj("XTemplateTemplate", {
-                                        "__template",
-                                        "PDAMilitiaShopAddress"
-                                    }),
-                                }),
-                                PlaceObj("XTemplateMode", {
-                                    "mode",
-                                    "home"
-                                }, {
-                                    PlaceObj("XTemplateForEach", {
-                                        "array",
-                                        function(parent, context)
-                                            return ImpLeftPageLinks()
-                                        end,
-                                        "run_after",
-                                        function(child, context, item, i, n, last)
-                                            child.idLink:SetLinkId(item.link_id)
-                                            child.idLink:SetText(item.text)
-                                            local dlg = GetDialog(child)
-                                            child.idLink.idLink:SetTextStyle(dlg.clicked_links and
-                                                dlg.clicked_links[item.link_id] and "PDAIMPHyperLinkClicked" or
-                                                "PDAIMPHyperLink")
-                                            if item.error then
-                                                child.idLink:SetErrParam(item.error)
-                                            end
-                                            if item.link_id == "mercs" then
-                                                function child.idLink.OnClick(this, dlg)
-                                                    dlg:SetMode("squads")
-                                                end
-                                            end
-                                            if item.link_id == "gallery" then
-                                                function child.idLink.OnClick(this, dlg)
-                                                    dlg:SetMode("squads")
-                                                end
-                                            end
-                                        end
+                                    PlaceObj("XTemplateMode", {
+                                        "mode",
+                                        "shop, orders, shop_list"
                                     }, {
-                                        PlaceObj("XTemplateWindow", {
-                                            "IdNode",
-                                            true,
-                                            "LayoutMethod",
-                                            "HList"
-                                        }, {
-                                            PlaceObj("XTemplateWindow", {
-                                                "__class",
-                                                "XImage",
-                                                "Image",
-                                                "UI/PDA/hm_circle",
-                                                "ImageScale",
-                                                point(600, 600),
-                                                "ImageColor",
-                                                RGBA(0, 0, 0, 255)
-                                            }),
-                                            PlaceObj("XTemplateTemplate", {
-                                                "__template",
-                                                "PDAImpHyperlink",
-                                                "Id",
-                                                "idLink",
-                                                "Margins",
-                                                box(5, 0, 0, 0)
-                                            })
+                                        PlaceObj("XTemplateTemplate", {
+                                            "__template",
+                                            "PDAMilitiaShopNav"
+                                        })
+                                    }),
+                                    PlaceObj("XTemplateMode", {
+                                        "mode",
+                                        "home, squads, squad"
+                                    }, {
+                                        PlaceObj("XTemplateTemplate", {
+                                            "__template",
+                                            "PDAMilitiaSidebarRIP"
                                         })
                                     })
                                 }),
                             }),
                             PlaceObj("XTemplateWindow", {
                                 "__class",
-                                "XText",
+                                "XZuluScroll",
+                                "Id",
+                                "idScrollbar",
                                 "Margins",
-                                box(10, 0, 10, 20),
+                                box(0, 0, 0, 0),
                                 "Dock",
-                                "box",
-                                "HAlign",
-                                "center",
-                                "VAlign",
-                                "bottom",
-                                "TextStyle",
-                                "PDAIMPCopyrightText",
-                                "Translate",
-                                true,
-                                "Text",
-                                "powered by I.M.P."
-                            })
+                                "right",
+                                "UseClipBox",
+                                false,
+                                "Target",
+                                "idScrollLeft",
+                                "AutoHide",
+                                true
+                            }),
                         }),
                         PlaceObj("XTemplateWindow", {
                             "comment",
@@ -884,6 +845,30 @@ PlaceObj("XTemplate", {
                             RGBA(230, 222, 202, 255),
 
                         }, {
+                            PlaceObj("XTemplateFunc", {
+                                "name",
+                                "RespawnContent(self)",
+                                "func",
+                                function(self)
+                                    print("RespawnContent")
+
+                                    local scroll = self.idScrollbar
+
+                                    local list = self.idScrollArea
+
+                                    local lastScrollPos = scroll and scroll:GetScroll()
+
+                                    XContentTemplate.RespawnContent(self)
+                                    RunWhenXWindowIsReady(self, function()
+                                        if self.idScroll and lastScrollPos then
+                                            self.idScroll:SetScroll(lastScrollPos)
+                                        end
+                                        if self.idScrollArea and lastScrollPos then
+                                            self.idScrollArea:ScrollTo(0, lastScrollPos)
+                                        end
+                                    end)
+                                end
+                            }),
                             PlaceObj("XTemplateWindow", {
                                 "__class",
                                 "XScrollArea",
@@ -904,207 +889,43 @@ PlaceObj("XTemplate", {
                                     "Margins",
                                     box(10, 10, 10, 10),
                                     "LayoutMethod",
-                                    "VList"
+                                    "VList",
+                                    "LayoutVSpacing",
+                                    10
                                 }, {
                                     PlaceObj("XTemplateMode", {
                                         "mode",
-                                        "shop, orders, shop_list"
+                                        "shop, orders, shop_list, conditions"
                                     }, {
                                         PlaceObj("XTemplateTemplate", {
                                             "__template",
                                             "PDAMilitiaShopCart"
+                                        }),
+                                        PlaceObj("XTemplateTemplate", {
+                                            "__template",
+                                            "PDAMilitiaShopAddress"
+                                        }),
+                                    }),
+                                    PlaceObj("XTemplateMode", {
+                                        "mode",
+                                        "squads, squad"
+                                    }, {
+                                        PlaceObj("XTemplateTemplate", {
+                                            "__template",
+                                            "PDAMilitiaSidebarBattle"
                                         })
                                     }),
                                     PlaceObj("XTemplateMode", {
                                         "mode",
-                                        "squads"
+                                        "home"
                                     }, {
-                                        PlaceObj("XTemplateWindow", {
-                                            "__class",
-                                            "XContextWindow",
-                                            "Margins",
-                                            box(10, 20, 10, 0),
-                                            "Dock",
-                                            "top",
-                                            "HAlign",
-                                            "left",
-                                            "VAlign",
-                                            "top",
-                                            "MinWidth",
-                                            160,
-                                            "MaxWidth",
-                                            160,
-                                            "MouseCursor",
-                                            "UI/Cursors/Pda_Hand.tga",
-                                            "FXMouseIn",
-                                            "buttonRollover",
-                                            "FXPress",
-                                            "buttonPress",
-                                            "FXPressDisabled",
-                                            "IactDisabled",
-                                            "TextStyle",
-                                            "PDAIMPMercBio",
-                                            "Translate",
-                                            true,
-                                            "ContextUpdateOnOpen",
-                                            true,
-                                            "OnContextUpdate",
-                                            function(self, context, ...)
-                                                XContextWindow.OnContextUpdate(self, context, ...)
-                                                local hyperlink = Untranslated("<h Read more>")
-                                                self.idHeadline:SetText(T({
-                                                    225920505057,
-                                                    "Latest Battle Report"
-                                                }))
-                                                self.idDots:SetText(T({
-                                                    312104275561,
-                                                    "<hl><underline>...<underline></h>",
-                                                    hl = hyperlink
-                                                }))
-                                                -- local dlg = GetDialog(self)
-                                                -- self.idHeadline:SetTextStyle(dlg.clicked_links.month_merc and "PDAIMPHyperLinkClicked" or
-                                                --     "PDAIMPHyperLink")
-                                                local data = ImpMercOfTheMonth()
-                                                if data then
-                                                    self.idTitle:SetText("The Battle of bla")
-                                                    self.idText:SetText(HUDA_AARGenerator:PrintAAR(
-                                                        gv_HUDA_ConflictTracker
-                                                        [#gv_HUDA_ConflictTracker]))
-                                                end
-                                            end
-                                        }, {
-                                            PlaceObj("XTemplateWindow", {
-                                                "__class",
-                                                "XText",
-                                                "Id",
-                                                "idHeadline",
-                                                "Margins",
-                                                box(10, 20, 10, 0),
-                                                "Dock",
-                                                "top",
-                                                "HAlign",
-                                                "left",
-                                                "VAlign",
-                                                "top",
-                                                "MinWidth",
-                                                160,
-                                                "MaxWidth",
-                                                160,
-                                                "MouseCursor",
-                                                "UI/Cursors/Pda_Hand.tga",
-                                                "FXMouseIn",
-                                                "buttonRollover",
-                                                "FXPress",
-                                                "buttonPress",
-                                                "FXPressDisabled",
-                                                "IactDisabled",
-                                                "TextStyle",
-                                                "PDAIMPMercBio",
-                                                "Translate",
-                                                true
-                                            }),
-                                            PlaceObj("XTemplateWindow", {
-                                                "__class",
-                                                "XText",
-                                                "Id",
-                                                "idTitle",
-                                                "Margins",
-                                                box(10, 10, 10, 0),
-                                                "Dock",
-                                                "top",
-                                                "MinWidth",
-                                                160,
-                                                "MaxWidth",
-                                                160,
-                                                "TextStyle",
-                                                "PDAIMPMercName",
-                                                "Translate",
-                                                true
-                                            }),
-                                            PlaceObj("XTemplateWindow", {
-                                                "__class",
-                                                "XText",
-                                                "Id",
-                                                "idDots",
-                                                "Margins",
-                                                box(10, -12, 10, 16),
-                                                "Padding",
-                                                box(2, 2, 2, 2),
-                                                "Dock",
-                                                "bottom",
-                                                "HAlign",
-                                                "left",
-                                                "VAlign",
-                                                "top",
-                                                "MinWidth",
-                                                160,
-                                                "MaxWidth",
-                                                160,
-                                                "MouseCursor",
-                                                "UI/Cursors/Pda_Hand.tga",
-                                                "FXMouseIn",
-                                                "buttonRollover",
-                                                "FXPress",
-                                                "buttonPress",
-                                                "FXPressDisabled",
-                                                "IactDisabled",
-                                                "TextStyle",
-                                                "PDAIMPHyperLink",
-                                                "Translate",
-                                                true,
-                                                "Text",
-                                                T(804387271590, "...")
-                                            }, {
-                                                PlaceObj("XTemplateFunc", {
-                                                    "name",
-                                                    "OnHyperLink(self, hyperlink, argument, hyperlink_box, pos, button)",
-                                                    "func",
-                                                    function(self, hyperlink, argument, hyperlink_box, pos, button)
-                                                        if hyperlink == "OpenMonthMerc" then
-                                                            PlayFX("buttonPress", "start")
-                                                            self:SetTextStyle("PDAIMPHyperLinkClicked")
-                                                            local dlg = GetDialog(self)
-                                                            dlg.clicked_links[argument] = true
-                                                            OpenAIMAndSelectMerc(g_ImpTest.month_merc)
-                                                        end
-                                                    end
-                                                })
-                                            }),
-                                            PlaceObj("XTemplateWindow", {
-                                                "__class",
-                                                "XText",
-                                                "Id",
-                                                "idText",
-                                                "Margins",
-                                                box(10, 5, 10, 0),
-                                                "Dock",
-                                                "top",
-                                                "VAlign",
-                                                "top",
-                                                "MinWidth",
-                                                160,
-                                                "MinHeight",
-                                                450,
-                                                "MaxWidth",
-                                                160,
-                                                "MaxHeight",
-                                                450,
-                                                "OnLayoutComplete",
-                                                function(self)
-                                                    local old_height = self.content_box:maxy() - self.content_box:miny()
-                                                    local line_height = self.font_height + self.font_linespace
-                                                    local new_height = floatfloor(old_height / line_height) * line_height
-                                                    if (0.0 + old_height) / line_height % 1 <= 0.9 then
-                                                        local cb = self.content_box
-                                                        self.content_box = box(cb:minx(), cb:miny(), cb:maxx(),
-                                                            cb:miny() + new_height)
-                                                    end
-                                                end,
-                                                "TextStyle",
-                                                "PDAIMPMercBio",
-                                                "Translate",
-                                                true
-                                            })
+                                        PlaceObj("XTemplateTemplate", {
+                                            "__template",
+                                            "PDAMilitiaSidebarPromotions"
+                                        }),
+                                        PlaceObj("XTemplateTemplate", {
+                                            "__template",
+                                            "PDAMilitiaSidebarNewbies"
                                         })
                                     })
                                 })
@@ -1147,20 +968,11 @@ PlaceObj("XTemplate", {
                             700,
                             "LayoutMethod",
                             "VList",
-                            "OnContextUpdate",
-                            function(self, context, ...)
-                                -- XContentTemplate.OnContextUpdate(self, context, ...)
-                                -- local dlg = GetDialog(self)
-                                -- if dlg:GetMode() == "test" then
-                                --     dlg.mode_param = Untranslated("Question" .. context.question)
-                                --     ObjModified("pda_url")
-                                -- end
-                            end
                         }, {
                             PlaceObj("XTemplateMode", { "mode", "finances" }, {
                                 PlaceObj("XTemplateTemplate", {
                                     "__template",
-                                    "PDAMilitiaFinances",
+                                    "PDAMilitiaConstruction",
                                     "HeaderButtonId",
                                     "idFinances"
                                 })
@@ -1193,7 +1005,7 @@ PlaceObj("XTemplate", {
                                     "__template",
                                     "PDAMilitiaSquad",
                                     "HeaderButtonId",
-                                    "idSquad"
+                                    "idSquads"
                                 })
                             }),
                             PlaceObj("XTemplateMode", {
@@ -1241,7 +1053,7 @@ PlaceObj("XTemplate", {
                             PlaceObj("XTemplateMode", { "mode", "home" }, {
                                 PlaceObj("XTemplateTemplate", {
                                     "__template",
-                                    "PDAMilitiaStartPage",
+                                    "PDAMilitiaHome",
                                     "HeaderButtonId",
                                     "idHome"
                                 })

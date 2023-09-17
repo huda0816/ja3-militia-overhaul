@@ -53,10 +53,27 @@ function HUDA_IsContextMilitia(context)
 	return militia
 end
 
-function HUDA_GetAllMilitiaSoldiers()
-	return table.filter(gv_UnitData, function(k, v)
+function HUDA_GetSectorNamePure(sector)
+	if not IsKindOf(sector, "SatelliteSector") then
+		sector = ResolvePropObj(sector)
+		sector = IsKindOf(sector, "SatelliteSector") and sector
+	end
+	if sector then
+		return sector.display_name or ""
+	end
+	return ""
+end
+
+function HUDA_GetMilitia(array)
+	local soldiers = table.filter(gv_UnitData, function(k, v)
 		return v.militia
 	end)
+
+	if array then
+		return HUDA_ReindexTable(soldiers)
+	else
+		return soldiers
+	end
 end
 
 function HUDA_keyOf(tbl, value)
@@ -68,6 +85,16 @@ function HUDA_keyOf(tbl, value)
 	return nil
 end
 
+function HUDA_GetRank(unit)
+	if (string.gmatch(unit.session_id, "Elite")) then
+		return "Elite"
+	elseif (string.gmatch(unit.session_id, "Veteran")) then
+		return "Veteran"
+	elseif (string.gmatch(unit.session_id, "Rookie")) then
+		return "Rookie"
+	end
+end
+
 function HUDA_GetSectorById(sector_id)
 	return gv_Sectors[sector_id]
 end
@@ -75,6 +102,11 @@ end
 function HUDA_GetSector(unit)
 	local sector_id = HUDA_GetSectorId(unit)
 	return gv_Sectors[sector_id]
+end
+
+function HUDA_GetSectorByUnitId(unit_id)
+	local unit = gv_UnitData[unit_id]
+	return HUDA_GetSector(unit)
 end
 
 function HUDA_GetSectorId(unit)
@@ -285,6 +317,38 @@ function HUDA_ArrayFind(array, fn)
 	return nil
 end
 
+function HUDA_ArraySpreadAppend(array, value)
+	for i, v in ipairs(value) do
+		table.insert(array, v)
+	end
+end
+
+function HUDA_ArrayMost(array)
+	local uniqueValues = {}
+
+	for i, v in ipairs(array) do
+		if not uniqueValues[v] then
+			uniqueValues[v] = 1
+		else
+			uniqueValues[v] = uniqueValues[v] + 1
+		end
+	end
+
+	table.sort(uniqueValues, function(a, b) return a > b end)
+
+	return HUDA_TableKeys(uniqueValues)[1], uniqueValues[HUDA_TableKeys(uniqueValues)[1]]
+end
+
+function HUDA_TableKeys(tbl)
+	local keys = {}
+
+	for k, v in pairs(tbl) do
+		table.insert(keys, k)
+	end
+
+	return keys
+end
+
 function HUDA_IsSquadFull(squad, sector)
 	local militia_types = {
 		MilitiaRookie = 0,
@@ -348,28 +412,34 @@ function HUDA_IsSquadManagementView()
 	return true
 end
 
-function HUDA_GetDaysSinceJoin(join_date)
-	local dist = Game.CampaignTime - join_date
+function HUDA_GetDateFromTime(timeStamp)
+
+	local t = GetTimeAsTable(timeStamp or 0)
+	local month = string.format("%02d", t and t.month or 1)
+	local day = string.format("%02d", t and t.day or 1)
+	local year = tostring(t and t.year or 1)
+	local systemDateFormat = GetDateTimeOrder()
+	for i, unit in ipairs(systemDateFormat) do
+		systemDateFormat[i] = "<u(" .. unit .. ")>"
+	end
+	systemDateFormat = table.concat(systemDateFormat, ".")
+	return T({
+		systemDateFormat,
+		month = month,
+		day = day,
+		year = year
+	})
+
+end
+
+
+
+function HUDA_GetDaysSinceTime(timeStamp)
+	local dist = Game.CampaignTime - timeStamp
 
 	local days = dist / 24 / 60 / 60
 
 	return days
-end
-
-function HUDA_GetModOptions(id, default, type)
-	id = "huda_" .. id
-
-	return CurrentModOptions[id] or default or 0
-end
-
-function OnMsg.ApplyModOptions(mod_id)
-	if CurrentModOptions then
-		for k, v in pairs(CurrentModOptions) do
-			if string.starts_with(k, "huda_Militia") then
-				HUDA_MilitiaFinances:UpdateProps(k, v)
-			end
-		end
-	end
 end
 
 function HUDA_GetSquadLeader(units)
@@ -386,4 +456,14 @@ function HUDA_GetSquadLeader(units)
 	else
 		return gv_UnitData[leaders[1]]
 	end
+end
+
+function HUDA_GetSquadName(squadId)
+	
+	local squad = gv_Squads[squadId]
+	
+	if squad.Name ~= "" then
+		return squad.Name
+	end
+
 end

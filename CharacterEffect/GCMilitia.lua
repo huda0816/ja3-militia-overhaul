@@ -6,7 +6,7 @@ DefineClass.GCMilitia = {
 
 	object_class = "CharacterEffect",
 	msg_reactions = {},
-	DisplayName = T(397426840120, --[[ModItemCharacterEffectCompositeDef GCMilitia DisplayName]] "Grand Chien Militia"),
-	Description = T(842211780828, --[[ModItemCharacterEffectCompositeDef GCMilitia Description]] "A perk every militia solider gets after bootcamp. Which allows them to clean and maintain their weapons."),
+	DisplayName = T(536678008843, --[[ModItemCharacterEffectCompositeDef GCMilitia DisplayName]] "Grand Chien Militia"),
+	Description = T(469649990452, --[[ModItemCharacterEffectCompositeDef GCMilitia Description]] "A perk every militia solider gets after bootcamp. Which allows them to clean and maintain their weapons."),
 }
 

@@ -30,7 +30,7 @@ function HUDA_ShopController:SetDeliveryTypes(deliveryTypes)
     self.DeliveryTypes = deliveryTypes
 end
 
-function HUDA_ShopController:Restock()
+function HUDA_ShopController:Restock(force)
     local tier = gv_HUDA_ShopTierStatus or 1
 
     local filteredProducts = table.ifilter(self.InventoryTemplate, function(_, product)

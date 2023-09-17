@@ -9,21 +9,7 @@ function TFormat.HUDA_MilitiaSince(context_obj)
 		return
 	end
 
-	local t = GetTimeAsTable(unit.JoinDate or 0)
-	local month = string.format("%02d", t and t.month or 1)
-	local day = string.format("%02d", t and t.day or 1)
-	local year = tostring(t and t.year or 1)
-	local systemDateFormat = GetDateTimeOrder()
-	for i, unit in ipairs(systemDateFormat) do
-		systemDateFormat[i] = "<u(" .. unit .. ")>"
-	end
-	systemDateFormat = table.concat(systemDateFormat, ".")
-	return T({
-		systemDateFormat,
-		month = month,
-		day = day,
-		year = year
-	})
+	return Untranslated(HUDA_GetDaysSinceTime(unit.JoinDate or 0) .. " days")
 end
 
 function TFormat.HUDA_MilitiaOrigin(context_obj)
@@ -235,7 +221,7 @@ if FirstLoad then
 
 		x_button.element.OnContextUpdate = function(self, context)
 			if HUDA_IsContextMilitia(context) then
-				self.idBgSquadIcon:SetImage("Mod/LXPER6t/Icons/merc_squad_militia.png")
+				self.idBgSquadIcon:SetImage("Mod/LXPER6t/Icons/merc_squad_militia_2.png")
 			end
 		end
 		x_button.element.AltPress = true
@@ -391,7 +377,7 @@ if FirstLoad then
 
 	XTemplates.SatelliteIconCombined[1].OnContextUpdate = function(self, context, ...)
 		if context.militia then
-			self.idBase:SetImage("Mod/LXPER6t/Icons/merc_squad_militia.png")
+			self.idBase:SetImage("Mod/LXPER6t/Icons/merc_squad_militia_2.png")
 			self.idUpperIcon:SetImage("")
 		else
 			local base, up = GetSatelliteIconImages(context)

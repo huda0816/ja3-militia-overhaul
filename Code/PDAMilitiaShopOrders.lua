@@ -127,7 +127,7 @@ PlaceObj("XTemplate", {
                 "IdNode",
                 false,
                 "Margins",
-                box(20, 20, 0, 20),
+                box(20, 20, 20, 20),
                 "VAlign",
                 "top",
                 "LayoutMethod",
@@ -395,7 +395,7 @@ PlaceObj("XTemplate", {
                                                     ObjModified("militia header")
                                                 end
                                             })
-                                        })                                        
+                                        })
                                     }),
                                 })
                             }),
@@ -409,7 +409,7 @@ PlaceObj("XTemplate", {
                 "Id",
                 "idScrollbar",
                 "Margins",
-                box(0, 0, 10, 0),
+                box(0, 5, 5, 5),
                 "Dock",
                 "right",
                 "UseClipBox",

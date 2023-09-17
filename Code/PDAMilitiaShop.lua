@@ -27,6 +27,48 @@ PlaceObj("XTemplate", {
             return "shop front"
         end
     }, {
+        PlaceObj("XTemplateFunc", {
+            "name",
+            "Open",
+            "func",
+            function(self, ...)
+                XWindow.Open(self, ...)
+                PDAImpHeaderEnable(self)
+            end
+        }),
+        PlaceObj("XTemplateFunc", {
+            "name",
+            "OnDelete",
+            "func",
+            function(self, ...)
+                XWindow.OnDelete(self, ...)
+                PDAImpHeaderDisable(self)
+            end
+        }),
+        PlaceObj("XTemplateFunc", {
+            "name",
+            "RespawnContent(self)",
+            "func",
+            function(self)
+                local scroll = self.idScrollbar
+
+                local list = self.idScrollArea
+
+                local lastScrollPos = scroll and scroll:GetScroll()
+
+                local lastSelected = list and list.selection and #list.selection >= 1 and list.selection
+
+                XContentTemplate.RespawnContent(self)
+                RunWhenXWindowIsReady(self, function()
+                    if self.idScrollbar and lastScrollPos then
+                        self.idScrollbar:SetScroll(lastScrollPos)
+                    end
+                    if self.idScrollArea and lastScrollPos then
+                        self.idScrollArea:ScrollTo(0, lastScrollPos)
+                    end
+                end)
+            end
+        }),
         PlaceObj("XTemplateWindow", {
             "__context",
             function(parent, context)
@@ -34,27 +76,11 @@ PlaceObj("XTemplate", {
             end,
             "LayoutMethod",
             "VList",
+            "IdNode",
+            false,
             "LayoutVSpacing",
             8
         }, {
-            PlaceObj("XTemplateFunc", {
-                "name",
-                "Open",
-                "func",
-                function(self, ...)
-                    XWindow.Open(self, ...)
-                    --   PDAImpHeaderEnable(self)
-                end
-            }),
-            PlaceObj("XTemplateFunc", {
-                "name",
-                "OnDelete",
-                "func",
-                function(self, ...)
-                    XWindow.OnDelete(self, ...)
-                    --   PDAImpHeaderDisable(self)
-                end
-            }),
             PlaceObj("XTemplateWindow", {
                 "__class",
                 "XContextFrame",
@@ -118,6 +144,8 @@ PlaceObj("XTemplate", {
                 "XContextFrame",
                 "Dock",
                 "box",
+                "IdNode",
+                false,
                 "Image",
                 "UI/PDA/imp_panel",
                 "FrameBox",
@@ -133,7 +161,7 @@ PlaceObj("XTemplate", {
                     "IdNode",
                     false,
                     "Margins",
-                    box(20, 20, 0, 20),
+                    box(20, 20, 20, 20),
                     "VAlign",
                     "top",
                     "LayoutMethod",
@@ -192,7 +220,7 @@ PlaceObj("XTemplate", {
                     "Id",
                     "idScrollbar",
                     "Margins",
-                    box(0, 0, 10, 0),
+                    box(0, 5, 5, 5),
                     "Dock",
                     "right",
                     "UseClipBox",

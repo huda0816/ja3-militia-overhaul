@@ -234,7 +234,8 @@ function HUDA_MilitiaPersonalization:RemoveBios(unit, filtered)
 end
 
 function HUDA_MilitiaPersonalization:GetRandomSquadName(sector_id)
-    return sector_id .. " - " .. self:GetRandomMilitiaSquadName()
+    -- return sector_id .. " - " .. self:GetRandomMilitiaSquadName()
+    return self:GetRandomMilitiaSquadName()
 end
 
 function HUDA_MilitiaPersonalization:GetSpecialization(unit)

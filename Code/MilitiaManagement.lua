@@ -172,6 +172,9 @@ function CreateNewSatelliteSquad(predef_props, unit_ids, days, seed, enemy_squad
                     local name = HUDA_MilitiaPersonalization:GetRandomSquadName(HUDA_GetSectorId(unit))
                     predef_props.Name = name
                     predef_props.ShortName = name
+                    if next(unit_ids) then
+                        predef_props.BornInSector = HUDA_GetSectorIdByUnitId(unit_ids[1])
+                    end
                 end
                 break
             end
@@ -203,7 +206,8 @@ end
 -- reset all trainables
 function OnMsg.DialogClose(dlg)
     if dlg.XTemplate == "PDASquadManagement" then
-        local sectors_with_militia = table.filter(gv_Sectors, function(i, v) return v.militia_squad_id or v.militia_squads end)
+        local sectors_with_militia = table.filter(gv_Sectors,
+            function(i, v) return v.militia_squad_id or v.militia_squads end)
 
         for k, v in pairs(sectors_with_militia) do
             if v.militia_squad_id then

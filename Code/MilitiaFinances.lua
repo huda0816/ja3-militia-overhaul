@@ -112,11 +112,10 @@ function GetMercCurrentDailySalary(id)
     local unitData = gv_UnitData[id]
 
     if unitData.militia then
-      return HUDA_MilitiaFinances:GetSalary(unitData)
+        return HUDA_MilitiaFinances:GetSalary(unitData)
     end
 
     return HUDA_OriginalGetMercCurrentDailySalary(id)
-    
 end
 
 HUDA_OriginalGetMoneyProjection = GetMoneyProjection
@@ -141,7 +140,7 @@ function OnMsg.NewHour()
     HUDA_UpdateDailyCosts()
 end
 
-function TFormat.GetDailyMoneyChange()    
+function TFormat.GetDailyMoneyChange()
     return T({
         780491782250,
         "<moneyWithSign(amount)>",
@@ -165,8 +164,7 @@ function HUDA_MilitiaFinances:UpdateProps(prop_name, value)
     self[property_name] = value
 end
 
-function HUDA_MilitiaFinances:GetSalary(unit, days) 
-
+function HUDA_MilitiaFinances:GetSalary(unit, days)
     days = days or 1
 
     local base_salary = 0
@@ -180,11 +178,23 @@ function HUDA_MilitiaFinances:GetSalary(unit, days)
     end
 
     return base_salary + self:AddCampaignBonus(unit)
-    
+end
+
+function HUDA_MilitiaFinances:GetDailyCostsPerSquad(squad)
+    local upkeep = 0
+
+    for _, unitId in pairs(squad.units) do
+        local unit = gv_UnitData[unitId]
+
+        if unit.militia then
+            upkeep = upkeep + self:GetSalary(unit)
+        end
+    end
+
+    return round(upkeep,1)
 end
 
 function HUDA_MilitiaFinances:GetMilitiaUpkeep(days)
-
     local militia_units = table.filter(gv_UnitData, function(k, v)
         return v.militia and v.Squad
     end)
@@ -196,15 +206,14 @@ function HUDA_MilitiaFinances:GetMilitiaUpkeep(days)
     local elites = 0
 
     for _, unit in pairs(militia_units) do
-
         if unit.class == "MilitiaRookie" then
-            upkeep = upkeep +  tonumber(self.MilitiaRookieIncome)
+            upkeep = upkeep + tonumber(self.MilitiaRookieIncome)
             rookies = rookies + 1
         elseif unit.class == "MilitiaVeteran" then
-            upkeep = upkeep +  tonumber(self.MilitiaVeteranIncome)
+            upkeep = upkeep + tonumber(self.MilitiaVeteranIncome)
             veterans = veterans + 1
         elseif unit.class == "MilitiaElite" then
-            upkeep = upkeep +  tonumber(self.MilitiaEliteIncome)
+            upkeep = upkeep + tonumber(self.MilitiaEliteIncome)
             elites = elites + 1
         end
 
@@ -231,7 +240,7 @@ function HUDA_MilitiaFinances:AddCampaignBonus(unit)
 
     local water_price = water_sectors and #water_sectors * DivRound(self.MilitiaCampaignCosts, 10) or 0
 
-    local price = DivRound(travel_time, 3600) * DivRound(self.MilitiaCampaignCosts, 20)  + water_price
+    local price = DivRound(travel_time, 3600) * DivRound(self.MilitiaCampaignCosts, 20) + water_price
 
     return price
 end

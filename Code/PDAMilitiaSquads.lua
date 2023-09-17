@@ -31,7 +31,7 @@ PlaceObj("XTemplate", {
       "func",
       function(self, ...)
         XWindow.Open(self, ...)
-        --   PDAImpHeaderEnable(self)
+        PDAImpHeaderEnable(self)
       end
     }),
     PlaceObj("XTemplateFunc", {
@@ -40,7 +40,7 @@ PlaceObj("XTemplate", {
       "func",
       function(self, ...)
         XWindow.OnDelete(self, ...)
-        --   PDAImpHeaderDisable(self)
+        PDAImpHeaderDisable(self)
       end
     }),
     PlaceObj("XTemplateWindow", {
@@ -54,10 +54,20 @@ PlaceObj("XTemplate", {
       true
     }, {
       PlaceObj("XTemplateWindow", {
+        "__class",
+        "XScrollArea",
+        "Id",
+        "idScrollArea",
+        "IdNode",
+        false,
         "Margins",
         box(20, 20, 20, 20),
+        "VAlign",
+        "top",
         "LayoutMethod",
-        "VList"
+        "VList",
+        "VScroll",
+        "idScrollbar"
       }, {
         PlaceObj("XTemplateWindow", {
           "__class",
@@ -82,17 +92,112 @@ PlaceObj("XTemplate", {
         PlaceObj("XTemplateWindow", {
           "Margins",
           box(0, 10, 0, 0),
-          "HAlign",
-          "center",
-          "VAlign",
-          "top",
           "LayoutMethod",
           "VList",
-          "LayoutHSpacing",
-          50,
           "LayoutVSpacing",
-          30
+          10
         }, {
+          PlaceObj("XTemplateWindow", {
+            "LayoutMethod",
+            "HList",
+          }, {
+            PlaceObj("XTemplateWindow", {
+              "__class",
+              "XText",
+              "HandleMouse",
+              false,
+              "TextStyle",
+              "PDAIMPGalleryName",
+              "TextHAlign",
+              "left",
+              "MinWidth",
+              300,
+              "MaxWidth",
+              300,
+              "Text",
+              "Squad Name"
+            }),
+            PlaceObj("XTemplateWindow", {
+              "__class",
+              "XText",
+              "HandleMouse",
+              false,
+              "TextStyle",
+              "PDAIMPGalleryBottom",
+              "MinWidth",
+              70,
+              "MaxWidth",
+              70,
+              "TextHAlign",
+              "left",
+              "Text",
+              "Units"
+            }),
+            PlaceObj("XTemplateWindow", {
+              "__class",
+              "XText",
+              "HandleMouse",
+              false,
+              "TextStyle",
+              "PDAIMPGalleryBottom",
+              "MinWidth",
+              100,
+              "MaxWidth",
+              100,
+              "TextHAlign",
+              "left",
+              "Text",
+              "Location"
+            }),
+            PlaceObj("XTemplateWindow", {
+              "__class",
+              "XText",
+              "HandleMouse",
+              false,
+              "TextStyle",
+              "PDAIMPGalleryBottom",
+              "MinWidth",
+              130,
+              "MaxWidth",
+              130,
+              "TextHAlign",
+              "left",
+              "Text",
+              "Status"
+            }),
+            PlaceObj("XTemplateWindow", {
+              "__class",
+              "XText",
+              "HandleMouse",
+              false,
+              "TextStyle",
+              "PDAIMPGalleryBottom",
+              "MinWidth",
+              100,
+              "MaxWidth",
+              100,
+              "TextHAlign",
+              "left",
+              "Text",
+              "Costs"
+            })
+          }),
+          PlaceObj("XTemplateWindow", {
+            "comment",
+            "line",
+            "__class",
+            "XImage",
+            "Margins",
+            box(0, 5, 0, 5),
+            "VAlign",
+            "center",
+            "Transparency",
+            141,
+            "Image",
+            "UI/PDA/separate_line_vertical",
+            "ImageFit",
+            "stretch-x"
+          }),
           PlaceObj("XTemplateForEach", {
             "__context",
             function(parent, context, item, i, n)
@@ -100,23 +205,34 @@ PlaceObj("XTemplate", {
             end,
             "array",
             function(parent, context)
-              return HUDA_TableValues(table.filter(gv_Squads, function(i, squad)
+              local squads = HUDA_TableValues(table.filter(gv_Squads, function(i, squad)
                 return squad.militia
               end))
+
+              table.sort(squads, function(a, b)
+                return a.UniqueId < b.UniqueId
+              end)
+
+              return squads
+
             end,
             "run_after",
             function(child, context, item, i, n, last)
               child.idSquadName:SetText(item.Name)
               child.idSquadLocation:SetText(item.CurrentSector)
+              if gv_Sectors[item.CurrentSector].conflict then
+                child.idSquadStatus:SetText("In Conflict")
+              elseif item.route and item.route.displayedSectionEnd then
+                child.idSquadStatus:SetText("Moves towards: " .. item.route.displayedSectionEnd)
+              else
+                child.idSquadStatus:SetText("Defending")
+              end
+              child.idSquadUnits:SetText(#item.units)
             end
           }, {
             PlaceObj("XTemplateWindow", {
               "__class",
               "XButton",
-              "HAlign",
-              "left",
-              "VAlign",
-              "top",
               "LayoutMethod",
               "HList",
               "Background",
@@ -128,7 +244,7 @@ PlaceObj("XTemplate", {
               "OnPress",
               function(self, gamepad)
                 local dlg = GetDialog(self)
-                dlg:SetMode("squad", {selected_squad = self.context})
+                dlg:SetMode("squad", { selected_squad = self.context })
               end,
               "RolloverBackground",
               RGBA(255, 255, 255, 0),
@@ -145,7 +261,29 @@ PlaceObj("XTemplate", {
                 "TextStyle",
                 "PDAIMPGalleryName",
                 "TextHAlign",
-                "left"
+                "left",
+                "MinWidth",
+                300,
+                "MaxWidth",
+                300,
+              }),
+              PlaceObj("XTemplateWindow", {
+                "__class",
+                "XText",
+                "Id",
+                "idSquadUnits",
+                "HandleMouse",
+                false,
+                "TextStyle",
+                "PDAIMPGalleryBottom",
+                "Translate",
+                true,
+                "TextHAlign",
+                "left",
+                "MinWidth",
+                70,
+                "MaxWidth",
+                70,
               }),
               PlaceObj("XTemplateWindow", {
                 "__class",
@@ -159,33 +297,85 @@ PlaceObj("XTemplate", {
                 "Translate",
                 true,
                 "TextHAlign",
-                "right"
+                "left",
+                "MinWidth",
+                100,
+                "MaxWidth",
+                100,
+              }),
+              PlaceObj("XTemplateWindow", {
+                "__class",
+                "XText",
+                "Id",
+                "idSquadStatus",
+                "HandleMouse",
+                false,
+                "TextStyle",
+                "PDAIMPGalleryBottom",
+                "Translate",
+                true,
+                "TextHAlign",
+                "left",
+                "MinWidth",
+                130,
+                "MaxWidth",
+                130,
+              }),
+              PlaceObj("XTemplateWindow", {
+                "__class",
+                "XText",
+                "Id",
+                "idSquadCosts",
+                "HandleMouse",
+                false,
+                "TextStyle",
+                "PDAIMPGalleryBottom",
+                "Translate",
+                true,
+                "TextHAlign",
+                "left",
+                "MinWidth",
+                100,
+                "MaxWidth",
+                100,
+                "Text",
+                Untranslated("<MilitiaSquadCosts(context)>$")
               })
-            })
+            }),
+            PlaceObj("XTemplateWindow", {
+              "comment",
+              "line",
+              "__class",
+              "XImage",
+              "Margins",
+              box(0, 5, 0, 5),
+              "VAlign",
+              "center",
+              "Transparency",
+              141,
+              "Image",
+              "UI/PDA/separate_line_vertical",
+              "ImageFit",
+              "stretch-x"
+            }),
           })
-        }),
-        PlaceObj("XTemplateWindow", {
-          "__class",
-          "XText",
-          "Id",
-          "idBottom",
-          "Margins",
-          box(0, 40, 0, 0),
-          "Padding",
-          box(0, 0, 0, 0),
-          "HAlign",
-          "center",
-          "VAlign",
-          "bottom",
-          "HandleMouse",
-          false,
-          "TextStyle",
-          "PDAIMPGalleryBottom",
-          "Translate",
-          true,
-          "Text",
-          T(509636760606, "Last updated Fri, Jan 21:39:09 2001")
         })
+      }),
+      PlaceObj("XTemplateWindow", {
+        "__class",
+        "XZuluScroll",
+        "Id",
+        "idScrollbar",
+        "Margins",
+        box(0, 5, 5, 5),
+        "Dock",
+        "right",
+        "UseClipBox",
+        false,
+        "Target",
+        "idScrollArea",
+        "AutoHide",
+        true
       })
     })
   })

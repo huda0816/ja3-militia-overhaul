@@ -38,6 +38,8 @@ PlaceObj("XTemplate", {
                 140,
                 "Image",
                 "UI/Hud/portrait_background",
+                "ImageColor",
+                RGBA(255, 255, 255, 120),
                 "ImageFit",
                 "stretch"
             }),

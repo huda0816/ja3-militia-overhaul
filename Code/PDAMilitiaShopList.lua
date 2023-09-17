@@ -19,6 +19,24 @@ PlaceObj("XTemplate", {
         "name",
         T(536912996016, "NavButtonId")
     }),
+    PlaceObj("XTemplateProperty", {
+        "id",
+        "HeaderButtonId",
+        "editor",
+        "text",
+        "translate",
+        false,
+        "Set",
+        function(self, value)
+            self.HeaderButtonId = value
+        end,
+        "Get",
+        function(self)
+            return self.HeaderButtonId
+        end,
+        "name",
+        T(536912996016, "HeaderButtonId")
+    }),
     PlaceObj("XTemplateWindow", {
         "__class",
         "XContentTemplate",
@@ -27,6 +45,48 @@ PlaceObj("XTemplate", {
             return "shop list"
         end
     }, {
+        PlaceObj("XTemplateFunc", {
+            "name",
+            "Open",
+            "func",
+            function(self, ...)
+                XWindow.Open(self, ...)
+                PDAImpHeaderEnable(self)
+            end
+        }),
+        PlaceObj("XTemplateFunc", {
+            "name",
+            "OnDelete",
+            "func",
+            function(self, ...)
+                XWindow.OnDelete(self, ...)
+                PDAImpHeaderDisable(self)
+            end
+        }),
+        PlaceObj("XTemplateFunc", {
+            "name",
+            "RespawnContent(self)",
+            "func",
+            function(self)
+                local scroll = self[1][2].idScroll
+
+                local list = self[1][2].idScrollArea
+
+                local lastScrollPos = scroll and scroll:GetScroll()
+
+                local lastSelected = list and list.selection and #list.selection >= 1 and list.selection
+
+                XContentTemplate.RespawnContent(self)
+                RunWhenXWindowIsReady(self, function()
+                    if self[1][2].idScroll and lastScrollPos then
+                        self[1][2].idScroll:SetScroll(lastScrollPos)
+                    end
+                    if self[1][2].idScrollArea and lastScrollPos then
+                        self[1][2].idScrollArea:ScrollTo(0, lastScrollPos)
+                    end
+                end)
+            end
+        }),
         PlaceObj("XTemplateWindow", {
             "__context",
             function(parent, context)
@@ -141,7 +201,7 @@ PlaceObj("XTemplate", {
                     "LayoutMethod",
                     "VList",
                     "VScroll",
-                    "idScrollbar"
+                    "idScroll"
                 }, {
                     PlaceObj("XTemplateWindow", {
                         "__condition",
@@ -274,9 +334,9 @@ PlaceObj("XTemplate", {
                     "__class",
                     "XZuluScroll",
                     "Id",
-                    "idScrollbar",
+                    "idScroll",
                     "Margins",
-                    box(0, 0, 0, 0),
+                    box(0, 5, 5, 5),
                     "Dock",
                     "right",
                     "UseClipBox",

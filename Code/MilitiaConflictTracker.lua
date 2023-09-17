@@ -66,6 +66,24 @@ function HUDA_ConflictTracker:ResolveConflict(sector, playerAttacked, playerWon,
     conflict.autoResolve = autoResolve and true or false
     conflict.retreat = isRetreat
     conflict.endTime = Game.CampaignTime
+
+    local aar = HUDA_AARGenerator:PrintAAR(conflict)
+
+    local aarTitle = HUDA_AARGenerator:PrintAARTitle(conflict)
+
+    conflict.aar = {
+        title = aarTitle,
+        text = aar
+    }
+
+    HUDA_AddNews({
+        title = aarTitle,
+        text = aar,
+        date = Game.CampaignTime,
+        sector = sector.Id,
+        type = "AAR",
+    })
+
 end
 
 function HUDA_ConflictTracker:InitializeConflict(sectorId)
@@ -74,21 +92,13 @@ function HUDA_ConflictTracker:InitializeConflict(sectorId)
         return
     end
 
+    local enemyLeader = self:GetLeader(sectorId, "enemy")
+    local playerLeader = self:GetLeader(sectorId, "player")
+    local allyLeader = self:GetLeader(sectorId, "ally")
+    local militiaLeader = self:GetLeader(sectorId, "militia")
+
     local conflict = {
         sectorId = sectorId,
-        squads = self:GetConflictSquads(sectorId),
-        militiaUnits = self:GetUnitIds(sectorId, "militia"),
-        enemyUnits = self:GetUnitIds(sectorId, "enemy"),
-        playerUnits = self:GetUnitIds(sectorId, "player"),
-        allyUnits = self:GetUnitIds(sectorId, "ally"),
-        militiaLeader = self:GetLeader(sectorId, "militia"),
-        enemyLeader = self:GetLeader(sectorId, "enemy"),
-        playerLeader = self:GetLeader(sectorId, "player"),
-        allyLeader = self:GetLeader(sectorId, "ally"),
-        militiaKilled = {},
-        enemyKilled = {},
-        playerKilled = {},
-        allyKilled = {},
         civKilled = {},
         kills = {},
         wounds = {},
@@ -101,6 +111,32 @@ function HUDA_ConflictTracker:InitializeConflict(sectorId)
         resolved = false,
         startTime = Game.CampaignTime,
         endTime = 0,
+        squads = self:GetConflictSquads(sectorId),
+        militia = {
+            units = self:GetUnitIds(sectorId, "militia"),
+            leader = militiaLeader,
+            killed = {},
+            promotions = {},
+            affiliation = militiaLeader and militiaLeader.affiliation or self:GetAffiliation(sectorId, "militia"),
+        },
+        enemy = {
+            units = self:GetUnitIds(sectorId, "enemy"),
+            leader = enemyLeader,
+            killed = {},
+            affiliation = enemyLeader and enemyLeader.affiliation or self:GetAffiliation(sectorId, "enemy"),
+        },
+        player = {
+            units = self:GetUnitIds(sectorId, "player"),
+            leader = playerLeader,
+            killed = {},
+            affiliation = playerLeader and playerLeader.affiliation or self:GetAffiliation(sectorId, "enemy"),
+        },
+        ally = {
+            units = self:GetUnitIds(sectorId, "ally"),
+            leader = allyLeader,
+            killed = {},
+            affiliation = allyLeader and allyLeader.affiliation or self:GetAffiliation(sectorId, "enemy"),
+        }
     }
 
     table.insert(gv_HUDA_ConflictTracker, conflict)
@@ -131,13 +167,21 @@ function HUDA_ConflictTracker:ExtendConflict(sectorId, squadId)
         table.insert(conflict.squads, prepSquad)
 
         if squad.militia then
-            table.insert(conflict.militiaUnits, squad.units)
+            HUDA_ArraySpreadAppend(conflict.militia.units, squad.units)
+            conflict.militia.leader = self:GetLeader(sectorId, "militia")
+            conflict.militia.affiliation = conflict.militia.leader and conflict.militia.leader.affiliation or self:GetAffiliation(sectorId, "militia")
         elseif squad.Side == "enemy1" or squad.Side == "enemy2" then
-            table.insert(conflict.enemyUnits, squad.units)
+            HUDA_ArraySpreadAppend(conflict.enemy.units, squad.units)
+            conflict.enemy.leader = self:GetLeader(sectorId, "enemy")
+            conflict.enemy.affiliation = conflict.enemy.leader and conflict.enemy.leader.affiliation or self:GetAffiliation(sectorId, "enemy")
         elseif squad.Side == "player1" or squad.Side == "player2" then
-            table.insert(conflict.playerUnits, squad.units)
+            HUDA_ArraySpreadAppend(conflict.player.units, squad.units)
+            conflict.player.leader = self:GetLeader(sectorId, "player")
+            conflict.player.affiliation = conflict.player.leader and conflict.player.leader.affiliation or self:GetAffiliation(sectorId, "player")
         elseif squad.Side == "ally" then
-            table.insert(conflict.allyUnits, squad.units)
+            HUDA_ArraySpreadAppend(conflict.ally.units, squad.units)
+            conflict.ally.leader = self:GetLeader(sectorId, "ally")
+            conflict.ally.affiliation = conflict.ally.leader and conflict.ally.leader.affiliation or self:GetAffiliation(sectorId, "ally")
         end
     end
 end
@@ -185,7 +229,6 @@ function HUDA_ConflictTracker:GetUnitIds(sectorId, side)
 end
 
 function HUDA_ConflictTracker:GetAllUnits(sectorId, side)
-    
     local squads = self:GetSquads(sectorId, side)
 
     if not squads then
@@ -205,7 +248,6 @@ function HUDA_ConflictTracker:GetAllUnits(sectorId, side)
 end
 
 function HUDA_ConflictTracker:PrepareLeader(unit)
-
     local squad = gv_Squads[unit.Squad or unit.OldSquad]
 
     local leader = {
@@ -218,6 +260,24 @@ function HUDA_ConflictTracker:PrepareLeader(unit)
     }
 
     return leader
+end
+
+function HUDA_ConflictTracker:GetAffiliation(sectorId, side)
+    local units = self:GetAllUnits(sectorId, side)
+
+    if not units or not next(units) then
+        return side
+    end
+
+    local affiliations = {}
+
+    for _, unit in ipairs(units) do
+        if unit.Affiliation then
+            table.insert(affiliations, unit.Affiliation)
+        end
+    end
+
+    return HUDA_ArrayMost(affiliations) or side
 end
 
 function HUDA_ConflictTracker:GetLeader(sectorId, side)
@@ -241,7 +301,7 @@ function HUDA_ConflictTracker:GetLeader(sectorId, side)
 
     local potentialLeaders = table.ifilter(units, function(i, v)
         return (v.role and v.role == "Commander") or (v.Specialization and v.Specialization == "Leader") or
-        string.find(v.session_id, "Leader")
+            string.find(v.session_id, "Leader")
     end)
 
     if #potentialLeaders > 0 then
@@ -359,7 +419,7 @@ function HUDA_ConflictTracker:TrackPromotions(unit, oldId)
         newRank = self:GetMilitiaRank(unit.session_id)
     }
 
-    table.insert(conflict.promotions, promotion)
+    table.insert(conflict.militia.promotions, promotion)
 end
 
 function HUDA_ConflictTracker:TrackSpecialEvents(unit, event)
@@ -474,13 +534,13 @@ function HUDA_ConflictTracker:AddSideKill(unit, conflict)
     local side = self:GetUnitSide(unit)
 
     if unit.militia then
-        table.insert(conflict.militiaKilled, unit.session_id)
+        table.insert(conflict.militia.killed, unit.session_id)
     elseif side == "player" then
-        table.insert(conflict.playerKilled, unit.session_id)
+        table.insert(conflict.player.killed, unit.session_id)
     elseif side == "enemy" then
-        table.insert(conflict.enemyKilled, unit.session_id)
+        table.insert(conflict.enemy.killed, unit.session_id)
     elseif side == "ally" then
-        table.insert(conflict.allyKilled, unit.session_id)
+        table.insert(conflict.ally.killed, unit.session_id)
     elseif unit:IsCivilian() then
         table.insert(conflict.civKilled, unit.session_id)
     end

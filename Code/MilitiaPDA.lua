@@ -31,13 +31,10 @@ DefineClass.PDAMilitia = {
 }
 
 function PDAMilitia:Open()
-    local mode_param = GetDialogModeParam(self.parent) or GetDialogModeParam(GetDialog("PDADialog")) or
-        GetDialog("PDADialog").context
-
-    XDialog.Open(self)
+    print("I got opened")
 end
 
-function OpenMilitiaPDA()
+function OpenMilitiaPDA(mode)
     local full_screen = GetDialog("FullscreenGameDialogs")
     if full_screen and full_screen.window_state == "open" then
         full_screen:Close()
@@ -91,16 +88,78 @@ function TFormat.MilitiaName(context_obj)
     return context_obj.Name
 end
 
-function TFormat.LatestAAR()
-    return HUDA_AARGenerator:PrintAAR(gv_HUDA_ConflictTracker[#gv_HUDA_ConflictTracker])
+function TFormat.AAR(conflict)
+    conflict = conflict or gv_HUDA_ConflictTracker[#gv_HUDA_ConflictTracker]
+
+    return HUDA_AARGenerator:PrintAAR(conflict)
 end
 
-function _ENV:PDAImpHeaderEnable()
-    -- local header_button = GetDialog(self):ResolveId("idHeader"):ResolveId("idLeftLinks"):ResolveId(self:GetProperty("HeaderButtonId"))
-    -- header_button:ResolveId("idLink"):SetTextStyle("PDAIMPContentTitleSelected")
+function TFormat.AARTitle(conflict)
+    conflict = conflict or gv_HUDA_ConflictTracker[#gv_HUDA_ConflictTracker]
+
+    return HUDA_AARGenerator:PrintAARTitle(conflict)
 end
 
-function _ENV:PDAImpHeaderDisable()
-    -- local header_button = GetDialog(self):ResolveId("idHeader"):ResolveId("idLeftLinks"):ResolveId(self:GetProperty("HeaderButtonId"))
-    -- header_button:ResolveId("idLink"):SetTextStyle("PDAIMPContentTitleActive")
+function TFormat.ConflictDaysAgo(conflict)
+    conflict = conflict or gv_HUDA_ConflictTracker[#gv_HUDA_ConflictTracker]
+
+    return HUDA_GetDaysSinceTime(conflict.endTime)
+end
+
+function TFormat.ConflictResult(conflict)
+    conflict = conflict or gv_HUDA_ConflictTracker[#gv_HUDA_ConflictTracker]
+
+    if (conflict.playerWon and conflict.playerWon == true) then
+        return "Victory"
+    else
+        return "Defeat"
+    end
+end
+
+function TFormat.ConflictLocation(conflict)
+    conflict = conflict or gv_HUDA_ConflictTracker[#gv_HUDA_ConflictTracker]
+
+    return GetSectorName(gv_Sectors[conflict.sectorId])
+end
+
+function TFormat.ConflictDirection(conflict)
+    conflict = conflict or gv_HUDA_ConflictTracker[#gv_HUDA_ConflictTracker]
+
+    return conflict.playerAttacked and "Offensive" or "Defensive"
+end
+
+function TFormat.MilitiaSquadCosts(squad)
+    return HUDA_MilitiaFinances:GetDailyCostsPerSquad(squad)
+end
+
+function TFormat.MilitiaSquadOrigin(squad)
+    if squad.BornInSector == "" then
+        return "Unknown"
+    end
+
+    return HUDA_GetClosestCity(squad.BornInSector)
+end
+
+function TFormat.MilitiaStatus(item)
+    if gv_Sectors[item.CurrentSector].conflict then
+        return "In Battle"
+    elseif item.route and item.route.displayedSectionEnd then
+        return "Moves towards: " .. item.route.displayedSectionEnd
+    else
+        return "Defending"
+    end
+end
+
+function TFormat.NewsMeta(item)
+    local sector, date
+
+    if (item.sector) then
+        sector = GetSectorName(HUDA_GetSectorById(item.sector))
+    end
+
+    if (item.date) then
+        date = HUDA_GetDateFromTime(item.date)
+    end
+
+    return date .. (date and sector and " - ") .. sector
 end
