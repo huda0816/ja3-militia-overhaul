@@ -34,6 +34,7 @@ function RollForMilitiaPromotion(sector)
 
 					if new_guy then
 						HUDA_MergeMilitia(new_guy, copy)
+						Msg("MilitiaPromoted", new_guy, copy.session_id)
 					end
 				end
 			end
@@ -42,14 +43,14 @@ function RollForMilitiaPromotion(sector)
 	if 0 < promotedCount then
 		if 1 < promotedCount then
 			CombatLog("important", T({
-				293615811082,
+				999293615811082,
 				"<promotedCount> militia got promoted in <SectorName(sectorId)>",
 				promotedCount = promotedCount,
 				sectorId = sector.Id
 			}))
 		else
 			CombatLog("important", T({
-				488327770041,
+				999488327770041,
 				"A militia unit got promoted in <SectorName(sectorId)>",
 				promotedCount = promotedCount,
 				sectorId = sector.Id
@@ -152,6 +153,14 @@ function HUDA_MergeMilitia(new, original)
 				new[k] = v
 			end
 		end
+	end
+
+	if new.session_id ~= original.session_id then
+		
+		new.OldSessionIds = new.OldSessionIds or {}
+
+		table.insert(new.OldSessionIds, original.session_id)
+
 	end
 end
 

@@ -1,7 +1,7 @@
 -- GCMilita Perk Effects
 -- Militia Soldiers cleaning their gear daily
 function OnMsg.NewDay()
-    local militia = HUDA_GetAllMilitiaSoldiers()
+    local militia = HUDA_GetMilitia()
 
     for _, unit in pairs(militia) do
         
