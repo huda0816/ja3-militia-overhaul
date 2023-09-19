@@ -172,10 +172,6 @@ PlaceObj('ModItemCode', {
 	'CodeFileName', "Code/PDAMilitiaShopCart.lua",
 }),
 PlaceObj('ModItemCode', {
-	'name', "PDAMilitiaShopClosed",
-	'CodeFileName', "Code/PDAMilitiaShopClosed.lua",
-}),
-PlaceObj('ModItemCode', {
 	'name', "PDAMilitiaShopList",
 	'CodeFileName', "Code/PDAMilitiaShopList.lua",
 }),
@@ -194,6 +190,10 @@ PlaceObj('ModItemCode', {
 PlaceObj('ModItemCode', {
 	'name', "PDAMilitiaShopProduct",
 	'CodeFileName', "Code/PDAMilitiaShopProduct.lua",
+}),
+PlaceObj('ModItemCode', {
+	'name', "PDAMilitiaShopUnavailable",
+	'CodeFileName', "Code/PDAMilitiaShopUnavailable.lua",
 }),
 PlaceObj('ModItemCode', {
 	'name', "PDAMilitiaSidebarBattle",
@@ -222,10 +222,6 @@ PlaceObj('ModItemCode', {
 PlaceObj('ModItemCode', {
 	'name', "PDAMilitiaSquads",
 	'CodeFileName', "Code/PDAMilitiaSquads.lua",
-}),
-PlaceObj('ModItemCode', {
-	'name', "PDAMilitiaShopUnavailable",
-	'CodeFileName', "Code/PDAMilitiaShopUnavailable.lua",
 }),
 PlaceObj('ModItemMsgDef', {
 	Description = "When a militia soldier gets promoted",
@@ -378,6 +374,29 @@ PlaceObj('ModItemOptionChoice', {
 	},
 }),
 PlaceObj('ModItemOptionChoice', {
+	'name', "huda_MilitiaShopStockMultiplier",
+	'DisplayName', "Multiplies the default stock values",
+	'DefaultValue', "1",
+	'ChoiceList', {
+		"1",
+		"2",
+		"3",
+		"4",
+	},
+}),
+PlaceObj('ModItemOptionChoice', {
+	'name', "huda_MilitiaShopTier",
+	'DisplayName', "Changes current tier of shop",
+	'DefaultValue', "1",
+	'ChoiceList', {
+		"1",
+		"2",
+		"3",
+		"4",
+		"5",
+	},
+}),
+PlaceObj('ModItemOptionChoice', {
 	'name', "huda_MilitiaVeteranIncome",
 	'DisplayName', "Daily Upkeep Veteran",
 	'DefaultValue', "40",
@@ -424,6 +443,26 @@ PlaceObj('ModItemOptionChoice', {
 		"390",
 		"400",
 	},
+}),
+PlaceObj('ModItemOptionToggle', {
+	'name', "huda_MilitiaShopAllTowns",
+	'DisplayName', "Ship to all towns",
+	'Help', "Ships to all player controlled towns",
+}),
+PlaceObj('ModItemOptionToggle', {
+	'name', "huda_MilitiaShopAlwaysOpen",
+	'DisplayName', "Shop always open",
+	'Help', "Shop stays open even if Ernie is lost.",
+}),
+PlaceObj('ModItemOptionToggle', {
+	'name', "huda_MilitiaShopDailyRestock",
+	'DisplayName', "Shop gets restocked daily",
+	'Help', "No randomness",
+}),
+PlaceObj('ModItemOptionToggle', {
+	'name', "huda_MilitiaShopInstantShopping",
+	'DisplayName', "Instant Shopping",
+	'Help', "Gear arrives without delivery time",
 }),
 PlaceObj('ModItemOptionToggle', {
 	'name', "huda_militiaNoWeapons",

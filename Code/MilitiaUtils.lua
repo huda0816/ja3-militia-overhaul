@@ -458,8 +458,6 @@ function HUDA_GetDateFromTime(timeStamp)
 
 end
 
-
-
 function HUDA_GetDaysSinceTime(timeStamp)
 	local dist = Game.CampaignTime - timeStamp
 

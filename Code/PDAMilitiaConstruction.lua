@@ -111,7 +111,7 @@ PlaceObj("XTemplate", {
                         "Translate",
                         true,
                         "Text",
-                        T(145135869022, "Under Construction")
+                        "Under Construction"
                     }),
                     PlaceObj("XTemplateWindow", {
                         "__class",

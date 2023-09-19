@@ -1,7 +1,5 @@
 GameVar("gv_HUDA_Website_Status", {})
 
-
-
 if FirstLoad then
     local pda_mode_container = CustomSettingsMod.Utils.XTemplate_FindElementsByProp(XTemplates["PDABrowser"],
         "__template",
@@ -19,63 +17,82 @@ if FirstLoad then
     end
 end
 
-PDABrowser.InternalModes = PDABrowser.InternalModes .. ", militia"
 
--- DockBrowserTab("militia")
+function OnMsg.ZuluGameLoaded(game)
+    if gv_HUDA_Website_Status.launched then
+        InitBrowserModes()
+        return
+    end
 
-if PDABrowserTabData and not table.find(PDABrowserTabData, "id", "militia") then
-    table.insert(PDABrowserTabData, {
-        id = "militia",
-        DisplayName = "Militia",
-    })
+    local militia = HUDA_TableFind(gv_UnitData, function(k, unit)
+        return unit.militia and unit.HireStatus ~= "Dead"
+    end)
+
+    if militia then
+        HUDA_LaunchWebsite()
+    end
 end
 
+function InitBrowserModes()
+    PDABrowser.InternalModes = PDABrowser.InternalModes .. ", militia"
 
-function OnMsg.SquadSpawned(id) 
+    if PDABrowserTabData and not table.find(PDABrowserTabData, "id", "militia") then
+        table.insert(PDABrowserTabData, {
+            id = "militia",
+            DisplayName = "Militia",
+        })
+    end
+end
+
+function OnMsg.SquadSpawned(id)
+    if gv_HUDA_Website_Status.launched then
+        return
+    end
+
     local squad = gv_Squads[id]
 
     if not squad or not squad.militia then
         return
     end
 
-    if gv_HUDA_Website_Status.inaugurated then
-        return
-    end
-
-    -- ReceiveEmail(id)
-
-    -- PublishNews(id)
-
+    HUDA_LaunchWebsite()
 end
 
+function HUDA_LaunchWebsite()
+    InitBrowserModes()
 
+    gv_HUDA_Website_Status.launched = true
 
+    HUDA_PublishNews("WebsiteLaunched")
 
-function OpenMilitiaPDA(mode)
+    HUDA_ShopController:Init()
+
+    OpenMilitiaPDA("home")
+end
+
+function OpenMilitiaPDA(mode, params)
     local full_screen = GetDialog("FullscreenGameDialogs")
     if full_screen and full_screen.window_state == "open" then
         full_screen:Close()
     end
-    local pda = GetDialog("PDADialog")
-    -- print("pda", pda.Mode)
-    -- local mode_param = { browser_page = "militia" }
-    -- if not pda then
-    --     mode_param.Mode = "browser"
-    --     pda = OpenDialog("PDADialog", GetInGameInterface(), mode_param)
-    --     return
-    -- end
-    if pda.Mode ~= "browser" then
-        pda:SetMode("browser")
-        return
-    end
-    pda.idContent:SetMode("militia")
 
-    -- if pda.idContent.Mode ~= "militia" then
-    --     pda.idContent:SetMode("militia")
-    --     print(pda.idContent.Mode)
-    --     return
-    -- end
+    local pda = OpenDialog("PDADialog", GetInGameInterface(), { Mode = "browser" })
+
+    local dlg = pda.idContent
+
+    if dlg.Mode ~= "militia" then
+        dlg:SetMode("militia")
+    end
+
+    local content = dlg.idBrowserContent
+
+    if content:GetMode() ~= mode then
+        content:SetMode(mode, params)
+    end
 end
+
+-------------------------- TFormat --------------------------
+
 
 local HUDA_OriginalPDAUrl = TFormat.PDAUrl
 

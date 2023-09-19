@@ -91,7 +91,7 @@ PlaceObj("XTemplate", {
                           self:SetText(context.Name)
                       end,
                       "Text",
-                      T(145135869022, "<Name>")
+                      Untranslated("<Name>")
                   }),
                   PlaceObj("XTemplateWindow", {
                       "__class",
@@ -381,7 +381,7 @@ PlaceObj("XTemplate", {
                   "Translate",
                   true,
                   "Text",
-                  T(157984480848, "MEMBERS")
+                  "MEMBERS"
               }),
               PlaceObj("XTemplateWindow", {
                   "Margins",

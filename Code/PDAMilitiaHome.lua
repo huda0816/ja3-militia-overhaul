@@ -97,7 +97,7 @@ PlaceObj("XTemplate", {
           "Translate",
           true,
           "Text",
-          "At the Grand Chien Militia, we're not just about duty and discipline; we're also a tightly-knit family. As you browse through our official website, you'll discover more than just our exclusive Staff Shop."
+          "At the Grand Chien Militia, we're not just about duty and discipline; we're also a tightly-knit family."
         })
       })
     }),

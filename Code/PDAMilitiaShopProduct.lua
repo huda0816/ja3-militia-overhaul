@@ -191,6 +191,10 @@ PlaceObj("XTemplate", {
                     true,
                     "OnLayoutComplete",
                     function(self)
+                        local amount = self.context.category == "ammo" and 10 or 1
+
+                        self:SetText("<underline>Add " .. amount .. "x to cart</underline>")
+
                         if (self.context.stock == 0) then
                             self:SetTransparency(150)
                             self:SetMouseCursor("UI/Cursors/Pda_Cursor.tga")
@@ -205,7 +209,9 @@ PlaceObj("XTemplate", {
                         "OnMouseButtonDown(self, pos, button)",
                         "func",
                         function(self, pos, button)
-                            HUDA_ShopController:AddToCart(self.context, 1)
+                            local amount = self.context.category == "ammo" and 10 or 1
+
+                            HUDA_ShopController:AddToCart(self.context, amount)
                             ObjModified("right panel")
                             ObjModified("left panel")
                             ObjModified("militia header")
@@ -217,7 +223,9 @@ PlaceObj("XTemplate", {
                     "XText",
                     "__condition",
                     function(parent, context)
-                        return context.stock > 1
+                        local minStock = context.category == "ammo" and 10 or 1
+
+                        return context.stock > minStock
                     end,
                     "Id",
                     "idAdd5ToCart",
@@ -231,8 +239,12 @@ PlaceObj("XTemplate", {
                     true,
                     "OnLayoutComplete",
                     function(self)
-                        if (self.context.stock < 5) then
+                        local amount = self.context.category == "ammo" and 50 or 5
+
+                        if (self.context.stock < amount) then
                             self:SetText("<underline>Add " .. self.context.stock .. "x to cart</underline>")
+                        else
+                            self:SetText("<underline>Add " .. amount .. "x to cart</underline>")
                         end
                     end,
                     "Text",
@@ -243,7 +255,9 @@ PlaceObj("XTemplate", {
                         "OnMouseButtonDown(self, pos, button)",
                         "func",
                         function(self, pos, button)
-                            HUDA_ShopController:AddToCart(self.context, Min(5, self.context.stock))
+                            local amount = self.context.category == "ammo" and 50 or 5
+
+                            HUDA_ShopController:AddToCart(self.context, Min(amount, self.context.stock))
                             ObjModified("right panel")
                             ObjModified("left panel")
                             ObjModified("militia header")
@@ -255,7 +269,8 @@ PlaceObj("XTemplate", {
                     "XText",
                     "__condition",
                     function(parent, context)
-                        return context.category ~= "ammo" and context.caliber ~= nil and HUDA_ShopController:HasAmmo(context.caliber)
+                        return context.category ~= "ammo" and context.caliber ~= nil and
+                            HUDA_ShopController:HasAmmo(context.caliber)
                     end,
                     "Id",
                     "idBuyAmmo",
@@ -278,8 +293,13 @@ PlaceObj("XTemplate", {
                             local dlg = GetDialog(self.parent)
 
                             dlg:SetMode("trick",
-                                { query = { category = "ammo", caliber = self.context.caliber },
-                                    item = { name = self.context.caliberName .. " ammunition", description = "Get " .. self.context.caliberName .. " ammunition" } })
+                                {
+                                    query = { category = "ammo", caliber = self.context.caliber },
+                                    item = {
+                                        name = self.context.caliberName .. " ammunition",
+                                        description = "Get " .. self.context.caliberName .. " ammunition"
+                                    }
+                                })
                             ObjModified(dlg)
                             ObjModified("right panel")
                             ObjModified("left panel")

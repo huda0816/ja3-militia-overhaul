@@ -29,9 +29,9 @@ if FirstLoad then
                 true,
                 "OnContextUpdate",
                 function(self, context, ...)
-                    local value = HUDA_MilitiaFinances:GetMilitiaUpkeep() or 0
+                    local value = gv_HUDA_MilitiaFinances.dailyUpkeep or 0
                     local text = T({
-                        812946341374,
+                        999812946341374,
                         "<style PDA_FinancesValueText><money(value)></style>/Day",
                         value = value
                     })
@@ -65,9 +65,9 @@ if FirstLoad then
             true,
             "OnContextUpdate",
             function(self, context, ...)
-                local burnRate = HUDA_MilitiaFinances:GetMilitiaUpkeep() or 0
+                local burnRate = gv_HUDA_MilitiaFinances.dailyUpkeep or 0
                 local text = T({
-                    105101286891,
+                    999105101286891,
                     "<money(burnRate)>/Day",
                     burnRate = burnRate
                 })
@@ -123,14 +123,14 @@ HUDA_OriginalGetMoneyProjection = GetMoneyProjection
 function GetMoneyProjection(days)
     local money = HUDA_OriginalGetMoneyProjection(days)
 
-    local upkeep = HUDA_MilitiaFinances:GetMilitiaUpkeep(days)
+    local upkeep = (gv_HUDA_MilitiaFinances.dailyUpkeep or 0) * days
     return money - upkeep
 end
 
 local HUDA_DailyCosts = 0
 
 function HUDA_UpdateDailyCosts()
-    local upkeep = HUDA_MilitiaFinances:GetMilitiaUpkeep()
+    local upkeep = gv_HUDA_MilitiaFinances.dailyUpkeep or 0
     local dailyIncome = GetDailyIncome()
     local burnRate = GetBurnRate(1)
     HUDA_DailyCosts = dailyIncome - burnRate - upkeep
@@ -142,15 +142,20 @@ end
 
 function TFormat.GetDailyMoneyChange()
     return T({
-        780491782250,
+        999780491782250,
         "<moneyWithSign(amount)>",
         amount = HUDA_DailyCosts
     })
 end
 
 function OnMsg.NewDay()
+    gv_HUDA_MilitiaFinances.dailyUpkeep = nil
+    gv_HUDA_MilitiaFinances.squadsUpkeep = {}
     HUDA_MilitiaFinances:PayUpkeep()
+    HUDA_UpdateDailyCosts()
 end
+
+GameVar("gv_HUDA_MilitiaFinances", {})
 
 DefineClass.HUDA_MilitiaFinances = {
     MilitiaRookieIncome = HUDA_GetModOptions("MilitiaRookieIncome", 20),
@@ -183,6 +188,10 @@ end
 function HUDA_MilitiaFinances:GetDailyCostsPerSquad(squad)
     local upkeep = 0
 
+    if gv_HUDA_MilitiaFinances.squadsUpkeep and gv_HUDA_MilitiaFinances.squadsUpkeep[squad.UniqueId] then
+            return gv_HUDA_MilitiaFinances.squadsUpkeep[squad.UniqueId]
+    end
+
     for _, unitId in pairs(squad.units) do
         local unit = gv_UnitData[unitId]
 
@@ -191,10 +200,21 @@ function HUDA_MilitiaFinances:GetDailyCostsPerSquad(squad)
         end
     end
 
-    return round(upkeep,1)
+    upkeep = round(upkeep, 1)
+
+    gv_HUDA_MilitiaFinances.squadsUpkeep = gv_HUDA_MilitiaFinances.squadsUpkeep or {}
+
+    gv_HUDA_MilitiaFinances.squadsUpkeep[squad.UniqueId] = upkeep
+
+    return upkeep
 end
 
 function HUDA_MilitiaFinances:GetMilitiaUpkeep(days)
+
+    if gv_HUDA_MilitiaFinances.dailyUpkeep then
+        return gv_HUDA_MilitiaFinances.dailyUpkeep * (days or 1)
+    end
+
     local militia_units = table.filter(gv_UnitData, function(k, v)
         return v.militia and v.Squad
     end)
@@ -219,6 +239,8 @@ function HUDA_MilitiaFinances:GetMilitiaUpkeep(days)
 
         upkeep = upkeep + self:AddCampaignBonus(unit)
     end
+
+    gv_HUDA_MilitiaFinances.dailyUpkeep = upkeep
 
     return upkeep * (days or 1), rookies, veterans, elites
 end

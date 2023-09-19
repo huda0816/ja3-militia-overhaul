@@ -43,14 +43,14 @@ function RollForMilitiaPromotion(sector)
 	if 0 < promotedCount then
 		if 1 < promotedCount then
 			CombatLog("important", T({
-				293615811082,
+				999293615811082,
 				"<promotedCount> militia got promoted in <SectorName(sectorId)>",
 				promotedCount = promotedCount,
 				sectorId = sector.Id
 			}))
 		else
 			CombatLog("important", T({
-				488327770041,
+				999488327770041,
 				"A militia unit got promoted in <SectorName(sectorId)>",
 				promotedCount = promotedCount,
 				sectorId = sector.Id

@@ -115,7 +115,7 @@ PlaceObj("XTemplate", {
                         "Translate",
                         true,
                         "Text",
-                        T(145135869022, "I.M.P. MILITIA STAFF SHOP")
+                        "I.M.P. MILITIA STAFF SHOP"
                     }),
                     PlaceObj("XTemplateWindow", {
                         "__class",
@@ -131,7 +131,7 @@ PlaceObj("XTemplate", {
                         "Translate",
                         true,
                         "Text",
-                        "Welcome to the Grand Chien Militia Staff Shop, the one-stop destination for all your militia needs! This place is for bona fide militia members only. Trying to sneak in? Well, let's just say our watchdogs have some rather persuasive ways of ensuring compliance. So, if you're part of the Grand Chien Militia, gear up and get ready to conquer."
+                        "Welcome to the Grand Chien Militia Staff Shop, the one-stop destination for all your militia (and mercenary) needs! Gear up and get ready to conquer."
                     })
                 })
             }),
@@ -207,8 +207,6 @@ PlaceObj("XTemplate", {
                                 end
 
                                 products = HUDA_ShopController:GetProducts({ topSeller = true, num = 5 })
-
-                                print("top sellers", #products)
 
                                 return products
                             end

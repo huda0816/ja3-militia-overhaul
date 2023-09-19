@@ -22,6 +22,10 @@ PlaceObj("XTemplate", {
 
                 newbieMilitia = HUDA_ReindexTable(newbieMilitia)
 
+                if #newbieMilitia == 0 then
+                    return {}
+                end
+
                 table.sort(newbieMilitia, function(a, b)
                     return a.session_id > b.session_id
                 end)

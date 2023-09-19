@@ -1,7 +1,6 @@
 GameVar("gv_HUDA_News", {})
 
-
-MercHiredHeadlines = {
+HUDA_MercHiredHeadlines = {
     "Elite Mercenary <mercName> Joins Our Ranks from <affiliation>!",
     "Militia Strengthens Its Forces with Distinguished Mercenary <mercName>",
     "Distinguished Mercenary <mercName> Enlisted from <affiliation> to Boost Our Forces!",
@@ -18,7 +17,7 @@ MercHiredHeadlines = {
     "Mercenary <mercName> from <affiliation> Enhances Militia's Capabilities!"
 }
 
-MercHiredTexts = {
+HUDA_MercHiredTexts = {
     "In a significant development, <mercName> has been enlisted as a distinguished mercenary with a stellar background in various fields of warfare. Hailing from the renowned <affiliation> organization, <mercName>'s expertise will undoubtedly enhance our militia's capabilities and readiness for any challenge that lies ahead. This pivotal recruitment underscores our unwavering commitment to strengthening our forces.",
     "A remarkable addition to our ranks, <mercName> now stands among us as a seasoned mercenary, bringing a wealth of experience from the esteemed <affiliation> organization. His expertise is poised to elevate our militia's capabilities, preparing us for whatever challenges may arise. This recruitment exemplifies our dedication to bolstering our forces.",
     "We are pleased to announce the enlistment of <mercName>, a distinguished mercenary renowned for his expertise across various warfare domains. Originating from the prestigious <affiliation> organization, <mercName> now joins our militia, enhancing our capabilities and fortifying us for the challenges ahead. His arrival signals a critical step in our mission.",
@@ -36,6 +35,16 @@ MercHiredTexts = {
 }
 
 
+HUDA_CannedNews = {}
+
+HUDA_CannedNews.WebsiteLaunched = {
+    title = "<style PDA_SquadNameBig>Grand Chien Militia Website</style>\nYour Tactical Hub is Here!",
+    text = Untranslated("Today marks an exciting milestone for our dedicated members as we proudly announce the official launch of the Grand Chien Militia's new online hub.\n\n<style PDA_SquadNameBig>Squad Management Made Easy</style>\n\nOur website brings you a cutting-edge Squad Management feature, designed to streamline the organization of your squads, ensuring that you and your comrades are always battle-ready.\n\n<style PDA_SquadNameBig>Stay Informed with the Latest News</style>\n\nIn the fast-paced world of military operations, information is power. Our News section keeps you updated with real-time updates, important announcements, and vital intelligence. Stay in the loop and never miss a beat.\n\n<style PDA_SquadNameBig>After Action Reports: Learning from Experience</style>\n\nKnowledge gained in the field is priceless. With our After Action Reports (AARs), you can access detailed post-mission analysis, tactical insights, and valuable lessons learned. Elevate your strategies and adapt to ever-changing threats.\n\n<style PDA_SquadNameBig>Gear Up at the Militia Staff Shop</style>\n\nYour one-stop-shop for essential equipment and provisions, the Militia Staff Shop is now at your fingertips. Stock up on firearms, ammunition, armor, and more.\n\n<style PDA_SquadNameBig>Powered by I.M.P. - Your Trustworthy Partner</style>\n\nBehind the scenes, the Grand Chien Militia website is powered by I.M.P., our trusted technology partner. Together, we bring you a seamless online experience without compromising security or reliability.\n\nStay tuned for more exciting updates and features as we continue to evolve our digital headquarters. Welcome to the future of Grand Chien Militia operations - where knowledge, strategy, and preparedness meet in perfect harmony.\n\nJoin us today, and let's embark on this new era together.\n\nSincerely,\n\nGrand Chien Militia Public Relations Office"),
+    sector = "H2",
+    type = "News",
+    image = "Mod/LXPER6t/Icons/grandchienwappenbig.png"
+}
+
 function OnMsg.MercHired(mercId, price, days, alreadyHired)
     
     if (alreadyHired) then
@@ -50,10 +59,10 @@ function OnMsg.MercHired(mercId, price, days, alreadyHired)
 
     local portrait = merc.Portrait
 
-    local text = HUDA_T(MercHiredTexts[InteractionRandRange(1, #MercHiredTexts)],
+    local text = HUDA_T(HUDA_MercHiredTexts[InteractionRandRange(1, #MercHiredTexts)],
         { mercName = name, affiliation = affiliation })
 
-    local title = HUDA_T(MercHiredHeadlines[InteractionRandRange(1, #MercHiredHeadlines)], {
+    local title = HUDA_T(HUDA_MercHiredHeadlines[InteractionRandRange(1, #MercHiredHeadlines)], {
         mercName = name, affiliation = affiliation
     })
 
@@ -77,6 +86,9 @@ HUDA_AddDummyNews = function()
     })
 end
 
+HUDA_PublishNews = function(id)
+    HUDA_NewsController:PublishNews(id)
+end
 
 HUDA_AddNews = function(news)
     HUDA_NewsController:AddNews(news)
@@ -106,4 +118,17 @@ function HUDA_NewsController:GetNewsMeta(news)
     end
 
     return city, date
+end
+
+function HUDA_NewsController:GetCannedNews(id)
+    return HUDA_CannedNews[id]
+end
+
+function HUDA_NewsController:PublishNews(id)
+    local news = self:GetCannedNews(id)
+
+    if (news) then
+        news.date = Game.CampaignTime
+        self:AddNews(news)
+    end
 end

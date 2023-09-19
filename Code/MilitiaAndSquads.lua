@@ -238,7 +238,7 @@ if FirstLoad then
                   end
                   self:SetRollover(false)
 				  g_SatelliteUI:SelectSquad(squad)
-				  g_SatelliteUI:OpenContextMenu(self, sector_id, squad.Id)
+				  g_SatelliteUI:OpenContextMenu(self, sector_id, squad.UniqueId)
 		end
 	end
 
@@ -283,6 +283,50 @@ if FirstLoad then
 	})
 	)
 
+	table.insert(XTemplates["GameShortcuts"], PlaceObj("XTemplateAction", {
+		"ActionId",
+		"actionEditSquad",
+		"ActionSortKey",
+		"10000",
+		"ActionName",
+		Untranslated("Edit Squad"),
+		"ActionShortcut",
+		"E",
+		"ActionBindable",
+		true,
+		"ActionMouseBindable",
+		false,
+		"ActionState",
+		function(self, host)
+			return "enabled"
+		end,
+		"OnAction",
+		function(self, host, source, ...)
+			local context_menu = g_SatelliteUI and g_SatelliteUI.context_menu
+			if not context_menu then
+				return
+			end
+
+			local squad_id = context_menu:ResolveId("idContent"):GetContext().squad_id
+
+			if not squad_id then
+				return
+			end
+
+			local squad = gv_Squads[squad_id]
+
+			if not squad then
+				return
+			end
+
+			OpenMilitiaPDA("squad", { selected_squad = squad})
+
+		end,
+		"IgnoreRepeated",
+		true
+	})
+	)
+
 	local huda_context_actions = CustomSettingsMod.Utils.XTemplate_FindElementsByProp(
 		XTemplates["SatelliteViewMapContextMenu"],
 		"comment", "actions")
@@ -301,6 +345,9 @@ if FirstLoad then
 						function(k, v) return v ~= "actionOpenCharacterContextMenu" and v ~= "idPerks" end)
 					if gv_SatelliteView and context.unit_id then
 						table.insert(context.actions, "actionDeleteMilitia")
+					end
+					if gv_SatelliteView then
+						table.insert(context.actions, "actionEditSquad")
 					end
 				end
 			end

@@ -115,7 +115,7 @@ PlaceObj("XTemplate", {
                         "Translate",
                         true,
                         "Text",
-                        "OUT OF Service"
+                        "***Important Notice: Temporary Shop Closure***"
                     }),
                     PlaceObj("XTemplateWindow", {
                         "__class",
@@ -131,7 +131,7 @@ PlaceObj("XTemplate", {
                         "Translate",
                         true,
                         "Text",
-                        "We regret to inform you that the Militia Shop is currently unavailable. It is essential bla"
+                        "Dear Valued Members of the Grand Chien Militia,\n\nWe regret to inform you that due to current circumstances, the Grand Chien Militia Staff Shop is temporarily closed for business. The safety and security of our supply chain are paramount, and we must exercise caution during these challenging times.\n\nThe temporary closure is a result of Ernie Village, falling under the control of hostile forces. Shipping goods has become too perilous, putting our dedicated staff and precious cargo at risk.\n\nWe understand the inconvenience this may cause, but we want to emphasize the significance of regaining control of Ernie Village. By doing so, you ensure the swift reopening of the shop, allowing you to access the essential equipment and provisions you require.\n\nThank you for your understanding.\n\nSincerely,\n\nI.M.P. Militia Staff Shop Team"
                     })
                 })
             })            
