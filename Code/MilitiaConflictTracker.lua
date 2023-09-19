@@ -16,7 +16,7 @@ function OnMsg.StatusEffectAdded(unit, statusEffect, stacks)
     HUDA_ConflictTracker:TrackStatusEffects(unit, statusEffect, stacks)
 end
 
-function OnMsg.MilitiaPromoted(unit, oldId)
+function OnMsg.HUDAMilitiaPromoted(unit, oldId)
     HUDA_ConflictTracker:TrackPromotions(unit, oldId)
 end
 

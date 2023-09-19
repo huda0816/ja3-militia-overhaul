@@ -34,7 +34,7 @@ function RollForMilitiaPromotion(sector)
 
 					if new_guy then
 						HUDA_MergeMilitia(new_guy, copy)
-						Msg("MilitiaPromoted", new_guy, copy.session_id)
+						Msg("HUDAMilitiaPromoted", new_guy, copy.session_id)
 					end
 				end
 			end

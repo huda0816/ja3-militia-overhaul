@@ -56,14 +56,39 @@ end
 
 -- Functions
 
+function HUDAGetPresets(id, group, array)
+    
+    group = group or "Default"
+
+    if not Presets[id] then
+        return {}
+    end
+    
+    local presets = {}
+
+    for k, v in pairs(Presets[id][group]) do
+        if type(k) == "string" then
+            if array then
+                table.insert(presets, v)
+            else
+                presets[k] = v
+            end
+        end
+    end
+
+    print("HUDAGetPresets", id, group, array, #presets)
+
+    return presets
+end
+
 DefineClass.HUDA_ShopController = {
     AbandonedCartTimeout = 1,
-    Categories = HUDA_MilitiaShopCategories,
-    InventoryTemplate = HUDA_MilitiaShopInventoryTemplate,
-    DeliveryTypes = HUDA_MilitiaShopDeliveryTypes,
-    CouponCodes = HUDA_MilitiaShopCouponCodes,
+    Categories = HUDAGetPresets('HUDAMilitiaShopCategory', 'Default', true),
+    InventoryTemplate = HUDAGetPresets('HUDAMilitiaShopInventoryItem', 'Default', true),
+    DeliveryTypes = HUDAGetPresets('HUDAMilitiaShopDeliveryType', 'Default', true),
+    CouponCodes = HUDAGetPresets('HUDAMilitiaShopCouponCode'),
     ValidDeliverySectors = { "H2", "K9" },
-    SectorCondition = "H2",
+    SectorCondition = "H2", 
     AlwaysOpen = HUDA_GetShopOptions('AlwaysOpen', false),
     DailyRestock = HUDA_GetShopOptions('DailyRestock', false),
     InstantShopping = HUDA_GetShopOptions('InstantShopping', false),
@@ -81,6 +106,8 @@ DefineClass.HUDA_ShopController = {
     }
 }
 
+
+
 function HUDA_ShopController:InitGVs()
     -- print(gv_HUDA_ShopStatus)
 
@@ -97,6 +124,8 @@ function HUDA_ShopController:Init()
     if not self.AlwaysOpen and not self:CheckSectorStatus(false) then
         return
     end
+
+    Msg("HUDAMilitaShopBeforeInit")
 
     gv_HUDA_ShopStatus = self.ShopStatus
 
@@ -368,8 +397,53 @@ function HUDA_ShopController:AddInventoryProduct(product, restock)
     end
 end
 
+function HUDA_ShopController:AddInventoryProducts(products, restock)
+    for _, product in ipairs(products) do
+        table.insert(self.InventoryTemplate, product)
+    end
+    if restock then
+        self:Restock()
+    end
+end
+
+function HUDA_ShopController:AddCouponCode(code, data, notUpdate)
+    if not code or not data then
+        return
+    end
+
+    code = string.lower(code)
+
+    if self.CouponCodes[code] then
+        return
+    end
+
+    self.CouponCodes[code] = data
+
+    if not notUpdate then
+        self:UpdateCouponCodes()
+    end
+end
+
+function HUDA_ShopController:AddCouponCodes(codes)
+    for code, data in pairs(codes) do
+        self:AddCouponCode(code, data, true)
+    end
+
+    self:UpdateCouponCodes()
+end
+
 function HUDA_ShopController:SetShopCategories(categories)
     self.Categories = categories
+end
+
+function HUDA_ShopController:AddShopCategory(category)
+    table.insert(self.Categories, category)
+end
+
+function HUDA_ShopController:AddShopCategories(categories)
+    for _, category in ipairs(categories) do
+        table.insert(self.Categories, category)
+    end
 end
 
 function HUDA_ShopController:GetShopCategories()
@@ -417,6 +491,8 @@ function HUDA_ShopController:MaybeRestock(sectors)
 end
 
 function HUDA_ShopController:Restock()
+    Msg("HUDAMilitaShopBeforeRestock")
+
     local tier = gv_HUDA_ShopStatus.tier or 1
 
     local filteredProducts = table.ifilter(self.InventoryTemplate, function(_, product)
@@ -491,7 +567,7 @@ function HUDA_ShopController:GetAvailableCategories()
         end)
 
         if next(ps) then
-            local preparedCat = table.copy(category)
+            local preparedCat = category
 
             preparedCat.productCount = #ps
 
@@ -549,7 +625,7 @@ function HUDA_ShopController:GetDeliveryCosts()
         local weight = 0
 
         for i, product in ipairs(cart.products) do
-            weight = weight + (weightTable[product.category] or 0) * product.count
+            weight = weight + (product.weight or (weightTable[product.category] or 0)) * product.count
         end
 
         return MulDivRound(deliveryType.pricePerKilogram, weight, 100)
@@ -588,6 +664,16 @@ end
 
 function HUDA_ShopController:SetDeliveryType(deliveryType)
     gv_HUDA_ShopCart.deliveryType = deliveryType
+end
+
+function HUDA_ShopController:AddDeliveryType(deliveryType)
+    table.insert(self.DeliveryTypes, deliveryType)
+end
+
+function HUDA_ShopController:AddDeliveryTypes(deliveryTypes)
+    for _, deliveryType in ipairs(deliveryTypes) do
+        self:AddDeliveryType(deliveryType)
+    end
 end
 
 function HUDA_ShopController:HasAmmo(caliber)
@@ -700,6 +786,7 @@ function HUDA_ShopController:PrepareProduct(product)
     product.name = productData.DisplayName
     product.categories = productData.Group or productData.objext_class
     product.image = productData.Icon
+    product.weight = product.weight or productData.Weight
 
     if productData.Caliber then
         product.caliber = productData.Caliber
@@ -768,8 +855,14 @@ function HUDA_ShopController:AddToCart(product, count)
 
     if not next(productsInCart) then
         table.insert(cartProducts,
-            { id = product.id, count = count, name = product.name, category = product.category, price = product
-            .basePrice })
+            {
+                id = product.id,
+                count = count,
+                name = product.name,
+                category = product.category,
+                price = product
+                    .basePrice
+            })
     else
         productsInCart[1].count = productsInCart[1].count + count
     end

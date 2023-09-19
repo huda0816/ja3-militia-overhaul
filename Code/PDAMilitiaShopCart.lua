@@ -257,7 +257,7 @@ PlaceObj("XTemplate", {
                         end,
                         "run_after",
                         function(child, context, item, i, n, last)
-                            child.idDeliveryType:SetText(item.name ..
+                            child.idDeliveryType:SetText(item.title ..
                                 "(" .. item.duration .. "d)")
 
                             child:SetContext(item)

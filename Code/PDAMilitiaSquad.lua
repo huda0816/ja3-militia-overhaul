@@ -227,9 +227,6 @@ PlaceObj("XTemplate", {
                                 "OnKillFocus",
                                 "func",
                                 function(self, ...)
-                                    if self:GetText() then
-                                        -- g_ImpTest.final.name = self:GetText()
-                                    end
                                     XEdit.OnKillFocus(self)
                                 end
                             }),
