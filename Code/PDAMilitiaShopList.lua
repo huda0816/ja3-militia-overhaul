@@ -146,7 +146,7 @@ PlaceObj("XTemplate", {
                         "PDAIMPContentTitle",
                         "OnLayoutComplete",
                         function(self)
-                            self:SetText(self.context.item.name)
+                            self:SetText(self.context.item.title)
                         end,
                         "Translate",
                         true,

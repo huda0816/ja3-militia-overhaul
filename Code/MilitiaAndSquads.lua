@@ -52,7 +52,8 @@ if FirstLoad then
 			PlaceObj("XTemplateWindow", {
 				"__condition",
 				function(parent, context)
-					return context.militia and gv_SatelliteView and not HUDA_IsInventoryView() and not HUDA_IsSquadManagementView()
+					return context.militia and gv_SatelliteView and not HUDA_IsInventoryView() and
+						not HUDA_IsSquadManagementView()
 				end,
 				"__class",
 				"XContextWindow",
@@ -93,7 +94,8 @@ if FirstLoad then
 			PlaceObj("XTemplateWindow", {
 				"__condition",
 				function(parent, context)
-					return context.militia and gv_SatelliteView and not HUDA_IsInventoryView() and not HUDA_IsSquadManagementView()
+					return context.militia and gv_SatelliteView and not HUDA_IsInventoryView() and
+						not HUDA_IsSquadManagementView()
 				end,
 				"comment",
 				"attributes label",
@@ -206,6 +208,23 @@ if FirstLoad then
 		)
 	end
 
+	local inventory_dialog = CustomSettingsMod.Utils.XTemplate_FindElementsByProp(XTemplates["Inventory"], "Id",
+		"idDlgContent")
+
+	if inventory_dialog then
+		local element = inventory_dialog.element
+
+		element[1].MinWidth = 1700
+		element[1].MaxWidth = 1700
+		element[1].DrawOnTop = true
+		element[1].LayoutMethod = "HWrap"
+
+
+		element[2].Margins = box(-1610, 0, 0, 75)
+		element[3].Margins = box(-1250, 18, 0, 0)
+		element[4].Margins = box(-860, 18, 32, 32)
+	end
+
 	local x_fit = CustomSettingsMod.Utils.XTemplate_FindElementsByProp(XTemplates["SquadsAndMercs"], "__class",
 		"XFitContent")
 
@@ -226,19 +245,19 @@ if FirstLoad then
 		end
 		x_button.element.AltPress = true
 		x_button.element.OnAltPress = function(self, gamepad)
-				  if g_SatelliteUI.context_menu then
-                    local prev_context = g_SatelliteUI.context_menu[1].context
-                    prev = prev_context and prev_context.unit_id
-                    g_SatelliteUI:RemoveContextMenu()
-                  end
-                  local squad = self.context
-                  local sector_id = squad and squad.CurrentSector
-                  if not sector_id then
-                    return
-                  end
-                  self:SetRollover(false)
-				  g_SatelliteUI:SelectSquad(squad)
-				  g_SatelliteUI:OpenContextMenu(self, sector_id, squad.UniqueId)
+			if g_SatelliteUI.context_menu then
+				local prev_context = g_SatelliteUI.context_menu[1].context
+				prev = prev_context and prev_context.unit_id
+				g_SatelliteUI:RemoveContextMenu()
+			end
+			local squad = self.context
+			local sector_id = squad and squad.CurrentSector
+			if not sector_id then
+				return
+			end
+			self:SetRollover(false)
+			g_SatelliteUI:SelectSquad(squad)
+			g_SatelliteUI:OpenContextMenu(self, sector_id, squad.UniqueId)
 		end
 	end
 
@@ -249,8 +268,6 @@ if FirstLoad then
 		"10000",
 		"ActionName",
 		Untranslated("Dismiss Unit"),
-		"ActionShortcut",
-		"U",
 		"ActionBindable",
 		true,
 		"ActionMouseBindable",
@@ -290,8 +307,6 @@ if FirstLoad then
 		"10000",
 		"ActionName",
 		Untranslated("Edit Squad"),
-		"ActionShortcut",
-		"E",
 		"ActionBindable",
 		true,
 		"ActionMouseBindable",
@@ -319,8 +334,7 @@ if FirstLoad then
 				return
 			end
 
-			OpenMilitiaPDA("squad", { selected_squad = squad})
-
+			OpenMilitiaPDA("squad", { selected_squad = squad })
 		end,
 		"IgnoreRepeated",
 		true
@@ -532,66 +546,65 @@ function RemoveUnitFromSquad(unit_data, reason)
 	ObjModified(squad)
 end
 
-
 function XSatelliteViewMap:OpenContextMenu(ctrl, sector_id, squad_id, unit_id)
 	if self.travel_mode then
-	  self:ExitTravelMode()
+		self:ExitTravelMode()
 	end
 	local actions = {}
 	local squad = gv_Squads[squad_id]
 	local squadName = squad and Untranslated(squad.Name)
 	if unit_id then
-	  table.insert(actions, "idInventory")
-	  table.insert(actions, "idPerks")
+		table.insert(actions, "idInventory")
+		table.insert(actions, "idPerks")
 	else
-	  local squadsOnSector = GetSquadsInSector(sector_id)
-	  local canEnterWithAny = false
-	  local currentSelectedSquad = self.selected_squad
-	  if currentSelectedSquad and table.find(squadsOnSector, currentSelectedSquad) and GetSquadEnterSectorState(currentSelectedSquad.UniqueId) then
-		canEnterWithAny = currentSelectedSquad
-	  end
-	  if not canEnterWithAny then
-		for i, s in ipairs(squadsOnSector) do
-		  if GetSquadEnterSectorState(s.UniqueId) then
-			canEnterWithAny = s
-			break
-		  end
+		local squadsOnSector = GetSquadsInSector(sector_id)
+		local canEnterWithAny = false
+		local currentSelectedSquad = self.selected_squad
+		if currentSelectedSquad and table.find(squadsOnSector, currentSelectedSquad) and GetSquadEnterSectorState(currentSelectedSquad.UniqueId) then
+			canEnterWithAny = currentSelectedSquad
 		end
-	  end
-	  local selSquad = canEnterWithAny or squad
-	  if selSquad and selSquad.Side == "player1" and self.selected_squad ~= selSquad then
-		self:SelectSquad(selSquad)
-	  end
-	  if SatelliteToggleActionState() == "enabled" and canEnterWithAny then
-		table.insert(actions, "actionToggleSatellite")
-	  end
-	  if 0 < #squadsOnSector then
-		table.insert(actions, "idOperations")
-	  end
-	  if squad_id and CanCancelSatelliteSquadTravel() == "enabled" then
-		table.insert(actions, "idCancelTravel")
-	  end
-	  table.insert(actions, "actionContextMenuViewSectorStash")
+		if not canEnterWithAny then
+			for i, s in ipairs(squadsOnSector) do
+				if GetSquadEnterSectorState(s.UniqueId) then
+					canEnterWithAny = s
+					break
+				end
+			end
+		end
+		local selSquad = canEnterWithAny or squad
+		if selSquad and selSquad.Side == "player1" and self.selected_squad ~= selSquad then
+			self:SelectSquad(selSquad)
+		end
+		if SatelliteToggleActionState() == "enabled" and canEnterWithAny then
+			table.insert(actions, "actionToggleSatellite")
+		end
+		if 0 < #squadsOnSector then
+			table.insert(actions, "idOperations")
+		end
+		if squad_id and CanCancelSatelliteSquadTravel() == "enabled" then
+			table.insert(actions, "idCancelTravel")
+		end
+		table.insert(actions, "actionContextMenuViewSectorStash")
 	end
 	if #actions == 0 then
-	  return
+		return
 	end
 	if IsKindOf(ctrl, "XMapObject") then
-	  SetCampaignSpeed(0, GetUICampaignPauseReason("UIContextMenu"))
+		SetCampaignSpeed(0, GetUICampaignPauseReason("UIContextMenu"))
 	end
 	local overrideRollover = false
 	if RolloverWin and IsKindOf(RolloverWin, "ZuluContextMenu") then
-	  overrideRollover = RolloverWin
-	  RolloverWin = false
-	  RolloverControl = false
+		overrideRollover = RolloverWin
+		RolloverWin = false
+		RolloverControl = false
 	else
-	  XDestroyRolloverWindow()
+		XDestroyRolloverWindow()
 	end
 	local context = {
-	  sector_id = sector_id,
-	  squad_id = squad_id,
-	  actions = actions,
-	  unit_id = unit_id
+		sector_id = sector_id,
+		squad_id = squad_id,
+		actions = actions,
+		unit_id = unit_id
 	}
 	local popupHost = GetParentOfKind(self, "PDAClass")
 	popupHost = popupHost and popupHost:ResolveId("idDisplayPopupHost")
@@ -599,14 +612,14 @@ function XSatelliteViewMap:OpenContextMenu(ctrl, sector_id, squad_id, unit_id)
 	self.context_menu = menu
 	menu:SetAnchor(ctrl:ResolveRolloverAnchor())
 	if IsKindOf(ctrl, "XMapRolloverable") then
-	  ctrl:SetupMapSafeArea(menu)
+		ctrl:SetupMapSafeArea(menu)
 	else
-	  menu:SetMargins(box(30, 2, 0, 0))
+		menu:SetMargins(box(30, 2, 0, 0))
 	end
 	if menu.window_state ~= "open" then
-	  menu:Open()
+		menu:Open()
 	end
 	menu.idContent:SetContext(context, true)
 	menu:SetModal(true)
 	return menu
-  end
+end

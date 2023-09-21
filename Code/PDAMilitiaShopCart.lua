@@ -253,7 +253,14 @@ PlaceObj("XTemplate", {
                     PlaceObj("XTemplateForEach", {
                         "array",
                         function(parent, context)
-                            return HUDA_ShopController:GetDeliveryTypes()
+
+                            local deliveryTypes = HUDA_ShopController:GetDeliveryTypes()
+
+                            table.sort(deliveryTypes, function(a, b)
+                                return a.duration > b.duration
+                            end)
+
+                            return deliveryTypes
                         end,
                         "run_after",
                         function(child, context, item, i, n, last)

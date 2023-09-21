@@ -57,13 +57,12 @@ end
 -- Functions
 
 function HUDAGetPresets(id, group, array)
-    
     group = group or "Default"
 
     if not Presets[id] then
         return {}
     end
-    
+
     local presets = {}
 
     for k, v in pairs(Presets[id][group]) do
@@ -76,19 +75,17 @@ function HUDAGetPresets(id, group, array)
         end
     end
 
-    print("HUDAGetPresets", id, group, array, #presets)
-
     return presets
 end
 
 DefineClass.HUDA_ShopController = {
     AbandonedCartTimeout = 1,
-    Categories = HUDAGetPresets('HUDAMilitiaShopCategory', 'Default', true),
-    InventoryTemplate = HUDAGetPresets('HUDAMilitiaShopInventoryItem', 'Default', true),
-    DeliveryTypes = HUDAGetPresets('HUDAMilitiaShopDeliveryType', 'Default', true),
-    CouponCodes = HUDAGetPresets('HUDAMilitiaShopCouponCode'),
+    Categories = HUDA_MilitiaShopCategories, -- HUDAGetPresets('HUDAMilitiaShopCategory', 'Default', true),
+    InventoryTemplate = HUDA_MilitiaShopInventoryTemplate, -- HUDAGetPresets('HUDAMilitiaShopInventoryItem', 'Default', true),
+    DeliveryTypes = HUDA_MilitiaShopDeliveryTypes, -- HUDAGetPresets('HUDAMilitiaShopDeliveryType', 'Default', true),
+    CouponCodes = HUDA_MilitiaShopCouponCodes, -- HUDAGetPresets('HUDAMilitiaShopCouponCode'),
     ValidDeliverySectors = { "H2", "K9" },
-    SectorCondition = "H2", 
+    SectorCondition = "H2",
     AlwaysOpen = HUDA_GetShopOptions('AlwaysOpen', false),
     DailyRestock = HUDA_GetShopOptions('DailyRestock', false),
     InstantShopping = HUDA_GetShopOptions('InstantShopping', false),
@@ -109,11 +106,13 @@ DefineClass.HUDA_ShopController = {
 
 
 function HUDA_ShopController:InitGVs()
-    -- print(gv_HUDA_ShopStatus)
+    if not gv_HUDA_ShopStatus.initialized then
+        return
+    end
 
-    -- gv_HUDA_ShopStatus = self.ShopStatus
+    self:UpdateCouponCodes()
 
-    -- self:UpdateCouponCodes()
+    self:Restock()
 end
 
 function HUDA_ShopController:Init()
@@ -495,17 +494,19 @@ function HUDA_ShopController:Restock()
 
     local tier = gv_HUDA_ShopStatus.tier or 1
 
+
+
     local filteredProducts = table.ifilter(self.InventoryTemplate, function(_, product)
         return tonumber(product.tier or 1) <= tonumber(tier)
     end)
 
     local products = {}
 
-    for _, product in ipairs(filteredProducts) do
+    for i, product in ipairs(filteredProducts) do
         local roll = InteractionRand(100, "HUDA_ShopAvailability")
 
         if roll < (product.availability or 100) + ((tier - product.tier) * 10) then
-            local prod = table.copy(product)
+            local prod = table.raw_copy(product)
 
             local tierBonus = 1 + ((tier - product.tier) * 0.5)
 
@@ -1121,14 +1122,41 @@ function HUDA_ShopController:Deliver(order)
     local items = {}
 
     for i, product in ipairs(order.products) do
-        for j = 1, product.count do
-            local item = PlaceInventoryItem(product.id)
+        if product.category == "ammo" then
+            
+            local numOfItems = product.count / 500
 
-            if item == nil then
-                return
+            local remainder = product.count % 500
+
+            if remainder > 0 then
+                numOfItems = numOfItems + 1
             end
 
-            table.insert(items, item)
+            for j = 1, numOfItems do
+                local item = PlaceInventoryItem(product.id)
+
+                if item == nil then
+                    return
+                end
+
+                if j == numOfItems and remainder > 0 then
+                    item.Amount = remainder
+                else
+                    item.Amount = 500
+                end
+
+                table.insert(items, item)
+            end
+        else
+            for j = 1, product.count do
+                local item = PlaceInventoryItem(product.id)
+
+                if item == nil then
+                    return
+                end
+
+                table.insert(items, item)
+            end
         end
     end
 

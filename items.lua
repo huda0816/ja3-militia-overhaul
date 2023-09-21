@@ -40,8 +40,20 @@ PlaceObj('ModItemCode', {
 	'CodeFileName', "Code/1Options.lua",
 }),
 PlaceObj('ModItemCode', {
+	'name', "1_MilitiaShopCouponCodes",
+	'CodeFileName', "Code/1_MilitiaShopCouponCodes.lua",
+}),
+PlaceObj('ModItemCode', {
+	'name', "1_MilitiaShopDeliveryTypes",
+	'CodeFileName', "Code/1_MilitiaShopDeliveryTypes.lua",
+}),
+PlaceObj('ModItemCode', {
 	'name', "1_MilitiaShopInventory",
 	'CodeFileName', "Code/1_MilitiaShopInventory.lua",
+}),
+PlaceObj('ModItemCode', {
+	'name', "1_MilitiaShopCategories",
+	'CodeFileName', "Code/1_MilitiaShopCategories.lua",
 }),
 PlaceObj('ModItemCode', {
 	'name', "MilitiaAARGenerator",
@@ -226,17 +238,6 @@ PlaceObj('ModItemCode', {
 PlaceObj('ModItemCode', {
 	'name', "PDAMilitiaSquads",
 	'CodeFileName', "Code/PDAMilitiaSquads.lua",
-}),
-PlaceObj('ModItemHUDAMilitiaShopInventoryItem', {
-	availability = 80,
-	basePrice = 3000,
-	category = "shotguns",
-	description = "The AA12 is an automatic shotgun known for its high rate of fire and reliability. It can deliver a devastating spread of buckshot in close combat.",
-	id = "",
-	order = 40,
-	stock = 5,
-	tier = 4,
-	topSeller = true,
 }),
 PlaceObj('ModItemMsgDef', {
 	Description = "When a militia soldier gets promoted",
