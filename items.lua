@@ -5,8 +5,8 @@ PlaceObj('ModItemCharacterEffectCompositeDef', {
 	'msg_reactions', {},
 	'Conditions', {},
 	'Modifiers', {},
-	'DisplayName', T(215892752703, --[[ModItemCharacterEffectCompositeDef FarFromHome DisplayName]] "Far From Home"),
-	'Description', T(896795480820, --[[ModItemCharacterEffectCompositeDef FarFromHome Description]] "Militia soldiers who fight too far from their hometown, especially rookies, face various negative effects such as loss of morale."),
+	'DisplayName', T(156089331478, --[[ModItemCharacterEffectCompositeDef FarFromHome DisplayName]] "Far From Home"),
+	'Description', T(963452191066, --[[ModItemCharacterEffectCompositeDef FarFromHome Description]] "Militia soldiers who fight too far from their hometown, especially rookies, face various negative effects such as loss of morale."),
 	'type', "Debuff",
 	'Icon', "Mod/LXPER6t/Icons/farfromhome.png",
 	'Shown', true,
@@ -16,8 +16,8 @@ PlaceObj('ModItemCharacterEffectCompositeDef', {
 	'Id', "GCMilitia",
 	'object_class', "CharacterEffect",
 	'msg_reactions', {},
-	'DisplayName', T(769204758850, --[[ModItemCharacterEffectCompositeDef GCMilitia DisplayName]] "Grand Chien Militia"),
-	'Description', T(317123105118, --[[ModItemCharacterEffectCompositeDef GCMilitia Description]] "A perk every militia solider gets after bootcamp. Which allows them to clean and maintain their weapons."),
+	'DisplayName', T(424840538679, --[[ModItemCharacterEffectCompositeDef GCMilitia DisplayName]] "Grand Chien Militia"),
+	'Description', T(254625587725, --[[ModItemCharacterEffectCompositeDef GCMilitia Description]] "A perk every militia solider gets after bootcamp. Which allows them to clean and maintain their weapons."),
 }),
 PlaceObj('ModItemCode', {
 	'name', "1MilitiaShopCategories",
@@ -38,6 +38,22 @@ PlaceObj('ModItemCode', {
 PlaceObj('ModItemCode', {
 	'name', "1Options",
 	'CodeFileName', "Code/1Options.lua",
+}),
+PlaceObj('ModItemCode', {
+	'name', "1_MilitiaShopCouponCodes",
+	'CodeFileName', "Code/1_MilitiaShopCouponCodes.lua",
+}),
+PlaceObj('ModItemCode', {
+	'name', "1_MilitiaShopDeliveryTypes",
+	'CodeFileName', "Code/1_MilitiaShopDeliveryTypes.lua",
+}),
+PlaceObj('ModItemCode', {
+	'name', "1_MilitiaShopInventory",
+	'CodeFileName', "Code/1_MilitiaShopInventory.lua",
+}),
+PlaceObj('ModItemCode', {
+	'name', "1_MilitiaShopCategories",
+	'CodeFileName', "Code/1_MilitiaShopCategories.lua",
 }),
 PlaceObj('ModItemCode', {
 	'name', "MilitiaAARGenerator",
@@ -227,7 +243,17 @@ PlaceObj('ModItemMsgDef', {
 	Description = "When a militia soldier gets promoted",
 	Params = "unit, oldid",
 	comment = "Fires after militia got promoted",
-	id = "MilitiaPromoted",
+	id = "HUDAMilitiaPromoted",
+}),
+PlaceObj('ModItemMsgDef', {
+	Description = "Before the shop gets initialized",
+	group = "Msg",
+	id = "HUDAMilitaShopBeforeInit",
+}),
+PlaceObj('ModItemMsgDef', {
+	Description = "Before a shop restocks",
+	group = "Msg",
+	id = "HUDAMilitaShopBeforeRestock",
 }),
 PlaceObj('ModItemOptionChoice', {
 	'name', "huda_MilitiaCampaignCosts",
@@ -472,14 +498,14 @@ PlaceObj('ModItemOptionToggle', {
 PlaceObj('ModItemTextStyle', {
 	RolloverTextColor = 4291018156,
 	TextColor = 4291018156,
-	TextFont = T(136501526624, --[[ModItemTextStyle HUDASMALLPDASM TextFont]] "HMGothic Rough A, 10"),
+	TextFont = T(876132343822, --[[ModItemTextStyle HUDASMALLPDASM TextFont]] "HMGothic Rough A, 10"),
 	id = "HUDASMALLPDASM",
 }),
 PlaceObj('ModItemTextStyle', {
 	RolloverTextColor = 4281612093,
 	ShadowType = "outline",
 	TextColor = 4290724685,
-	TextFont = T(975961077996, --[[ModItemTextStyle HUDAProductOutOfStock TextFont]] "HMGothic Regular A, 16"),
+	TextFont = T(194909143720, --[[ModItemTextStyle HUDAProductOutOfStock TextFont]] "HMGothic Regular A, 16"),
 	group = "Zulu PDA",
 	id = "HUDAProductOutOfStock",
 }),
@@ -487,14 +513,14 @@ PlaceObj('ModItemTextStyle', {
 	RolloverTextColor = 4290132532,
 	ShadowType = "outline",
 	TextColor = 4290132532,
-	TextFont = T(972058113481, --[[ModItemTextStyle PDAMilitiaShopCouponCode TextFont]] "HMGothic Regular A, 14"),
+	TextFont = T(168663358571, --[[ModItemTextStyle PDAMilitiaShopCouponCode TextFont]] "HMGothic Regular A, 14"),
 	id = "PDAMilitiaShopCouponCode",
 }),
 PlaceObj('ModItemTextStyle', {
 	RolloverTextColor = 4286349920,
 	ShadowType = "outline",
 	TextColor = 4286349920,
-	TextFont = T(454956470660, --[[ModItemTextStyle PDAMilitiaShopCouponCodeValid TextFont]] "HMGothic Regular A, 14"),
+	TextFont = T(848873583608, --[[ModItemTextStyle PDAMilitiaShopCouponCodeValid TextFont]] "HMGothic Regular A, 14"),
 	id = "PDAMilitiaShopCouponCodeValid",
 }),
 }
