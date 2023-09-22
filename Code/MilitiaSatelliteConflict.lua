@@ -136,7 +136,7 @@ function IsAutoResolveEnabled(sector)
 	-- end
 	local anyHavePreviousSector = false
 	for i, squad in ipairs(alliesInConflict) do
-		anyHavePreviousSector = not squad.militia and squad.PreviousSector
+		-- anyHavePreviousSector = not squad.militia and squad.PreviousSector
 		anyHavePreviousSector = anyHavePreviousSector and squad.PreviousSector ~= sector.Id
 		if anyHavePreviousSector then
 			break
