@@ -7,14 +7,12 @@ function OnMsg.NewHour()
 end
 
 function OnMsg.PreSquadDespawned(squad_id, sector, reason)
-	
 	if sector == "E9" then
 		g_DespawnedE9Squad = squad_id
 	end
 end
 
 function OnMsg.QuestParamChanged(questId, varId, prevVal, newVal)
-	
 	if
 		not g_DespawnedE9Squad or
 		not questId == "04_Betrayal" or
@@ -111,47 +109,19 @@ if FirstLoad then
 	end
 end
 
+local HUDA_OriginalIsAutoResolveEnabled = IsAutoResolveEnabled
 
 function IsAutoResolveEnabled(sector)
-	if not sector.conflict then
+	
+	if sector.autoresolve_disabled then		
 		return false
 	end
-	if not sector.Map then
-		return true
-	end
-	local alliesInConflict, enemySquads = GetSquadsInSector(sector.Id, "excludeTravelling", "includeMilitia",
-		"excludeArriving")
-	if not alliesInConflict or #alliesInConflict == 0 then
+
+	if CanGoInMap(sector.Id) and sector.ForceConflict then
 		return false
 	end
-	-- local onlyMilitia = true
-	-- for i, s in ipairs(alliesInConflict) do
-	--   if not s.militia then
-	-- 	onlyMilitia = false
-	-- 	break
-	--   end
-	-- end
-	-- if onlyMilitia then
-	--   return true
-	-- end
-	local anyHavePreviousSector = false
-	for i, squad in ipairs(alliesInConflict) do
-		-- anyHavePreviousSector = not squad.militia and squad.PreviousSector
-		anyHavePreviousSector = anyHavePreviousSector and squad.PreviousSector ~= sector.Id
-		if anyHavePreviousSector then
-			break
-		end
-	end
-	if not anyHavePreviousSector then
-		return false
-	end
-	if sector.autoresolve_disabled then
-		return false
-	end
-	if not enemySquads or #enemySquads == 0 then
-		return false
-	end
-	return CanGoInMap(sector.Id) and not sector.ForceConflict
+
+	return HUDA_OriginalIsAutoResolveEnabled(sector)
 end
 
 function SatelliteRetreat(sector_id, sides_to_retreat)
@@ -165,7 +135,7 @@ function SatelliteRetreat(sector_id, sides_to_retreat)
 	local squadsToRetreat = {}
 	for i, squad in ipairs(g_SquadsArray) do
 		--   if not squad.militia and squad.CurrentSector == sector_id and IsSquadInConflict(squad) and table.find(sides_to_retreat, squad.Side) then
-		if not squad.militia and squad.CurrentSector == sector_id and IsSquadInConflict(squad) and table.find(sides_to_retreat, squad.Side) then
+		if squad.CurrentSector == sector_id and IsSquadInConflict(squad) and table.find(sides_to_retreat, squad.Side) then
 			squadsToRetreat[#squadsToRetreat + 1] = squad
 			if squad.PreviousSector == sector_id then
 				squad.PreviousSector = false
@@ -250,4 +220,61 @@ function SatelliteRetreat(sector_id, sides_to_retreat)
 	end
 	ResolveConflict(sector, "no voice", false, "retreat")
 	ResumeCampaignTime("UI")
+end
+
+function ResolveConflict(sector, bNoVoice, isAutoResolve, isRetreat)
+	gv_ActiveCombat = false
+	sector = sector or gv_Sectors[gv_CurrentSectorId]
+	local mercSquads, enemySquads = GetSquadsInSector(sector.Id, "no_travel", false, "no_arriving", "no_retreat")
+	local militiaLeft = GetMilitiaSquads(sector)
+	-- if 0 < #militiaLeft and 0 < #enemySquads then
+	-- 	print("ResolveConflict: militia left and enemy squads in sector")
+	-- 	if isAutoResolve then
+	-- 		table.remove_value(g_ConflictSectors, sector.Id)
+	-- 		sector.conflict = false
+	-- 		return
+	-- 	end
+	-- 	if g_SatelliteUI then
+	-- 		print("ResolveConflict: g_SatelliteUI")
+	-- 		AutoResolveConflict(sector)
+	-- 	elseif not table.find(SatQueuedResolveConflict, sector.Id) then
+	-- 		SatQueuedResolveConflict[#SatQueuedResolveConflict + 1] = sector.Id
+	-- 	end
+	-- 	return
+	-- end
+	local playerAttacking = sector.conflict and sector.conflict.player_attacking
+	local fromMap = sector.conflict and sector.conflict.from_map
+	if sector then
+		table.remove_value(g_ConflictSectors, sector.Id)
+		sector.conflict = false
+		if not g_Combat then
+			ShowTacticalNotification("conflictResolved")
+			PlayFX("NoEnemiesLeft", "start")
+		end
+	end
+	if not AnyNonWaitingConflict() then
+		ResumeCampaignTime("SatelliteConflict")
+	end
+	UpdateEntranceAreasVisibility()
+	local squads = GetSquadsInSector(sector.Id)
+	for i, squad in ipairs(squads) do
+		ObjModified(squad)
+	end
+	ObjModified(SelectedObj)
+	ObjModified("gv_SatelliteView")
+	UpdateSectorControl(sector.Id)
+	if (sector.Side == "player1" or sector.Side == "player2") and not gv_SatelliteView and #mercSquads == 0 then
+		local playerUnitsOnMap = GetCurrentMapUnits("player")
+		local enemyUnitsOnMap = GetCurrentMapUnits("enemy")
+		if #playerUnitsOnMap == 0 and 0 < #enemyUnitsOnMap then
+			local first = enemyUnitsOnMap[1]
+			SatelliteSectorSetSide(sector.Id, "enemy1")
+		end
+	end
+	local playerWon = not isRetreat and (sector.Side == "player1" or sector.Side == "player2")
+	if playerWon then
+		sector.CustomConflictDescr = false
+		RollForMilitiaPromotion(sector)
+	end
+	Msg("ConflictEnd", sector, bNoVoice, playerAttacking, playerWon, isAutoResolve, isRetreat, fromMap)
 end

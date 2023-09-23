@@ -239,7 +239,7 @@ function HUDA_ConflictTracker:GetAllUnits(sectorId, side)
 
     for _, squad in ipairs(squads) do
         for _, unit_id in ipairs(squad.units) do
-            local unit = getUnits and g_Units[unit_id] or gv_UnitData[unit_id]
+            local unit = g_Units and g_Units[unit_id] or gv_UnitData[unit_id]
             table.insert(units, unit)
         end
     end

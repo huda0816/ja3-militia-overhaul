@@ -505,6 +505,17 @@ function SquadWindow:SpawnSquadIcon(parent)
 	return img
 end
 
+function GetSatelliteSquadsForContextMenu(sectorId)
+	if not sectorId then
+		return empty_table
+	end
+	local squads = GetSquadsInSector(sectorId, "excludeTravelling", true, "excludeArriving")
+	if #squads <= 1 then
+		return empty_table
+	end
+	return squads
+end
+
 function RemoveUnitFromSquad(unit_data, reason)
 	local squad_id = unit_data.Squad
 	local squad = gv_Squads[squad_id]

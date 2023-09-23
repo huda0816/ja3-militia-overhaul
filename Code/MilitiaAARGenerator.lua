@@ -608,7 +608,7 @@ end
 function HUDA_AARGenerator:GetMercNames(conflict)
     local mercNames = ""
     for i, v in ipairs(conflict.player.units) do
-        local unit = getUnits and g_Units[v] or gv_UnitData[v]
+        local unit = g_Units and g_Units[v] or gv_UnitData[v]
 
         local name = unit.Name or unit.Nick
 

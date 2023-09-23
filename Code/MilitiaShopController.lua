@@ -1,282 +1,3 @@
-PlaceObj('PresetDef', {
-    group = "PresetDefs",
-    id = "HUDAMilitiaShopCategory",
-    PlaceObj('PropertyDefText', {
-        'id', "title",
-    }),
-    PlaceObj('PropertyDefText', {
-        'id', "description",
-    }),
-    PlaceObj('PropertyDefNumber', {
-        'id', "weight",
-    }),
-    PlaceObj('PropertyDefNumber', {
-        'id', "order",
-    }),
-})
-
-DefineClass.HUDAMilitiaShopCategory = {
-    __parents = { "Preset" },
-    __generated_by_class = "PresetDef",
-    properties = {
-        {
-            id = "title",
-            title = "Name",
-            help = "Name of the category",
-            editor = "text",
-            default = ""
-        },
-        {
-            id = "description",
-            title = "Description",
-            help = "Description of the category",
-            editor = "text",
-            default = ""
-        },
-        {
-            id = "weight",
-            title = "Weight",
-            help = "Weight of the category",
-            editor = "number",
-            default = 0
-        },
-        {
-            id = "order",
-            title = "Order",
-            help = "Order of the category",
-            editor = "number",
-            default = 0
-        }
-    }
-}
-
-DefineModItemPreset("HUDAMilitiaShopCategory", {
-    EditorName = "Shop Category",
-    EditorSubmenu = "Other"
-})
-
-PlaceObj('PresetDef', {
-    group = "PresetDefs",
-    id = "HUDAMilitiaShopCouponCode",
-    PlaceObj('PropertyDefNumber', {
-        'id', "discount",
-    }),
-    PlaceObj('PropertyDefBool', {
-        'id', "multi",
-    }),
-    PlaceObj('PropertyDefText', {
-        'id', "description",
-    })
-})
-
-DefineClass.HUDAMilitiaShopCouponCode = {
-    __parents = { "Preset" },
-    __generated_by_class = "PresetDef",
-    properties = {
-        {
-            id = "discount",
-            name = "Discount",
-            help = "Discount in percent",
-            editor = "number",
-            default = 50
-        },
-        {
-            id = "multi",
-            name = "Multi",
-            help = "Is this a multi-use code",
-            editor = "bool",
-            default = false
-        },
-        {
-            id = "description",
-            name = "Description",
-            help = "Description of the code",
-            editor = "text",
-            default = ""
-        }
-    }
-}
-
-DefineModItemPreset("HUDAMilitiaShopCouponCode", {
-    EditorName = "Coupon Code",
-    EditorSubmenu = "Other"
-})
-
-PlaceObj('PresetDef', {
-    group = "PresetDefs",
-    id = "HUDAMilitiaShopDeliveryType",
-    PlaceObj('PropertyDefText', {
-        'id', "title",
-    }),
-    PlaceObj('PropertyDefNumber', {
-        'id', "duration",
-    }),
-    PlaceObj('PropertyDefNumber', {
-        'id', "pricePerKilogram",
-    }),
-    PlaceObj('PropertyDefBool', {
-        'id', "default",
-    }),
-})
-
-DefineClass.HUDAMilitiaShopDeliveryType = {
-    __parents = { "Preset" },
-    __generated_by_class = "PresetDef",
-    properties = {
-        {
-            id = "title",
-            name = "Name",
-            help = "Name of the delivery type",
-            editor = "text",
-            default = ""
-        },
-        {
-            id = "duration",
-            name = "Duration",
-            help = "Duration of the delivery in days",
-            editor = "number",
-            default = 0
-        },
-        {
-            id = "pricePerKilogram",
-            name = "Price per Kilogram",
-            help = "Price per Kilogram of the delivery",
-            editor = "number",
-            default = 0
-        },
-        {
-            id = "default",
-            name = "Default",
-            help = "Is this the default delivery type",
-            editor = "bool",
-            default = false
-        }
-    }
-}
-
-DefineModItemPreset("HUDAMilitiaShopDeliveryType", {
-    EditorName = "Delivery Type",
-    EditorSubmenu = "Other"
-})
-
-PlaceObj('PresetDef', {
-    group = "PresetDefs",
-    id = "HUDAMilitiaShopInventoryItem",
-    PlaceObj('PropertyDefText', {
-        'id', "description",
-    }),
-    PlaceObj('PropertyDefNumber', {
-        'id', "weight",
-    }),
-    PlaceObj('PropertyDefNumber', {
-        'id', "order",
-    }),
-    PlaceObj('PropertyDefNumber', {
-        'id', "basePrice",
-    }),
-    PlaceObj('PropertyDefNumber', {
-        'id', "stock",
-    }),
-    PlaceObj('PropertyDefNumber', {
-        'id', "tier",
-    }),
-    PlaceObj('PropertyDefNumber', {
-        'id', "availability",
-    }),
-    PlaceObj('PropertyDefBool', {
-        'id', "topSeller",
-    }),
-    PlaceObj('PropertyDefText', {
-        'id', "category",
-    }),
-})
-
-
-DefineClass.HUDAMilitiaShopInventoryItem = {
-    __parents = { "Preset" },
-    __generated_by_class = "PresetDef",
-    properties = {
-        {
-            id = "description",
-            title = "Description",
-            help = "Description of the Shop Item",
-            editor = "text",
-            default = ""
-        },
-        {
-            id = "weight",
-            title = "Weight",
-            help = "Weight of the Shop Item",
-            editor = "number",
-            default = 0
-        },
-        {
-            id = "order",
-            title = "Order",
-            help = "Order of the category",
-            editor = "number",
-            default = 10
-        },
-        {
-            id = "basePrice",
-            title = "Base Price",
-            help = "Base Price of the Shop Item",
-            editor = "number",
-            default = 1000
-        },
-        {
-            id = "stock",
-            title = "Stock",
-            help = "Stock of the Shop Item",
-            editor = "number",
-            default = 1
-        },
-        {
-            id = "tier",
-            title = "Tier",
-            help = "Tier of the Shop Item",
-            editor = "number",
-            default = 1
-        },
-        {
-            id = "availability",
-            title = "Availability",
-            help = "Availability of the Shop Item",
-            editor = "number",
-            default = 100
-        },
-        {
-            id = "topSeller",
-            title = "Top Seller",
-            help = "Top Seller of the Shop Item",
-            editor = "bool",
-            default = false
-        },
-        {
-            id = "category",
-            title = "Category",
-            help = "Category of the Shop Item",
-            editor = "text",
-            default = ""
-        },
-    }
-}
-
-DefineModItemPreset("HUDAMilitiaShopInventoryItem", {
-    EditorName = "Shop Product",
-    EditorSubmenu = "Other"
-})
-
-function OnMsg.Autorun()
-    LoadPresetFiles(CurrentModDef.content_path .. "presets/")
-    LoadPresetFolders(CurrentModDef.content_path .. "presets/")
-
-    HUDA_ShopController.Categories = HUDAGetPresets('HUDAMilitiaShopCategory', 'Default', true)
-    HUDA_ShopController.InventoryTemplate = HUDAGetPresets('HUDAMilitiaShopInventoryItem', 'Default', true)
-    HUDA_ShopController.DeliveryTypes = HUDAGetPresets('HUDAMilitiaShopDeliveryType', 'Default', true)
-    HUDA_ShopController.CouponCodes = HUDAGetPresets('HUDAMilitiaShopCouponCode')
-end
-
 GameVar("gv_HUDA_ShopInventory", {})
 GameVar("gv_HUDA_ShopOrders", {})
 GameVar("gv_HUDA_ShopCart", {})
@@ -333,36 +54,12 @@ function OnMsg.ZuluGameLoaded(game)
     HUDA_ShopController:InitGVs()
 end
 
--- Functions
-
-function HUDAGetPresets(id, group, array)
-    group = group or "Default"
-
-    if not Presets[id] then
-        return {}
-    end
-
-    local presets = {}
-
-    for k, v in pairs(Presets[id][group]) do
-        if type(k) == "string" then
-            if array then
-                table.insert(presets, v)
-            else
-                presets[k] = v
-            end
-        end
-    end
-
-    return presets
-end
-
 DefineClass.HUDA_ShopController = {
     AbandonedCartTimeout = 1,
-    Categories = HUDA_MilitiaShopCategories, -- HUDAGetPresets('HUDAMilitiaShopCategory', 'Default', true),
-    InventoryTemplate = HUDA_MilitiaShopInventoryTemplate, -- HUDAGetPresets('HUDAMilitiaShopInventoryItem', 'Default', true),
-    DeliveryTypes = HUDA_MilitiaShopDeliveryTypes, -- HUDAGetPresets('HUDAMilitiaShopDeliveryType', 'Default', true),
-    CouponCodes = HUDA_MilitiaShopCouponCodes, -- HUDAGetPresets('HUDAMilitiaShopCouponCode'),
+    Categories = {},
+    InventoryTemplate = {},
+    DeliveryTypes = {},
+    CouponCodes = {},
     ValidDeliverySectors = { "H2", "K9" },
     SectorCondition = "H2",
     AlwaysOpen = HUDA_GetShopOptions('AlwaysOpen', false),
@@ -382,7 +79,14 @@ DefineClass.HUDA_ShopController = {
     }
 }
 
+function HUDA_ShopController:SetPresets(deliveryTypes, categories, inventoryTemplate, couponCodes)
+    self.DeliveryTypes = deliveryTypes
+    self.Categories = categories
+    self.InventoryTemplate = inventoryTemplate
+    self.CouponCodes = couponCodes
 
+    self:InitGVs()
+end
 
 function HUDA_ShopController:InitGVs()
     if not gv_HUDA_ShopStatus.initialized then
@@ -390,7 +94,6 @@ function HUDA_ShopController:InitGVs()
     end
 
     self:UpdateCouponCodes()
-
     self:Restock()
 end
 
@@ -410,6 +113,10 @@ function HUDA_ShopController:Init()
     gv_HUDA_ShopStatus.initialized = true
 
     gv_HUDA_ShopStatus.open = true
+
+    gv_HUDA_ShopCart = {}
+
+    gv_HUDA_ShopCart.sector = gv_HUDA_ShopStatus.deliverySector or "H2"
 
     self:UpdateCouponCodes()
 
@@ -668,60 +375,12 @@ function HUDA_ShopController:GetInventoryTemplate()
     return self.InventoryTemplate
 end
 
-function HUDA_ShopController:AddInventoryProduct(product, restock)
-    table.insert(self.InventoryTemplate, product)
-    if restock then
-        self:Restock()
-    end
-end
-
-function HUDA_ShopController:AddInventoryProducts(products, restock)
-    for _, product in ipairs(products) do
-        table.insert(self.InventoryTemplate, product)
-    end
-    if restock then
-        self:Restock()
-    end
-end
-
-function HUDA_ShopController:AddCouponCode(code, data, notUpdate)
-    if not code or not data then
-        return
-    end
-
-    code = string.lower(code)
-
-    if self.CouponCodes[code] then
-        return
-    end
-
-    self.CouponCodes[code] = data
-
-    if not notUpdate then
-        self:UpdateCouponCodes()
-    end
-end
-
-function HUDA_ShopController:AddCouponCodes(codes)
-    for code, data in pairs(codes) do
-        self:AddCouponCode(code, data, true)
-    end
-
-    self:UpdateCouponCodes()
-end
-
 function HUDA_ShopController:SetShopCategories(categories)
     self.Categories = categories
 end
 
 function HUDA_ShopController:AddShopCategory(category)
     table.insert(self.Categories, category)
-end
-
-function HUDA_ShopController:AddShopCategories(categories)
-    for _, category in ipairs(categories) do
-        table.insert(self.Categories, category)
-    end
 end
 
 function HUDA_ShopController:GetShopCategories()
@@ -1067,6 +726,7 @@ function HUDA_ShopController:PrepareProduct(product)
     product.categories = productData.Group or productData.objext_class
     product.image = productData.Icon
     product.weight = product.weight or productData.Weight
+    product.maxStack = productData.MaxStacks or 1
 
     if productData.Caliber then
         product.caliber = productData.Caliber
@@ -1136,18 +796,12 @@ function HUDA_ShopController:AddToCart(product, count)
     if not next(productsInCart) then
         table.insert(cartProducts,
             {
-               
                 id = product.id,
-               
                 count = count,
-               
                 name = product.name,
-               
                 category = product.category,
-               
-                price = product
-                            .basePrice
-           
+                maxStack = product.maxStack,
+                price = product.basePrice
             })
     else
         productsInCart[1].count = productsInCart[1].count + count
@@ -1407,41 +1061,32 @@ function HUDA_ShopController:Deliver(order)
     local items = {}
 
     for i, product in ipairs(order.products) do
-        if product.category == "ammo" then
-            
-            local numOfItems = product.count / 500
+        local maxStack = product.maxStack or 1
 
-            local remainder = product.count % 500
+        print("maxStack", maxStack)
 
-            if remainder > 0 then
-                numOfItems = numOfItems + 1
+        local numOfItems = product.count / maxStack
+
+        local remainder = product.count % maxStack
+
+        if remainder > 0 then
+            numOfItems = numOfItems + 1
+        end
+
+        for j = 1, numOfItems do
+            local item = PlaceInventoryItem(product.id)
+
+            if item == nil then
+                return
             end
 
-            for j = 1, numOfItems do
-                local item = PlaceInventoryItem(product.id)
-
-                if item == nil then
-                    return
-                end
-
-                if j == numOfItems and remainder > 0 then
-                    item.Amount = remainder
-                else
-                    item.Amount = 500
-                end
-
-                table.insert(items, item)
+            if j == numOfItems and remainder > 0 then
+                item.Amount = remainder
+            else
+                item.Amount = maxStack
             end
-        else
-            for j = 1, product.count do
-                local item = PlaceInventoryItem(product.id)
 
-                if item == nil then
-                    return
-                end
-
-                table.insert(items, item)
-            end
+            table.insert(items, item)
         end
     end
 
@@ -1451,6 +1096,7 @@ function HUDA_ShopController:Deliver(order)
     order.deliveryTime = Game.CampaignTime
 
     self:SendMails("delivered", { sector = order.sector or "H2" })
+    self:NotifyDelivery(order.sector)
 end
 
 function HUDA_ShopController:Order()
@@ -1486,7 +1132,9 @@ function HUDA_ShopController:Order()
         end
     end
 
-    gv_HUDA_ShopCart = {}
+    gv_HUDA_ShopCart.products = {}
+
+    gv_HUDA_ShopCart.coupon = nil
 
     table.insert(orders, order)
 
@@ -1618,4 +1266,12 @@ function HUDA_ShopController:SendMails(internalId, context)
     end
 
     ReceiveEmail(id, context)
+end
+
+function HUDA_ShopController:NotifyDelivery(sector)
+    CombatLog("important", T({
+        Untranslated(
+            "An online shop order was successfully delivered in sector <em><sector></em>"),
+        sector = sector
+    }))
 end
