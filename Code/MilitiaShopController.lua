@@ -80,10 +80,11 @@ DefineClass.HUDA_ShopController = {
 }
 
 function HUDA_ShopController:SetPresets(deliveryTypes, categories, inventoryTemplate, couponCodes)
-    self.DeliveryTypes = deliveryTypes
-    self.Categories = categories
-    self.InventoryTemplate = inventoryTemplate
-    self.CouponCodes = couponCodes
+
+    self.DeliveryTypes = table.raw_copy(deliveryTypes)
+    self.Categories = table.raw_copy(categories)
+    self.InventoryTemplate = table.raw_copy(inventoryTemplate)
+    self.CouponCodes = table.raw_copy(couponCodes)
 
     self:InitGVs()
 end
@@ -443,7 +444,7 @@ function HUDA_ShopController:Restock()
     for i, product in ipairs(filteredProducts) do
         local roll = InteractionRand(100, "HUDA_ShopAvailability")
 
-        if roll < (product.availability or 100) + ((tier - product.tier) * 10) then
+        if product.availability > 0 and roll < (product.availability or 100) + ((tier - product.tier) * 10) then
             local prod = table.raw_copy(product)
 
             local tierBonus = 1 + ((tier - product.tier) * 0.5)
@@ -567,7 +568,7 @@ function HUDA_ShopController:GetDeliveryCosts()
             weight = weight + (product.weight or (weightTable[product.category] or 0)) * product.count
         end
 
-        return MulDivRound(deliveryType.pricePerKilogram, weight, 100)
+        return MulDivRound(deliveryType.pricePerKilogram, weight, 1000)
     end
 
     return 0
