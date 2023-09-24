@@ -138,7 +138,8 @@ PlaceObj("XTemplate", {
                     "center",
                     "OnLayoutComplete",
                     function(self)
-                        self:SetText(self.context.basePrice .. "$")
+                        local multiplier = HUDA_GetShopOptions("PriceMultiplier", 1)
+                        self:SetText(round(self.context.basePrice * multiplier, 1) .. "$")
                     end,
                 })
             }),

@@ -36,7 +36,7 @@ function OnMsg.QuestParamChanged(questId, varId, prevVal, newVal)
 	popupHost = popupHost and popupHost:ResolveId("idDisplayPopupHost")
 
 	local dlg = CreateMessageBox(popupHost, "Squad vanishes in Refugee Camp",
-		"We lost contact to our militia Squad in the Refugee Camp. We should send a squad to investigate the situation. (Please press retreat)")
+		"We lost contact to our militia Squad in the Refugee Camp. We should send a squad to investigate the situation. (If there is a combat dialog: please press retreat. Your squad is gone anyway.)")
 
 	dlg:Wait()
 
@@ -90,7 +90,8 @@ if FirstLoad then
 		huda_enabled_button.element.ActionState = function(self, host)
 			local sector = host.context
 			return CanGoInMap(sector.Id) and
-				#GetSquadsInSector(sector.Id, "excludeTravelling", true, "excludeArriving", "excludeRetreating") > 0 and
+				#GetSquadsInSector(sector.Id, "excludeTravelling",
+					not HUDA_GetModOptions("MilitiaNoControl", false), "excludeArriving", "excludeRetreating") > 0 and
 				"enabled" or "hidden"
 		end
 	end
@@ -112,8 +113,7 @@ end
 local HUDA_OriginalIsAutoResolveEnabled = IsAutoResolveEnabled
 
 function IsAutoResolveEnabled(sector)
-	
-	if sector.autoresolve_disabled then		
+	if sector.autoresolve_disabled then
 		return false
 	end
 
@@ -277,4 +277,131 @@ function ResolveConflict(sector, bNoVoice, isAutoResolve, isRetreat)
 		RollForMilitiaPromotion(sector)
 	end
 	Msg("ConflictEnd", sector, bNoVoice, playerAttacking, playerWon, isAutoResolve, isRetreat, fromMap)
+end
+
+local HUDA_OriginalDropLoot = Unit.DropLoot
+
+function Unit:DropLoot(container)
+	if self.militia then
+		local droped_items = 0
+
+		self:ForEachItem(function(item, slot_name)
+			if slot_name == "InventoryDead" then
+				return
+			end
+			self:RemoveItem(slot_name, item)
+			local dropped
+			local slot = container and "Inventory" or "InventoryDead"
+			if not item.locked then
+				local addTo = container or self
+				local pos, err = addTo:CanAddItem(slot, item)
+				if pos then
+					dropped, err = addTo:AddItem(slot, item, point_unpack(pos))
+				end
+			end
+			if not dropped then
+				DoneObject(item)
+			elseif slot == "InventoryDead" then
+				droped_items = droped_items + (item.LargeItem and 2 or 1)
+			end
+		end)
+	else
+		HUDA_OriginalDropLoot(self, container)
+	end
+end
+
+function OnMsg.ConflictStart(sectorId)
+	if not HUDA_GetModOptions("MilitiaNoControl", false) then
+		return
+	end
+
+	local sector = gv_Sectors[sectorId]
+
+	local militia = sector.militia_squads
+
+	if militia then
+		for i, squad in ipairs(militia) do
+			squad.Side = "ally"
+		end
+	end
+end
+
+function OnMsg.EnterSector()
+	if not HUDA_GetModOptions("MilitiaNoControl", false) then
+		return
+	end
+
+	local sector = gv_Sectors[gv_CurrentSectorId]
+
+	local militia = sector.militia_squads
+
+	if militia then
+		for i, squad in ipairs(militia) do
+			squad.Side = "ally"
+		end
+	end
+end
+
+function OnMsg.ClosePDA()
+	if not HUDA_GetModOptions("MilitiaNoControl", false) then
+		return
+	end
+
+	local sector = gv_Sectors[gv_CurrentSectorId]
+
+	local militia = sector.militia_squads
+
+	if militia then
+		for i, squad in ipairs(militia) do
+			squad.Side = "ally"
+		end
+	end
+end
+
+function OnMsg.OpenPDA()
+
+	for i, squad in ipairs(gv_Squads) do
+		if squad.militia then
+			squad.Side = "player1"			
+		end
+	end
+
+	ObjModified("gv_SatelliteView")
+	ObjModified("gv_Squads")
+end
+
+function OnMsg.SquadStartedTravelling(squad)
+	if not HUDA_GetModOptions("MilitiaNoControl", false) then
+		return
+	end
+
+	if not squad.militia then
+		return
+	end
+
+	local route = squad.route
+
+	local hostile = false
+
+	for i, sectorId in ipairs(route[1]) do
+		local sector = gv_Sectors[sectorId]
+
+		if sector.Side == "enemy1" then
+			hostile = true
+			break
+		end
+	end
+
+	if hostile then
+		squad.route = false
+
+		local popupHost = GetDialog("PDADialogSatellite")
+		popupHost = popupHost and popupHost:ResolveId("idDisplayPopupHost")
+
+		local dlg = CreateMessageBox(popupHost, Untranslated("Militia cannot move"),
+			Untranslated(
+				"As you are moving through or to a sector with enemy presence, your militia cannot move. (Change option to control militia in battle to move them)"))
+
+		dlg:Wait()
+	end
 end

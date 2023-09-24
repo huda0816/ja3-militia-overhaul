@@ -80,7 +80,6 @@ DefineClass.HUDA_ShopController = {
 }
 
 function HUDA_ShopController:SetPresets(deliveryTypes, categories, inventoryTemplate, couponCodes)
-
     self.DeliveryTypes = table.raw_copy(deliveryTypes)
     self.Categories = table.raw_copy(categories)
     self.InventoryTemplate = table.raw_copy(inventoryTemplate)
@@ -525,6 +524,8 @@ end
 function HUDA_ShopController:GetProductPrice()
     local cart = gv_HUDA_ShopCart
 
+    local multiplier = HUDA_GetShopOptions("PriceMultiplier", 1)
+
     local price = 0
 
     if not cart.products or not next(cart.products) then
@@ -537,6 +538,10 @@ function HUDA_ShopController:GetProductPrice()
 
     if cart.coupon then
         price = price - MulDivRound(price, cart.coupon.discount, 100)
+    end
+
+    if multiplier ~= 1 then
+        price = round(price * multiplier, 1)
     end
 
     return price
@@ -1063,8 +1068,6 @@ function HUDA_ShopController:Deliver(order)
 
     for i, product in ipairs(order.products) do
         local maxStack = product.maxStack or 1
-
-        print("maxStack", maxStack)
 
         local numOfItems = product.count / maxStack
 
