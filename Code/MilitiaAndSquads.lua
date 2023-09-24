@@ -232,6 +232,9 @@ if FirstLoad then
 		x_fit.element.HandleMouse = false
 	end
 
+
+	GameVar("gv_HUDA_SamStatus", "mercs")
+
 	local x_button = CustomSettingsMod.Utils.XTemplate_FindElementsByProp(XTemplates["SquadsAndMercs"], "__class",
 		"XButton")
 
@@ -239,10 +242,27 @@ if FirstLoad then
 		x_button.element[1].Id = "idBgSquadIcon"
 
 		x_button.element.OnContextUpdate = function(self, context)
+			self:SetFoldWhenHidden(true)
 			if HUDA_IsContextMilitia(context) then
 				self.idBgSquadIcon:SetImage("Mod/LXPER6t/Icons/merc_squad_militia_2.png")
+
+				if gv_HUDA_SamStatus == "militia" then
+					self:SetVisible(true)
+				else
+					self:SetVisible(false)
+				end
+			else
+				if gv_HUDA_SamStatus == "mercs" then
+					self:SetVisible(true)
+				else
+					self:SetVisible(false)
+				end
+			end
+			if gv_HUDA_SamStatus == "mercsandmilitia" then
+				self:SetVisible(true)
 			end
 		end
+		x_button.element.Margins = box(0, 0, -10, 0)
 		x_button.element.AltPress = true
 		x_button.element.OnAltPress = function(self, gamepad)
 			if g_SatelliteUI.context_menu then
@@ -259,6 +279,91 @@ if FirstLoad then
 			g_SatelliteUI:SelectSquad(squad)
 			g_SatelliteUI:OpenContextMenu(self, sector_id, squad.UniqueId)
 		end
+	end
+
+	local squad_buttons = CustomSettingsMod.Utils.XTemplate_FindElementsByProp(XTemplates["SquadsAndMercs"], "Id",
+		"idSquadButtons")
+
+	if squad_buttons and x_button then
+		local element = squad_buttons.element
+
+		element.LayoutHSpacing = 0
+
+		table.insert(element, 1, PlaceObj("XTemplateWindow", {
+			"__class",
+			"XButton",
+			"__condition",
+			function(parent, context)
+				return gv_SatelliteView and HUDA_TableFind(gv_Squads, function(k, v)
+					return v.militia and #v.units > 0
+				end)
+			end,
+			"Id",
+			"idMilitiaToggleButton",
+			"Margins",
+			box(7, 2, 0, 0),
+			"MaxHeight",
+			30,
+			"MinHeight",
+			30,
+			"VAlign",
+			"top",
+			"FXPress",
+			"MercPortraitPressPDA",
+			"__context",
+			function(parent, context)
+				return "mercs"
+			end,
+			"OnLayoutComplete",
+			function(self)
+				ShowToggleMilitiaTutorial()
+			end,
+			"OnPress",
+			function(self, gamepad)
+				if (gv_HUDA_SamStatus == "mercs") then
+					gv_HUDA_SamStatus = "militia"
+					for i, button in ipairs(self.parent) do
+						if button.context.UniqueId then
+							if button.context.militia then
+								button:SetVisible(true)
+							else
+								button:SetVisible(false)
+							end
+						end
+					end
+				else
+					gv_HUDA_SamStatus = "mercs"
+					for i, button in ipairs(self.parent) do
+						if button.context.UniqueId then
+							if button.context.militia then
+								button:SetVisible(false)
+							else
+								button:SetVisible(true)
+							end
+						end
+					end
+				end
+				ObjModified("ui_player_squads")
+			end,
+		}, {
+			PlaceObj("XTemplateWindow", {
+				"__class",
+				"XImage",
+				"Id",
+				"ToggleImage",
+				"Padding",
+				box(5, 0, 5, 0),
+				"ImageColor",
+				RGBA(61, 122, 153, 255),
+				"Background",
+				RGBA(255, 255, 255, 255),
+				"Image",
+				"UI/Hud/weapon_switch"
+			})
+		}))
+
+		ObjModified("ui_player_squads")
+		ObjModified("hud_squads")
 	end
 
 	table.insert(XTemplates["GameShortcuts"], PlaceObj("XTemplateAction", {
@@ -633,4 +738,43 @@ function XSatelliteViewMap:OpenContextMenu(ctrl, sector_id, squad_id, unit_id)
 	menu.idContent:SetContext(context, true)
 	menu:SetModal(true)
 	return menu
+end
+
+function OnMsg.SatelliteNewSquadSelected(selected_squad, old_squad, force)
+	
+	if not old_squad then
+		return
+	end
+
+	if old_squad == selected_squad then
+		return
+	end
+
+	if selected_squad.militia then
+		if gv_HUDA_SamStatus == "militia" then
+			return
+		end
+
+		gv_HUDA_SamStatus = "militia"
+	else
+		if gv_HUDA_SamStatus == "mercs" then
+			return
+		end
+
+		gv_HUDA_SamStatus = "mercs"
+	end
+
+	ObjModified("ui_player_squads")
+end
+
+function OnMsg.ClosePDA()
+	gv_HUDA_SamStatus = "mercsandmilitia"
+
+	ObjModified("ui_player_squads")
+end
+
+function OnMsg.OpenPDA()
+	gv_HUDA_SamStatus = "mercs"
+
+	ObjModified("ui_player_squads")
 end

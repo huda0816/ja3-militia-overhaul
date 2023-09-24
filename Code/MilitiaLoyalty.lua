@@ -5,6 +5,11 @@ end
 -- A city needs at least 4 militia or player units per sector to not loose loyalty. A city can loose maximum 3% loyalty per day.
 
 function HUDA_CheckCityOccupation()
+
+    if HUDA_GetModOptions("MilitiaNoLoyaltyLoss", false) then
+        return
+    end
+
     local cities = gv_Cities
     local sectors = gv_Sectors
 

@@ -124,6 +124,10 @@ PlaceObj('ModItemCode', {
 	'CodeFileName', "Code/MilitiaTraining.lua",
 }),
 PlaceObj('ModItemCode', {
+	'name', "MilitiaTutorial",
+	'CodeFileName', "Code/MilitiaTutorial.lua",
+}),
+PlaceObj('ModItemCode', {
 	'name', "MilitiaUtils",
 	'CodeFileName', "Code/MilitiaUtils.lua",
 }),
@@ -340,6 +344,25 @@ PlaceObj('ModItemOptionChoice', {
 	},
 }),
 PlaceObj('ModItemOptionChoice', {
+	'name', "huda_MilitiaRepairThresholdm",
+	'DisplayName', "Maximum repair item percentage",
+	'Help', "Maximum percentage militia can repair items on their own. Setting the value to 0 can also improve performance",
+	'DefaultValue', "80",
+	'ChoiceList', {
+		"0",
+		"10",
+		"20",
+		"30",
+		"40",
+		"50",
+		"60",
+		"70",
+		"80",
+		"90",
+		"100",
+	},
+}),
+PlaceObj('ModItemOptionChoice', {
 	'name', "huda_MilitiaRookieIncome",
 	'DisplayName', "Daily Upkeep Rookie",
 	'DefaultValue', "20",
@@ -411,6 +434,23 @@ PlaceObj('ModItemOptionChoice', {
 	},
 }),
 PlaceObj('ModItemOptionChoice', {
+	'name', "huda_MilitiaShopPriceMultiplier",
+	'DisplayName', "Multiplier for Items in the Staff Shop",
+	'DefaultValue', "1",
+	'ChoiceList', {
+		"1",
+		"2",
+		"3",
+		"4",
+		"5",
+		"6",
+		"7",
+		"8",
+		"9",
+		"10",
+	},
+}),
+PlaceObj('ModItemOptionChoice', {
 	'name', "huda_MilitiaVeteranIncome",
 	'DisplayName', "Daily Upkeep Veteran",
 	'DefaultValue', "40",
@@ -457,6 +497,16 @@ PlaceObj('ModItemOptionChoice', {
 		"390",
 		"400",
 	},
+}),
+PlaceObj('ModItemOptionToggle', {
+	'name', "huda_MilitiaNoControl",
+	'DisplayName', "Experimental: Militia fights on its own",
+	'Help', "Restart or Game (not Campaign) required. If this option is selected you will not control militia in battle and cannot fight offensively with militia squads.",
+}),
+PlaceObj('ModItemOptionToggle', {
+	'name', "huda_MilitiaNoLoyaltyLoss",
+	'DisplayName', "No loyalty loss in towns with not enough militia",
+	'Help', "If this option is selected militia won't impact loyalty",
 }),
 PlaceObj('ModItemOptionToggle', {
 	'name', "huda_MilitiaShopAllTowns",
