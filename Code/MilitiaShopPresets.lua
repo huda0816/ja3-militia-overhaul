@@ -1,21 +1,3 @@
-PlaceObj('PresetDef', {
-    group = "PresetDefs",
-    id = "HUDAMilitiaShopCategory",
-    PlaceObj('PropertyDefText', {
-        'id', "title",
-    }),
-    PlaceObj('PropertyDefText', {
-        'id', "description",
-    }),
-    PlaceObj('PropertyDefNumber', {
-        'id', "weight",
-        'min', 0,
-    }),
-    PlaceObj('PropertyDefNumber', {
-        'id', "order",
-    }),
-})
-
 DefineClass.HUDAMilitiaShopCategory = {
     __parents = {
         "Preset",
@@ -29,6 +11,20 @@ DefineClass.HUDAMilitiaShopCategory = {
             help = "Name of the category",
             editor = "text",
             default = ""
+        },
+        {
+            id = "menuTitle",
+            title = "Menu Name",
+            help = "Name of the category in the menu. If empty title is used",
+            editor = "text",
+            default = false
+        },
+        {
+            id = "image",
+            title = "Category image",
+            help = "Image of the category (optional)",
+            editor = "ui_image",
+            default = false
         },
         {
             id = "description",
@@ -50,6 +46,13 @@ DefineClass.HUDAMilitiaShopCategory = {
             help = "Order of the category",
             editor = "number",
             default = 0
+        },
+        {
+            id = "hideProductCount",
+            title = "Hide Product Count",
+            help = "Hide Item Number in the sidebar menu",
+            editor = "bool",
+            default = false
         }
     }
 }
@@ -57,22 +60,6 @@ DefineClass.HUDAMilitiaShopCategory = {
 DefineModItemPreset("HUDAMilitiaShopCategory", {
     EditorName = "Shop Category",
     EditorSubmenu = "Militia Shop"
-})
-
-PlaceObj('PresetDef', {
-    group = "PresetDefs",
-    id = "HUDAMilitiaShopCouponCode",
-    PlaceObj('PropertyDefNumber', {
-        'id', "discount",
-        'min', 0,
-        'max', 100,
-    }),
-    PlaceObj('PropertyDefBool', {
-        'id', "multi",
-    }),
-    PlaceObj('PropertyDefText', {
-        'id', "description",
-    })
 })
 
 DefineClass.HUDAMilitiaShopCouponCode = {
@@ -108,25 +95,6 @@ DefineClass.HUDAMilitiaShopCouponCode = {
 DefineModItemPreset("HUDAMilitiaShopCouponCode", {
     EditorName = "Coupon Code",
     EditorSubmenu = "Militia Shop"
-})
-
-PlaceObj('PresetDef', {
-    group = "PresetDefs",
-    id = "HUDAMilitiaShopDeliveryType",
-    PlaceObj('PropertyDefText', {
-        'id', "title",
-    }),
-    PlaceObj('PropertyDefNumber', {
-        'id', "duration",
-        'min', 0,
-    }),
-    PlaceObj('PropertyDefNumber', {
-        'id', "pricePerKilogram",
-        'min', 0,
-    }),
-    PlaceObj('PropertyDefBool', {
-        'id', "default",
-    }),
 })
 
 DefineClass.HUDAMilitiaShopDeliveryType = {
@@ -170,46 +138,6 @@ DefineModItemPreset("HUDAMilitiaShopDeliveryType", {
     EditorName = "Delivery Type",
     EditorSubmenu = "Militia Shop"
 })
-
-PlaceObj('PresetDef', {
-    group = "PresetDefs",
-    id = "HUDAMilitiaShopInventoryItem",
-    PlaceObj('PropertyDefText', {
-        'id', "description",
-    }),
-    PlaceObj('PropertyDefNumber', {
-        'id', "weight",
-        'min', 0,
-    }),
-    PlaceObj('PropertyDefNumber', {
-        'id', "order",
-    }),
-    PlaceObj('PropertyDefNumber', {
-        'id', "basePrice",
-        'min', 0,
-    }),
-    PlaceObj('PropertyDefNumber', {
-        'id', "stock",
-        'min', 1,
-    }),
-    PlaceObj('PropertyDefNumber', {
-        'id', "tier",
-        'min', 0,
-        'max', 5,
-    }),
-    PlaceObj('PropertyDefNumber', {
-        'id', "availability",
-        'min', 0,
-        'max', 100,
-    }),
-    PlaceObj('PropertyDefBool', {
-        'id', "topSeller",
-    }),
-    PlaceObj('PropertyDefPresetId', {
-        'id', "category",
-    }),
-})
-
 
 DefineClass.HUDAMilitiaShopInventoryItem = {
     __parents = { "Preset" },
