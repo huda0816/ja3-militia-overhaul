@@ -70,7 +70,7 @@ PlaceObj("XTemplate", {
                             dlg:SetMode("trick",
                                 {
                                     query = { category = "ammo", caliber = self.context.id },
-                                    item = { name = self.context.Name .. " ammunition",
+                                    item = { title = self.context.Name .. " ammunition",
                                         description = "Get " .. self.context.Name .. " ammunition here" }
                                 })
                             ObjModified(dlg)
