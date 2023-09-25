@@ -120,10 +120,7 @@ PlaceObj('HUDAMilitiaShopCategory', {
 
 PlaceObj('HUDAMilitiaShopCategory', {
     id = "throwables",
-    title = "Grenades and other Throwables",
-    menuTitle = "Grenades",
-    hideProductCount = true,
-    image = "UI/Icons/Items/combat_stim",
+    title = "Grenades",
     description = "An assortment of grenades and tactical throwables.",
     weight = 500,
     order = 170
