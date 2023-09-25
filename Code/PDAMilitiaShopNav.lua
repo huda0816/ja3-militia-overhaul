@@ -44,7 +44,12 @@ PlaceObj("XTemplate", {
                 end,
                 "run_after",
                 function(child, context, item, i, n, last)
-                    child.idNavItem:SetText("<underline>" .. item.title .. "(" .. item.productCount .. ")</underline>")
+
+                    local text = item.menuTitle or item.title
+
+                    local productCount = item.hideProductCount and "" or "(" .. item.productCount .. ")"
+
+                    child.idNavItem:SetText("<underline>" .. text .. productCount .."</underline>")
                     if (gv_HUDA_ShopQuery.category == item.id) then
                         child.idNavItem:SetTextStyle("PDABrowserThievesBoxLinksVisited")
                     end

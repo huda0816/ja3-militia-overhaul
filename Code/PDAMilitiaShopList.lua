@@ -128,7 +128,31 @@ PlaceObj("XTemplate", {
                     "VList",
                     "LayoutVSpacing",
                     10,
+                    "OnLayoutComplete",
+                    function(self)
+                        self[1]:SetImage(self.parent.context.item.image)
+                    end
                 }, {
+                    PlaceObj("XTemplateWindow", {
+                        "__class",
+                        "XImage",
+                        "__condition",
+                        function(parent, context)
+                            return context.item.image
+                        end,
+                        "Id",
+                        "idCategoryImage",
+                        "ImageFit",
+                        "stretch",
+                        "MinWidth",
+                        647,
+                        "MinHeight",
+                        120,
+                        "MaxWidth",
+                        647,
+                        "MaxHeight",
+                        120,
+                    }),
                     PlaceObj("XTemplateWindow", {
                         "__class",
                         "XText",

@@ -432,8 +432,6 @@ function HUDA_ShopController:Restock()
 
     local tier = gv_HUDA_ShopStatus.tier or 1
 
-
-
     local filteredProducts = table.ifilter(self.InventoryTemplate, function(_, product)
         return tonumber(product.tier or 1) <= tonumber(tier)
     end)
@@ -506,7 +504,7 @@ function HUDA_ShopController:GetAvailableCategories()
         end)
 
         if next(ps) then
-            local preparedCat = category
+            local preparedCat = table.raw_copy(category)
 
             preparedCat.productCount = #ps
 
@@ -664,6 +662,26 @@ function HUDA_ShopController:GetProducts(query, noqueryupdate)
         end)
     end
 
+    if query.order then
+        if query.order == "price" then
+            table.sort(preparedProducts, function(a, b)
+                return a.basePrice < b.basePrice
+            end)
+        elseif query.order == "name" then
+            table.sort(preparedProducts, function(a, b)
+                return TDevModeGetEnglishText(a.name) < TDevModeGetEnglishText(a.name)
+            end)
+        elseif query.order == "tier" then
+            table.sort(preparedProducts, function(a, b)
+                return a.tier < b.tier
+            end)
+        end
+    else 
+        table.sort(preparedProducts, function(a, b)
+            return a.order < b.order
+        end)
+    end
+
     if query.num then
         return table.move(preparedProducts, 1, query.num, 1, {})
     end
@@ -807,7 +825,8 @@ function HUDA_ShopController:AddToCart(product, count)
                 name = product.name,
                 category = product.category,
                 maxStack = product.maxStack,
-                price = product.basePrice
+                price = product.basePrice,
+                weight = product.weight
             })
     else
         productsInCart[1].count = productsInCart[1].count + count

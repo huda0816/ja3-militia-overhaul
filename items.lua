@@ -20,22 +20,6 @@ PlaceObj('ModItemCharacterEffectCompositeDef', {
 	'Description', T(193097640175, --[[ModItemCharacterEffectCompositeDef GCMilitia Description]] "A perk every militia solider gets after bootcamp. Which allows them to clean and maintain their weapons."),
 }),
 PlaceObj('ModItemCode', {
-	'name', "1MilitiaShopCategories",
-	'CodeFileName', "Code/1MilitiaShopCategories.lua",
-}),
-PlaceObj('ModItemCode', {
-	'name', "1MilitiaShopCouponCodes",
-	'CodeFileName', "Code/1MilitiaShopCouponCodes.lua",
-}),
-PlaceObj('ModItemCode', {
-	'name', "1MilitiaShopDeliveryTypes",
-	'CodeFileName', "Code/1MilitiaShopDeliveryTypes.lua",
-}),
-PlaceObj('ModItemCode', {
-	'name', "1MilitiaShopInventoryTemplate",
-	'CodeFileName', "Code/1MilitiaShopInventoryTemplate.lua",
-}),
-PlaceObj('ModItemCode', {
 	'name', "1Options",
 	'CodeFileName', "Code/1Options.lua",
 }),

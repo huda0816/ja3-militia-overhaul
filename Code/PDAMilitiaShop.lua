@@ -206,7 +206,7 @@ PlaceObj("XTemplate", {
                                     return products
                                 end
 
-                                products = HUDA_ShopController:GetProducts({ topSeller = true, num = 5 })
+                                products = HUDA_ShopController:GetProducts({ topSeller = true, num = 5, order = "price" })
 
                                 return products
                             end
