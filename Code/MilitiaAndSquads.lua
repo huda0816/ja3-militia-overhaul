@@ -522,7 +522,7 @@ if FirstLoad then
 
 	if template then
 		template.element.__context = function(parent, context)
-			local squads = GetGroupedSquads(false, true, true)
+			local squads = GetGroupedSquads(false, true)
 
 			local militia = table.filter(squads, function(k, v) return v.militia end)
 			local mercs = table.filter(squads, function(k, v) return not v.militia end)
@@ -621,6 +621,7 @@ function GetSatelliteSquadsForContextMenu(sectorId)
 	return squads
 end
 
+
 function RemoveUnitFromSquad(unit_data, reason)
 	local squad_id = unit_data.Squad
 	local squad = gv_Squads[squad_id]
@@ -641,8 +642,14 @@ function RemoveUnitFromSquad(unit_data, reason)
 	if not squad then
 		return
 	end
-	table.remove_value(squad.units, unit_data.session_id)
-	if not next(squad.units) then
+	table.remove_value(squad.units, unit_data.session_id)		
+	-- There is some bug with millitia units being present twice in 
+	-- their squad for some reason 0.0
+	while table.find(squad.units, unit_data.session_id) do
+		assert(false) -- Unit was in the squad twice+ 0.0
+		table.remove_value(squad.units, unit_data.session_id)
+	end	
+	if not squad.units or #squad.units == 0 then
 		Msg("PreSquadDespawned", squad_id, squad.CurrentSector, reason)
 		if squad.militia then
 			local sector = gv_Sectors[squad.CurrentSector]
