@@ -24,15 +24,15 @@ function OnMsg.SquadSectorChanged(squad)
 end
 
 function OnMsg.SquadFinishedTraveling(squad)
+	
 	if not squad.militia then
 		return
 	end
 
-	local units = table.filter(gv_UnitData, function(k, v)
-		return table.find(squad.units, k)
-	end)
+	for i, unitId in ipairs(squad.units) do
 
-	for k, unit in pairs(units) do
+		local unit = gv_UnitData[unitId]
+
 		unit:RemoveStatusEffect("FarFromHome")
 
 		if unit.class ~= "MilitiaElite" then

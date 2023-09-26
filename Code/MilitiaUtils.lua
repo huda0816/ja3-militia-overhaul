@@ -115,24 +115,19 @@ function HUDA_GetSectorIdByUnitId(unit_id)
 end
 
 function HUDA_GetEnglishString(v)
-
 	if type(v) == "string" then
 		return v
 	else
 		return TDevModeGetEnglishText(v)
 	end
-
 end
 
 function HUDA_T(text, replace)
-
 	for k, v in pairs(replace) do
-
-		text = string.gsub(text,"<" .. k  .. ">", HUDA_GetEnglishString(v) )
+		text = string.gsub(text, "<" .. k .. ">", HUDA_GetEnglishString(v))
 	end
 
 	return text
-
 end
 
 function HUDA_GetSectorId(unit)
@@ -298,7 +293,7 @@ function HUDA_GetUnitDistance(unit)
 		return 0
 	end
 
-	local home_sector = unit.JoinSector or squad.BornInSector or current_sector
+	local home_sector = unit.JoinLocation or squad.BornInSector or current_sector
 
 	return GetSectorDistance(current_sector, home_sector)
 end
@@ -439,7 +434,6 @@ function HUDA_IsSquadManagementView()
 end
 
 function HUDA_GetDateFromTime(timeStamp)
-
 	local t = GetTimeAsTable(timeStamp or 0)
 	local month = string.format("%02d", t and t.month or 1)
 	local day = string.format("%02d", t and t.day or 1)
@@ -455,7 +449,6 @@ function HUDA_GetDateFromTime(timeStamp)
 		day = day,
 		year = year
 	})
-
 end
 
 function HUDA_GetDaysSinceTime(timeStamp)
@@ -483,11 +476,9 @@ function HUDA_GetSquadLeader(units)
 end
 
 function HUDA_GetSquadName(squadId)
-	
 	local squad = gv_Squads[squadId]
-	
+
 	if squad and squad.Name ~= "" then
 		return squad.Name
 	end
-
 end
