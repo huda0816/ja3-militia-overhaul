@@ -130,7 +130,9 @@ PlaceObj("XTemplate", {
                     10,
                     "OnLayoutComplete",
                     function(self)
-                        self[1]:SetImage(self.parent.context.item.image)
+                        if self.parent.context.item.image and self[1] then
+                            self[1]:SetImage(self.parent.context.item.image)
+                        end                        
                     end
                 }, {
                     PlaceObj("XTemplateWindow", {

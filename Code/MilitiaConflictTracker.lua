@@ -156,7 +156,7 @@ function HUDA_ConflictTracker:ExtendConflict(sectorId, squadId)
     end
 
     if not table.find(conflict.squads, squad) then
-        prepSquad = {
+        local prepSquad = {
             id = squad.UniqueId,
             side = self:GetSquadSide(squad),
             units = table.copy(squad.units),

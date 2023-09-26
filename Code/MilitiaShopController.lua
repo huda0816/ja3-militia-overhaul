@@ -1230,7 +1230,7 @@ function HUDA_ShopController:Pay(cart)
 end
 
 function HUDA_ShopController:CheckTierStatus(mail)
-    local currentTier = gv_HUDA_ShopStatus.tier
+    local currentTier = gv_HUDA_ShopStatus.tier or 1
 
     if currentTier == 5 then
         return
