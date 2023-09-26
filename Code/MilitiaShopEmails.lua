@@ -1,21 +1,21 @@
--- if FirstLoad then
-local HUDA_hyperlink_function = CustomSettingsMod.Utils.XTemplate_FindElementsByProp(XTemplates["PDAQuests_Email"],
-    "name", "OnHyperLink(self, hyperlink, argument, hyperlink_box, pos, button)")
+if FirstLoad then
+    local HUDA_hyperlink_function = CustomSettingsMod.Utils.XTemplate_FindElementsByProp(XTemplates["PDAQuests_Email"],
+        "name", "OnHyperLink(self, hyperlink, argument, hyperlink_box, pos, button)")
 
-if HUDA_hyperlink_function then
-    HUDA_hyperlink_function.element.func = function(self, hyperlink, argument, hyperlink_box, pos, button)
-        if hyperlink == "OpenIMPPage" then
-            OpenIMPPage()
-        end
-        if hyperlink == "OpenShopPage" then
-            HUDA_OpenShopPage()
-        end
-        if hyperlink == "OpenSectorInventory" then
-            HUDA_OpenSectorInventory(self.context.context.location)
+    if HUDA_hyperlink_function then
+        HUDA_hyperlink_function.element.func = function(self, hyperlink, argument, hyperlink_box, pos, button)
+            if hyperlink == "OpenIMPPage" then
+                OpenIMPPage()
+            end
+            if hyperlink == "OpenShopPage" then
+                HUDA_OpenShopPage()
+            end
+            if hyperlink == "OpenSectorInventory" then
+                HUDA_OpenSectorInventory(self.context.context.location)
+            end
         end
     end
 end
--- end
 
 
 function HUDA_OpenShopPage()
@@ -39,7 +39,8 @@ function HUDA_OpenSectorInventory(sectorName)
 
     local unitsInSector = GetPlayerSectorUnits(sectorId)
 
-    local militiaInSector = next(gv_Sectors[sectorId].militia_squads) and next(gv_Sectors[sectorId].militia_squads[1].units) and true or false
+    local militiaInSector = next(gv_Sectors[sectorId].militia_squads) and
+        next(gv_Sectors[sectorId].militia_squads[1].units) and true or false
 
     if not next(unitsInSector) and not militiaInSector then
         local popupHost = GetDialog("PDADialog")
@@ -107,7 +108,8 @@ PlaceObj('Email', {
 })
 
 PlaceObj('Email', {
-    body ="Dear Grand Chien Militia Members,\n\nWe're thrilled to announce that the Grand Chien Militia Staff Shop has officially launched, and it's now ready to serve all your tactical gear needs. To celebrate this momentous occasion, we're offering an exclusive 50% off coupon code: \"BARK0816.\"\n\nVisit the shop now and gear up for your next mission with unbeatable discounts! Don't miss out; this offer won't last forever.\n\nShop Now: <h OpenShopPage><underline><em>http://gc-militia/shop</em></underline></h>\n\nStay prepared, stay safe, and equip yourself with the best.\n\nSincerely,\n I.M.P.M.S.S. Customer Service",
+    body =
+    "Dear Grand Chien Militia Members,\n\nWe're thrilled to announce that the Grand Chien Militia Staff Shop has officially launched, and it's now ready to serve all your tactical gear needs. To celebrate this momentous occasion, we're offering an exclusive 50% off coupon code: \"BARK0816.\"\n\nVisit the shop now and gear up for your next mission with unbeatable discounts! Don't miss out; this offer won't last forever.\n\nShop Now: <h OpenShopPage><underline><em>http://gc-militia/shop</em></underline></h>\n\nStay prepared, stay safe, and equip yourself with the best.\n\nSincerely,\n I.M.P.M.S.S. Customer Service",
     group = "Militia",
     label = "Important",
     id = "HUDA_ShopLaunch",
@@ -117,7 +119,8 @@ PlaceObj('Email', {
 })
 
 PlaceObj('Email', {
-    body ="We regret to inform you that due to current circumstances, the Grand Chien Militia Staff Shop is temporarily closed for business.\n\nThe temporary closure is a result of Ernie Village falling under the control of hostile forces.\n\nShipping goods has become too perilous.\n\nRest assured, all pending orders will be promptly refunded.\n\nWe apologize for any inconvenience this may cause and appreciate your understanding.\n\nSincerely,\n I.M.P.M.S.S. Customer Service",
+    body =
+    "We regret to inform you that due to current circumstances, the Grand Chien Militia Staff Shop is temporarily closed for business.\n\nThe temporary closure is a result of Ernie Village falling under the control of hostile forces.\n\nShipping goods has become too perilous.\n\nRest assured, all pending orders will be promptly refunded.\n\nWe apologize for any inconvenience this may cause and appreciate your understanding.\n\nSincerely,\n I.M.P.M.S.S. Customer Service",
     group = "Militia",
     label = "Important",
     id = "HUDA_ShopClosed",
@@ -127,7 +130,8 @@ PlaceObj('Email', {
 })
 
 PlaceObj('Email', {
-    body ="Dear Grand Chien Militia Members,\n\nGreat news! The Grand Chien Militia Staff Shop has reopened, and we're excited to get you back in action. To welcome you back, we're offering an exclusive 30% discount on all orders for the next seven days. Simply use coupon code \"REOPEN30\" at checkout.\n\nShop Now: <h OpenShopPage><underline><em>http://gc-militia/shop</em></underline></h>\n\nThis limited-time offer is our way of saying thank you for your support. Gear up with the best tactical equipment and accessories now.\n\nStay prepared, stay safe.\n\nSincerely,\n I.M.P.M.S.S. Customer Service",
+    body =
+    "Dear Grand Chien Militia Members,\n\nGreat news! The Grand Chien Militia Staff Shop has reopened, and we're excited to get you back in action. To welcome you back, we're offering an exclusive 30% discount on all orders for the next seven days. Simply use coupon code \"REOPEN30\" at checkout.\n\nShop Now: <h OpenShopPage><underline><em>http://gc-militia/shop</em></underline></h>\n\nThis limited-time offer is our way of saying thank you for your support. Gear up with the best tactical equipment and accessories now.\n\nStay prepared, stay safe.\n\nSincerely,\n I.M.P.M.S.S. Customer Service",
     group = "Militia",
     label = "Important",
     id = "HUDA_ShopReopened",
@@ -135,4 +139,3 @@ PlaceObj('Email', {
     title = "Militia Staff Shop Reopens – Special Offer Inside!",
     repeatable = true,
 })
-
