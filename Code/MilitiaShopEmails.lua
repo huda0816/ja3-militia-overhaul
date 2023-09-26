@@ -40,7 +40,7 @@ function HUDA_OpenSectorInventory(sectorName)
     local unitsInSector = GetPlayerSectorUnits(sectorId)
 
     local militiaInSector = next(gv_Sectors[sectorId].militia_squads) and
-    next(gv_Sectors[sectorId].militia_squads[1].units) and true or false
+        next(gv_Sectors[sectorId].militia_squads[1].units) and true or false
 
     if not next(unitsInSector) and not militiaInSector then
         local popupHost = GetDialog("PDADialog")
