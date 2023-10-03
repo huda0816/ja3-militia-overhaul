@@ -67,120 +67,168 @@ PlaceObj("XTemplate", {
                 return next(gv_HUDA_ShopCart.products)
             end,
         }, {
-            PlaceObj("XTemplateForEach", {
-                "array",
-                function(parent, context)
-                    return gv_HUDA_ShopCart.products or {}
-                end,
-                "run_after",
-                function(child, context, item, i, n, last)
-                    child.idCartProduct:SetText(item.count .. " x " .. item.name or item.id)
-                    child:SetContext(item)
-                end
+            PlaceObj("XTemplateWindow", {
+                "IdNode",
+                false,
+                "LayoutMethod",
+                "VList",
+                "LayoutVSpacing",
+                5
             }, {
-                PlaceObj("XTemplateWindow", {
-                    "__class",
-                    "XContextWindow",
-                    "LayoutMethod",
-                    "VList",
-                    "IdNode",
-                    true,
+                PlaceObj("XTemplateForEach", {
+                    "array",
+                    function(parent, context)
+                        return gv_HUDA_ShopCart.products or {}
+                    end,
+                    "run_after",
+                    function(child, context, item, i, n, last)
+                        child.idCartProduct:SetText(item.count .. " x " .. item.name or item.id)
+                        child:SetContext(item)
+                    end
                 }, {
                     PlaceObj("XTemplateWindow", {
                         "__class",
-                        "XText",
-                        "Margins",
-                        box(0, 0, 0, 0),
-                        "Id",
-                        "idCartProduct",
-                        "TextStyle",
-                        "PDAIMPMercBio",
-                        "Translate",
-                        true,
-                        "Text",
-                        "Placeholder"
-                    }),
-                    PlaceObj("XTemplateWindow", {
+                        "XContextWindow",
                         "LayoutMethod",
-                        "HList",
+                        "VList",
                         "IdNode",
                         true,
                     }, {
                         PlaceObj("XTemplateWindow", {
-                            "comment",
-                            "plus",
                             "__class",
-                            "XImage",
-                            "MinWidth",
-                            16,
-                            "MinHeight",
-                            16,
-                            "MaxWidth",
-                            16,
-                            "MaxHeight",
-                            16,
-                            "ImageFit",
-                            "height",
-                            "MouseCursor",
-                            "UI/Cursors/Pda_Hand.tga",
-                            "HandleMouse",
+                            "XText",
+                            "Margins",
+                            box(0, 0, 0, 0),
+                            "Id",
+                            "idCartProduct",
+                            "TextStyle",
+                            "PDAIMPMercBio",
+                            "Translate",
                             true,
-                            "HAlign",
-                            "left",
-                            "VAlign",
-                            "center",
-                            "Image",
-                            "UI/PDA/Quest/T_Icon_Plus"
-                        }, {
-                            PlaceObj("XTemplateFunc", {
-                                "name",
-                                "OnMouseButtonDown(self, pos, button)",
-                                "func",
-                                function(self, pos, button)
-                                    HUDA_ShopController:AddToCart(self.parent.parent.context, 1)
-                                    ObjModified("right panel")
-                                    ObjModified("left panel")
-                                    ObjModified("militia header")
-                                end
-                            })
+                            "Text",
+                            "Placeholder"
                         }),
                         PlaceObj("XTemplateWindow", {
-                            "comment",
-                            "minus",
-                            "__class",
-                            "XImage",
-                            "MinWidth",
-                            16,
-                            "MinHeight",
-                            16,
-                            "MaxWidth",
-                            16,
-                            "MaxHeight",
-                            16,
-                            "ImageFit",
-                            "height",
-                            "MouseCursor",
-                            "UI/Cursors/Pda_Hand.tga",
-                            "HandleMouse",
+                            "LayoutMethod",
+                            "HList",
+                            "LayoutHSpacing",
+                            5,
+                            "BorderWidth",
+                            2,
+                            "Padding",
+                            box(5, 0, 5, 0),
+                            "Margins",
+                            box(2, 2, 2, 2),
+                            "IdNode",
                             true,
-                            "HAlign",
-                            "left",
-                            "VAlign",
-                            "center",
-                            "Image",
-                            "UI/PDA/Quest/T_Icon_Minus"
                         }, {
-                            PlaceObj("XTemplateFunc", {
-                                "name",
-                                "OnMouseButtonDown(self, pos, button)",
-                                "func",
-                                function(self, pos, button)
-                                    HUDA_ShopController:RemoveFromCart(
-                                        self.parent.parent.context, 1)
-                                    ObjModified("right panel")
-                                    ObjModified("left panel")
-                                    ObjModified("militia header")
-                                end
+                            PlaceObj("XTemplateWindow", {
+                                "comment",
+                                "plus",
+                                "__class",
+                                "XImage",
+                                "MinWidth",
+                                16,
+                                "MinHeight",
+                                16,
+                                "MaxWidth",
+                                16,
+                                "MaxHeight",
+                                16,
+                                "ImageFit",
+                                "height",
+                                "MouseCursor",
+                                "UI/Cursors/Pda_Hand.tga",
+                                "HandleMouse",
+                                true,
+                                "HAlign",
+                                "left",
+                                "VAlign",
+                                "center",
+                                "Image",
+                                "UI/PDA/Quest/T_Icon_Plus"
+                            }, {
+                                PlaceObj("XTemplateFunc", {
+                                    "name",
+                                    "OnMouseButtonDown(self, pos, button)",
+                                    "func",
+                                    function(self, pos, button)
+                                        HUDA_ShopController:AddToCart(self.parent.parent.context, 1)
+                                        ObjModified("right panel")
+                                        ObjModified("left panel")
+                                        ObjModified("militia header")
+                                    end
+                                })
+                            }),
+                            PlaceObj("XTemplateWindow", {
+                                "comment",
+                                "minus",
+                                "__class",
+                                "XImage",
+                                "MinWidth",
+                                16,
+                                "MinHeight",
+                                16,
+                                "MaxWidth",
+                                16,
+                                "MaxHeight",
+                                16,
+                                "ImageFit",
+                                "height",
+                                "MouseCursor",
+                                "UI/Cursors/Pda_Hand.tga",
+                                "HandleMouse",
+                                true,
+                                "HAlign",
+                                "left",
+                                "VAlign",
+                                "center",
+                                "Image",
+                                "UI/PDA/Quest/T_Icon_Minus"
+                            }, {
+                                PlaceObj("XTemplateFunc", {
+                                    "name",
+                                    "OnMouseButtonDown(self, pos, button)",
+                                    "func",
+                                    function(self, pos, button)
+                                        HUDA_ShopController:RemoveFromCart(
+                                            self.parent.parent.context, 1)
+                                        ObjModified("right panel")
+                                        ObjModified("left panel")
+                                        ObjModified("militia header")
+                                    end
+                                })
+                            }),
+                            PlaceObj("XTemplateWindow", {
+                                "comment",
+                                "remove",
+                                "__class",
+                                "XText",
+                                "MouseCursor",
+                                "UI/Cursors/Pda_Hand.tga",
+                                "HandleMouse",
+                                true,
+                                "HAlign",
+                                "left",
+                                "VAlign",
+                                "center",
+                                "Text",
+                                "remove",
+                                "TextStyle",
+                                "PDABrowserThievesBoxLinks"
+                            }, {
+                                PlaceObj("XTemplateFunc", {
+                                    "name",
+                                    "OnMouseButtonDown(self, pos, button)",
+                                    "func",
+                                    function(self, pos, button)
+                                        HUDA_ShopController:RemoveFromCart(
+                                            self.parent.parent.context)
+                                        ObjModified("right panel")
+                                        ObjModified("left panel")
+                                        ObjModified("militia header")
+                                    end
+                                })
                             })
                         })
                     })
@@ -253,7 +301,6 @@ PlaceObj("XTemplate", {
                     PlaceObj("XTemplateForEach", {
                         "array",
                         function(parent, context)
-
                             local deliveryTypes = HUDA_ShopController:GetDeliveryTypes()
 
                             table.sort(deliveryTypes, function(a, b)
@@ -530,7 +577,7 @@ PlaceObj("XTemplate", {
                 "OnLayoutComplete",
                 function(self)
                     if gv_HUDA_ShopCart.coupon then
-                        self:SetText("Discount: ".. gv_HUDA_ShopCart.coupon.discount .. "%")
+                        self:SetText("Discount: " .. gv_HUDA_ShopCart.coupon.discount .. "%")
                         self:SetVisible(true)
                     end
                 end,

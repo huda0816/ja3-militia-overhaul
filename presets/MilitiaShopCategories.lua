@@ -67,7 +67,8 @@ PlaceObj('HUDAMilitiaShopCategory', {
     title = "Ammo",
     description = "Stock up on high-quality ammunition for your firearms.",
     weight = 10,
-    order = 100
+    order = 100,
+    minAmount = 20,
 })
 
 PlaceObj('HUDAMilitiaShopCategory', {
@@ -107,7 +108,8 @@ PlaceObj('HUDAMilitiaShopCategory', {
     title = "Crafting",
     description = "Crafting materials and resources for skilled artisans.",
     weight = 500,
-    order = 150
+    order = 150,
+    minAmount = 10,
 })
 
 PlaceObj('HUDAMilitiaShopCategory', {

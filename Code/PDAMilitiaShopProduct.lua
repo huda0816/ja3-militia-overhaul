@@ -192,7 +192,7 @@ PlaceObj("XTemplate", {
                     true,
                     "OnLayoutComplete",
                     function(self)
-                        local amount = self.context.category == "ammo" and 10 or 1
+                        local amount = self.context.minAmount or 1
 
                         self:SetText("<underline>Add " .. amount .. "x to cart</underline>")
 
@@ -210,7 +210,7 @@ PlaceObj("XTemplate", {
                         "OnMouseButtonDown(self, pos, button)",
                         "func",
                         function(self, pos, button)
-                            local amount = self.context.category == "ammo" and 10 or 1
+                            local amount = self.context.minAmount or 1
 
                             HUDA_ShopController:AddToCart(self.context, amount)
                             ObjModified("right panel")
@@ -224,9 +224,9 @@ PlaceObj("XTemplate", {
                     "XText",
                     "__condition",
                     function(parent, context)
-                        local minStock = context.category == "ammo" and 10 or 1
+                        local minAdd = (context.minAmount or 1) * 10
 
-                        return context.stock > minStock
+                        return context.stock >= minAdd
                     end,
                     "Id",
                     "idAdd5ToCart",
@@ -240,13 +240,9 @@ PlaceObj("XTemplate", {
                     true,
                     "OnLayoutComplete",
                     function(self)
-                        local amount = self.context.category == "ammo" and 50 or 5
+                        local amount = (self.context.minAmount or 1) * 10
 
-                        if (self.context.stock < amount) then
-                            self:SetText("<underline>Add " .. self.context.stock .. "x to cart</underline>")
-                        else
-                            self:SetText("<underline>Add " .. amount .. "x to cart</underline>")
-                        end
+                        self:SetText("<underline>Add " .. amount .. "x to cart</underline>")
                     end,
                     "Text",
                     "<underline>Add 5x to cart</underline>"
@@ -256,9 +252,45 @@ PlaceObj("XTemplate", {
                         "OnMouseButtonDown(self, pos, button)",
                         "func",
                         function(self, pos, button)
-                            local amount = self.context.category == "ammo" and 50 or 5
+                            local amount = (self.context.minAmount or 1) * 10
 
-                            HUDA_ShopController:AddToCart(self.context, Min(amount, self.context.stock))
+                            HUDA_ShopController:AddToCart(self.context, amount)
+                            ObjModified("right panel")
+                            ObjModified("left panel")
+                            ObjModified("militia header")
+                        end
+                    })
+                }),
+                PlaceObj("XTemplateWindow", {
+                    "__class",
+                    "XText",
+                    "__condition",
+                    function(parent, context)
+                        return context.stock > 0
+                    end,
+                    "Id",
+                    "idAddAllToCart",
+                    "TextHAlign",
+                    "Right",
+                    "MouseCursor",
+                    "UI/Cursors/Pda_Hand.tga",
+                    "TextStyle",
+                    "PDABrowserThievesBoxLinks",
+                    "Translate",
+                    true,
+                    "OnLayoutComplete",
+                    function(self)
+                        self:SetText("<underline>Add all to cart</underline>")
+                    end,
+                    "Text",
+                    "<underline>Add 5x to cart</underline>"
+                }, {
+                    PlaceObj("XTemplateFunc", {
+                        "name",
+                        "OnMouseButtonDown(self, pos, button)",
+                        "func",
+                        function(self, pos, button)
+                            HUDA_ShopController:AddToCart(self.context, self.context.stock)
                             ObjModified("right panel")
                             ObjModified("left panel")
                             ObjModified("militia header")

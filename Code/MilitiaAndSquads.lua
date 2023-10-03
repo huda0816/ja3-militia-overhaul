@@ -265,19 +265,21 @@ if FirstLoad then
 		x_button.element.Margins = box(0, 0, -10, 0)
 		x_button.element.AltPress = true
 		x_button.element.OnAltPress = function(self, gamepad)
-			if g_SatelliteUI.context_menu then
-				local prev_context = g_SatelliteUI.context_menu[1].context
-				prev = prev_context and prev_context.unit_id
-				g_SatelliteUI:RemoveContextMenu()
+			if g_SatelliteUI then
+				if g_SatelliteUI.context_menu then
+					local prev_context = g_SatelliteUI.context_menu[1].context
+					prev = prev_context and prev_context.unit_id
+					g_SatelliteUI:RemoveContextMenu()
+				end
+				local squad = self.context
+				local sector_id = squad and squad.CurrentSector
+				if not sector_id then
+					return
+				end
+				self:SetRollover(false)
+				g_SatelliteUI:SelectSquad(squad)
+				g_SatelliteUI:OpenContextMenu(self, sector_id, squad.UniqueId)
 			end
-			local squad = self.context
-			local sector_id = squad and squad.CurrentSector
-			if not sector_id then
-				return
-			end
-			self:SetRollover(false)
-			g_SatelliteUI:SelectSquad(squad)
-			g_SatelliteUI:OpenContextMenu(self, sector_id, squad.UniqueId)
 		end
 	end
 
@@ -748,7 +750,6 @@ function XSatelliteViewMap:OpenContextMenu(ctrl, sector_id, squad_id, unit_id)
 end
 
 function OnMsg.SatelliteNewSquadSelected(selected_squad, old_squad, force)
-	
 	if not old_squad then
 		return
 	end

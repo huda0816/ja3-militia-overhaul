@@ -405,7 +405,5 @@ function OnMsg.SquadStartedTravelling(squad)
 		local dlg = CreateMessageBox(popupHost, Untranslated("Militia cannot move"),
 			Untranslated(
 				"As you are moving through or to a sector with enemy presence, your militia cannot move. (Change option to control militia in battle to move them)"))
-
-		dlg:Wait()
 	end
 end

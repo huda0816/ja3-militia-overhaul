@@ -53,6 +53,15 @@ DefineClass.HUDAMilitiaShopCategory = {
             help = "Hide Item Number in the sidebar menu",
             editor = "bool",
             default = false
+        },
+        {
+            id = "minAmount",
+            title = "Minimum Amount to put in cart",
+            help = "Minimum Amount of items one can add to the cart",
+            editor = "number",
+            default = 1,
+            min = 1,
+            max = 100
         }
     }
 }

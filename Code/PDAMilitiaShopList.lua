@@ -140,7 +140,7 @@ PlaceObj("XTemplate", {
                         "XImage",
                         "__condition",
                         function(parent, context)
-                            return context.item.image
+                            return context.item and context.item.image or false
                         end,
                         "Id",
                         "idCategoryImage",
@@ -158,6 +158,10 @@ PlaceObj("XTemplate", {
                     PlaceObj("XTemplateWindow", {
                         "__class",
                         "XText",
+                        "__condition",
+                        function(parent, context)
+                            return context.item.title and context.item.title ~= ""
+                        end,
                         "Id",
                         "idTitle",
                         "FoldWhenHidden",
@@ -182,6 +186,10 @@ PlaceObj("XTemplate", {
                     PlaceObj("XTemplateWindow", {
                         "__class",
                         "XText",
+                        "__condition",
+                        function(parent, context)
+                            return context.item.description and context.item.description ~= ""
+                        end,
                         "Padding",
                         box(0, 0, 0, 0),
                         "HAlign",

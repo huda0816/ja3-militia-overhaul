@@ -166,7 +166,7 @@ DefineClass.HUDA_MilitiaFinances = {
 
 function HUDA_MilitiaFinances:UpdateProps(prop_name, value)
     local property_name = prop_name:gsub("huda_", "")
-    self[property_name] = value
+    self[property_name] = tonumber(value)
 end
 
 function HUDA_MilitiaFinances:GetSalary(unit, days)
