@@ -226,16 +226,20 @@ function ResolveConflict(sector, bNoVoice, isAutoResolve, isRetreat)
 	gv_ActiveCombat = false
 	sector = sector or gv_Sectors[gv_CurrentSectorId]
 	local mercSquads, enemySquads = GetSquadsInSector(sector.Id, "no_travel", false, "no_arriving", "no_retreat")
-	local militiaLeft = GetMilitiaSquads(sector)
-	-- if 0 < #militiaLeft and 0 < #enemySquads then
-	-- 	print("ResolveConflict: militia left and enemy squads in sector")
+	-- local militiaLeft = GetMilitiaSquads(sector)
+	-- if #militiaLeft > 0 and #enemySquads > 0 then
 	-- 	if isAutoResolve then
+	-- 		assert(false) -- Auto resolve is causing another auto resolve, infinite loop!
 	-- 		table.remove_value(g_ConflictSectors, sector.Id)
 	-- 		sector.conflict = false
+			
+	-- 		if not AnyNonWaitingConflict() then
+	-- 			ResumeCampaignTime("SatelliteConflict")	
+	-- 		end
 	-- 		return
 	-- 	end
+
 	-- 	if g_SatelliteUI then
-	-- 		print("ResolveConflict: g_SatelliteUI")
 	-- 		AutoResolveConflict(sector)
 	-- 	elseif not table.find(SatQueuedResolveConflict, sector.Id) then
 	-- 		SatQueuedResolveConflict[#SatQueuedResolveConflict + 1] = sector.Id
@@ -302,7 +306,7 @@ function Unit:DropLoot(container)
 			if not dropped then
 				DoneObject(item)
 			elseif slot == "InventoryDead" then
-				droped_items = droped_items + (item.LargeItem and 2 or 1)
+				droped_items = droped_items + (item:IsLargeItem() and 2 or 1)
 			end
 		end)
 	else
@@ -401,7 +405,5 @@ function OnMsg.SquadStartedTravelling(squad)
 		local dlg = CreateMessageBox(popupHost, Untranslated("Militia cannot move"),
 			Untranslated(
 				"As you are moving through or to a sector with enemy presence, your militia cannot move. (Change option to control militia in battle to move them)"))
-
-		dlg:Wait()
 	end
 end

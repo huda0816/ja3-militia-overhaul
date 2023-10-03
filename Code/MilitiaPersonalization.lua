@@ -348,20 +348,14 @@ function HUDA_MilitiaPersonalization:PersonalizeSquads(squad_ids)
                 squad.image = ""
             end
 
-            if not squad.Name or squad.Name == "MILITIA" or IsT(squad.Name) then
+            local squad_name = IsT(squad.Name) and TDevModeGetEnglishText(squad.Name) or squad.Name
+
+            if squad_name == "MILITIA" then
                 squad.Name = self:GetRandomSquadName(squad.CurrentSector)
             end
 
             if not squad.BornInSector or squad.BornInSector == "" then
-                -- fix the home sector of squads
-                local name_sector
-
-                for i in string.gmatch(squad.Name, "%S+") do
-                    name_sector = i
-                    break
-                end
-
-                squad.BornInSector = name_sector or squad.CurrentSector
+                squad.BornInSector = squad.CurrentSector
             end
         end
     end

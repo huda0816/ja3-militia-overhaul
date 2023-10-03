@@ -265,19 +265,21 @@ if FirstLoad then
 		x_button.element.Margins = box(0, 0, -10, 0)
 		x_button.element.AltPress = true
 		x_button.element.OnAltPress = function(self, gamepad)
-			if g_SatelliteUI.context_menu then
-				local prev_context = g_SatelliteUI.context_menu[1].context
-				prev = prev_context and prev_context.unit_id
-				g_SatelliteUI:RemoveContextMenu()
+			if g_SatelliteUI then
+				if g_SatelliteUI.context_menu then
+					local prev_context = g_SatelliteUI.context_menu[1].context
+					prev = prev_context and prev_context.unit_id
+					g_SatelliteUI:RemoveContextMenu()
+				end
+				local squad = self.context
+				local sector_id = squad and squad.CurrentSector
+				if not sector_id then
+					return
+				end
+				self:SetRollover(false)
+				g_SatelliteUI:SelectSquad(squad)
+				g_SatelliteUI:OpenContextMenu(self, sector_id, squad.UniqueId)
 			end
-			local squad = self.context
-			local sector_id = squad and squad.CurrentSector
-			if not sector_id then
-				return
-			end
-			self:SetRollover(false)
-			g_SatelliteUI:SelectSquad(squad)
-			g_SatelliteUI:OpenContextMenu(self, sector_id, squad.UniqueId)
 		end
 	end
 
@@ -522,7 +524,7 @@ if FirstLoad then
 
 	if template then
 		template.element.__context = function(parent, context)
-			local squads = GetGroupedSquads(false, true, true)
+			local squads = GetGroupedSquads(false, true)
 
 			local militia = table.filter(squads, function(k, v) return v.militia end)
 			local mercs = table.filter(squads, function(k, v) return not v.militia end)
@@ -621,6 +623,7 @@ function GetSatelliteSquadsForContextMenu(sectorId)
 	return squads
 end
 
+
 function RemoveUnitFromSquad(unit_data, reason)
 	local squad_id = unit_data.Squad
 	local squad = gv_Squads[squad_id]
@@ -641,8 +644,14 @@ function RemoveUnitFromSquad(unit_data, reason)
 	if not squad then
 		return
 	end
-	table.remove_value(squad.units, unit_data.session_id)
-	if not next(squad.units) then
+	table.remove_value(squad.units, unit_data.session_id)		
+	-- There is some bug with millitia units being present twice in 
+	-- their squad for some reason 0.0
+	while table.find(squad.units, unit_data.session_id) do
+		assert(false) -- Unit was in the squad twice+ 0.0
+		table.remove_value(squad.units, unit_data.session_id)
+	end	
+	if not squad.units or #squad.units == 0 then
 		Msg("PreSquadDespawned", squad_id, squad.CurrentSector, reason)
 		if squad.militia then
 			local sector = gv_Sectors[squad.CurrentSector]
@@ -741,7 +750,6 @@ function XSatelliteViewMap:OpenContextMenu(ctrl, sector_id, squad_id, unit_id)
 end
 
 function OnMsg.SatelliteNewSquadSelected(selected_squad, old_squad, force)
-	
 	if not old_squad then
 		return
 	end

@@ -441,6 +441,11 @@ function HUDA_ShopController:Restock()
     for i, product in ipairs(filteredProducts) do
         local roll = InteractionRand(100, "HUDA_ShopAvailability")
 
+        product.availability = product.availability or 100
+        product.tier = product.tier or 1
+        product.stock = product.stock or 1
+        product.basePrice = product.basePrice or 0
+
         if product.availability > 0 and roll < (product.availability or 100) + ((tier - product.tier) * 10) then
             local prod = table.raw_copy(product)
 
@@ -513,7 +518,7 @@ function HUDA_ShopController:GetAvailableCategories()
     end
 
     table.sort(categories, function(a, b)
-        return a.order < b.order
+        return (a.order or 0) < (b.order or 0)
     end)
 
     return categories
@@ -665,7 +670,7 @@ function HUDA_ShopController:GetProducts(query, noqueryupdate)
     if query.order then
         if query.order == "price" then
             table.sort(preparedProducts, function(a, b)
-                return a.basePrice < b.basePrice
+                return (a.basePrice or 0) < (b.basePrice or 0)
             end)
         elseif query.order == "name" then
             table.sort(preparedProducts, function(a, b)
@@ -673,12 +678,12 @@ function HUDA_ShopController:GetProducts(query, noqueryupdate)
             end)
         elseif query.order == "tier" then
             table.sort(preparedProducts, function(a, b)
-                return a.tier < b.tier
+                return (a.tier or 1) < (b.tier or 1)
             end)
         end
-    else 
+    else
         table.sort(preparedProducts, function(a, b)
-            return a.order < b.order
+            return (a.order or 0) < (b.order or 0)
         end)
     end
 
@@ -747,10 +752,23 @@ function HUDA_ShopController:PrepareProduct(product)
 
     product.description = product.description or productData.Description or ""
     product.name = productData.DisplayName
-    product.categories = productData.Group or productData.objext_class
     product.image = productData.Icon
-    product.weight = product.weight or productData.Weight
+    product.weight = (product.weight ~= 0 and product.weight) or
+    (productData.Weight and round(productData.Weight * 1000, 1) or 1000)
     product.maxStack = productData.MaxStacks or 1
+    product.minAmount = product.minAmount or productData.MinAmount or nil
+
+    if not product.minAmount then
+        local category = HUDA_ArrayFind(self.Categories, function(i, category)
+            return category.id == product.category
+        end)
+
+        if category then
+            product.minAmount = category.minAmount
+        else
+            product.minAmount = 1
+        end
+    end
 
     if productData.Caliber then
         product.caliber = productData.Caliber
@@ -859,7 +877,7 @@ function HUDA_ShopController:RemoveFromCart(product, count)
     end)
 
     if inventoryProduct then
-        inventoryProduct.stock = inventoryProduct.stock + count
+        inventoryProduct.stock = inventoryProduct.stock + (count or cartProduct.count)
     end
 
     if count and count < cartProduct.count then

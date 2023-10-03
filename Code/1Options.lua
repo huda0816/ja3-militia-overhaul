@@ -1,6 +1,10 @@
 function HUDA_GetModOptions(id, default, type)
 	id = "huda_" .. id
 
+	if type == "number" then
+		return tonumber(CurrentModOptions[id]) or default
+	end
+
 	return CurrentModOptions[id] or default
 end
 
@@ -11,7 +15,7 @@ function HUDA_GetShopOptions(id, default, type)
 		return default
 	end
 
-	if (type == "number") then
+	if type == "number" then
 		return tonumber(CurrentModOptions[id])
 	end
 
