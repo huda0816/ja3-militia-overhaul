@@ -24,13 +24,24 @@ function OnMsg.SquadSectorChanged(squad)
 end
 
 function OnMsg.SquadFinishedTraveling(squad)
-	
+	if not squad.militia then
+		return
+	end
+
+	if HUDA_GetModOptions("MilitiaNoFarFromHome", false) then
+		return
+	end
+
+	HUDA_MakeFarFromHome(squad)
+end
+
+function HUDA_MakeFarFromHome(squad)
+
 	if not squad.militia then
 		return
 	end
 
 	for i, unitId in ipairs(squad.units) do
-
 		local unit = gv_UnitData[unitId]
 
 		unit:RemoveStatusEffect("FarFromHome")
@@ -40,6 +51,27 @@ function OnMsg.SquadFinishedTraveling(squad)
 
 			if distance > 4 then
 				unit:AddStatusEffect("FarFromHome")
+			end
+		end
+	end
+end
+
+function HUDA_SetFarFromHomeStatus(deactivated)
+	local squads = gv_Squads
+
+	for i, squad in pairs(squads) do
+
+		if squad.militia then
+
+			if deactivated then
+				
+				for i, unitId in ipairs(squad.units) do
+					local unit = gv_UnitData[unitId]
+
+					unit:RemoveStatusEffect("FarFromHome")
+				end
+			else
+				HUDA_MakeFarFromHome(squad)
 			end
 		end
 	end

@@ -42,6 +42,8 @@ function OnMsg.ApplyModOptions(mod_id)
 						k == "huda_MilitiaRookieIncome" or
 						k == "huda_MilitiaVeteranIncome") then
 					HUDA_MilitiaFinances:UpdateProps(k, v)
+				elseif (k == "huda_MilitiaNoFarFromHome") then
+					HUDA_SetFarFromHomeStatus(v)
 				end
 			end
 		end
