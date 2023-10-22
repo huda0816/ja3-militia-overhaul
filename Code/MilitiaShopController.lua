@@ -98,6 +98,7 @@ function HUDA_ShopController:InitGVs()
 end
 
 function HUDA_ShopController:Init()
+
     if gv_HUDA_ShopStatus.initialized then
         return
     end
@@ -171,9 +172,6 @@ end
 
 function HUDA_ShopController:CheckSectorChange(sectorId, oldSide, newSide)
     if not gv_HUDA_ShopStatus.initialized then
-        if newSide == "player1" and sectorId == self.SectorCondition then
-            self:Init()
-        end
         return
     end
 
@@ -754,7 +752,7 @@ function HUDA_ShopController:PrepareProduct(product)
     product.name = productData.DisplayName
     product.image = productData.Icon
     product.weight = (product.weight ~= 0 and product.weight) or
-    (productData.Weight and round(productData.Weight * 1000, 1) or 1000)
+    (productData.Weight and round(productData.Weight * 1000, 1) or nil)
     product.maxStack = productData.MaxStacks or 1
     product.minAmount = product.minAmount or productData.MinAmount or nil
 
