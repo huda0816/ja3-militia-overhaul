@@ -351,8 +351,6 @@ function HUDA_ConflictTracker:GetConflictByUnit(unit)
     local sectorId = squad and squad.CurrentSector or false
 
     if not sectorId then
-        print("No sector found for squad " .. squad.Id)
-
         return
     end
 
@@ -361,8 +359,6 @@ end
 
 function HUDA_ConflictTracker:GetConflict(sectorId)
     if not sectorId then
-        print("No sector found for squad " .. squad.Id)
-
         return
     end
 
@@ -385,7 +381,7 @@ function HUDA_ConflictTracker:GetConflict(sectorId)
 end
 
 function HUDA_ConflictTracker:TrackActions(attacker, results)
-    local kill = 0 < #(results.killed_units or empty_table)
+    local kill = 0 < #(results.killed_units or {})
     if kill then
         self:TrackKills(attacker, results)
     end
@@ -475,11 +471,11 @@ function HUDA_ConflictTracker:TrackKills(attacker, results)
         return
     end
 
-    local multikill = 0 < #(results.killed_units or empty_table)
+    local multikill = 0 < #(results.killed_units or {})
 
     local time = Game.CampaignTime
 
-    local killedUnits = results.killed_units or empty_table
+    local killedUnits = results.killed_units or {}
 
     for _, unit in ipairs(killedUnits) do
         local existingKills = table.ifilter(conflict.kills, function(k, v) return v.target == unit.session_id end)

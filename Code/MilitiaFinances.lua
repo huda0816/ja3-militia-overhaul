@@ -112,7 +112,7 @@ function GetMercCurrentDailySalary(id)
     local unitData = gv_UnitData[id]
 
     if unitData.militia then
-        return HUDA_MilitiaFinances:GetSalary(unitData)
+        return HUDA_MilitiaFinances:GetSalary(unitData, 1, true)
     end
 
     return HUDA_OriginalGetMercCurrentDailySalary(id)
@@ -169,28 +169,34 @@ function HUDA_MilitiaFinances:UpdateProps(prop_name, value)
     self[property_name] = tonumber(value)
 end
 
-function HUDA_MilitiaFinances:GetSalary(unit, days)
+function HUDA_MilitiaFinances:GetSalary(unit, days, campaignBonus)
     days = days or 1
 
     local base_salary = 0
 
     if unit.class == "MilitiaRookie" then
-        base_salary = self.MilitiaRookieIncome * days
+        base_salary = tonumber(self.MilitiaRookieIncome) * days
     elseif unit.class == "MilitiaVeteran" then
-        base_salary = self.MilitiaVeteranIncome * days
+        base_salary = tonumber(self.MilitiaVeteranIncome) * days
     elseif unit.class == "MilitiaElite" then
-        base_salary = self.MilitiaEliteIncome * days
+        base_salary = tonumber(self.MilitiaEliteIncome) * days
     end
 
-    return base_salary + self:AddCampaignBonus(unit)
+    if campaignBonus then
+        base_salary = base_salary + self:AddCampaignBonus(unit)
+    end
+
+    return base_salary
 end
 
 function HUDA_MilitiaFinances:GetDailyCostsPerSquad(squad)
     local upkeep = 0
 
     if gv_HUDA_MilitiaFinances.squadsUpkeep and gv_HUDA_MilitiaFinances.squadsUpkeep[squad.UniqueId] then
-            return gv_HUDA_MilitiaFinances.squadsUpkeep[squad.UniqueId]
+        return gv_HUDA_MilitiaFinances.squadsUpkeep[squad.UniqueId]
     end
+
+    local campaignBonus = self:GetCampaignBonus(squad.UniqueId)
 
     for _, unitId in pairs(squad.units) do
         local unit = gv_UnitData[unitId]
@@ -198,6 +204,8 @@ function HUDA_MilitiaFinances:GetDailyCostsPerSquad(squad)
         if unit.militia then
             upkeep = upkeep + self:GetSalary(unit)
         end
+
+        upkeep = upkeep + campaignBonus
     end
 
     upkeep = round(upkeep, 1)
@@ -209,14 +217,13 @@ function HUDA_MilitiaFinances:GetDailyCostsPerSquad(squad)
     return upkeep
 end
 
-function HUDA_MilitiaFinances:GetMilitiaUpkeep(days)
-
-    if gv_HUDA_MilitiaFinances.dailyUpkeep then
+function HUDA_MilitiaFinances:GetMilitiaUpkeep(days, force)
+    if not force and gv_HUDA_MilitiaFinances.dailyUpkeep then
         return gv_HUDA_MilitiaFinances.dailyUpkeep * (days or 1)
     end
 
-    local militia_units = table.filter(gv_UnitData, function(k, v)
-        return v.militia and v.Squad
+    local militia_squads = table.filter(gv_Squads, function(k, v)
+        return v.militia
     end)
 
     local upkeep = 0
@@ -225,19 +232,26 @@ function HUDA_MilitiaFinances:GetMilitiaUpkeep(days)
     local veterans = 0
     local elites = 0
 
-    for _, unit in pairs(militia_units) do
-        if unit.class == "MilitiaRookie" then
-            upkeep = upkeep + tonumber(self.MilitiaRookieIncome)
-            rookies = rookies + 1
-        elseif unit.class == "MilitiaVeteran" then
-            upkeep = upkeep + tonumber(self.MilitiaVeteranIncome)
-            veterans = veterans + 1
-        elseif unit.class == "MilitiaElite" then
-            upkeep = upkeep + tonumber(self.MilitiaEliteIncome)
-            elites = elites + 1
-        end
+    for _, squad in pairs(militia_squads) do
+        local campaignBonus = self:GetCampaignBonus(squad.UniqueId)
 
-        upkeep = upkeep + self:AddCampaignBonus(unit)
+        local militia_units = table.filter(gv_UnitData, function(k, v)
+            return v.militia and v.Squad == squad.UniqueId
+        end)
+
+        for _, unit in pairs(militia_units) do
+            upkeep = upkeep + self:GetSalary(unit)
+
+            if unit.class == "MilitiaRookie" then
+                rookies = rookies + 1
+            elseif unit.class == "MilitiaVeteran" then
+                veterans = veterans + 1
+            elseif unit.class == "MilitiaElite" then
+                elites = elites + 1
+            end
+
+            upkeep = upkeep + campaignBonus
+        end
     end
 
     gv_HUDA_MilitiaFinances.dailyUpkeep = upkeep
@@ -246,19 +260,26 @@ function HUDA_MilitiaFinances:GetMilitiaUpkeep(days)
 end
 
 function HUDA_MilitiaFinances:AddCampaignBonus(unit)
-    local unit_squad = gv_Squads[unit.Squad]
+    return self:GetCampaignBonus(unit.Squad)
+end
 
-    if not unit_squad then
+function HUDA_MilitiaFinances:GetCampaignBonus(squadId)
+
+    local squad = gv_Squads[squadId]
+
+    if not squad then
         return 0
     end
 
-    local squad_distance, closest_sector = HUDA_GetShortestDistanceToCityAndBases(unit_squad.CurrentSector)
+    local squad_distance, closest_sector = HUDA_GetShortestDistanceToCityAndBases(squad.CurrentSector)
+
+    gv_Squads[squadId].SupplyBase = closest_sector
 
     if not closest_sector or not squad_distance or squad_distance < 2 then
         return 0
     end
 
-    local travel_time, water_sectors = HUDA_GetSupplyTravelInfo(closest_sector, unit_squad.CurrentSector)
+    local travel_time, water_sectors = HUDA_GetSupplyTravelInfo(closest_sector, squad.CurrentSector)
 
     local water_price = water_sectors and #water_sectors * DivRound(self.MilitiaCampaignCosts, 10) or 0
 

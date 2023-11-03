@@ -68,10 +68,14 @@ end
 
 local hasSquadBornIn = false
 
+local hasSquadSupplyBase = false
 
 for _, prop in ipairs(SatelliteSquad.properties) do
     if prop.id == 'BornInSector' then
         hasSquadBornIn = true
+    end
+    if prop.id == 'SupplyBase' then
+        hasSquadSupplyBase = true
     end
 end
 
@@ -84,6 +88,14 @@ if not hasSquadBornIn then
     }
 end
 
+if not hasSquadSupplyBase then
+    SatelliteSquad.properties[#SatelliteSquad.properties + 1] = {
+        category = "General",
+        id = "SupplyBase",
+        editor = "text",
+        default = "",
+    }
+end
 
 DefineClass.HUDA_MilitiaPersonalization = {}
 
@@ -297,8 +309,13 @@ function HUDA_MilitiaPersonalization:RandomizeStats(unit)
             v = v + 10
         end
 
-        unit['base_' .. k] = Min(100, InteractionRandRange(v - 6, v + 6))
-        unit[k] = unit['base_' .. k]
+        local randV = Min(100, InteractionRandRange(v - 6, v + 6)) 
+
+        local baseDiff = randV - unit['base_' .. k]
+
+        unit[k] = randV
+
+        unit:AddModifier("randstat" .. k, k, false, baseDiff)
 
         if k == "Health" then
             unit.HitPoints = unit[k]
@@ -356,6 +373,11 @@ function HUDA_MilitiaPersonalization:PersonalizeSquads(squad_ids)
 
             if not squad.BornInSector or squad.BornInSector == "" then
                 squad.BornInSector = squad.CurrentSector
+            end
+
+            if not squad.SupplyBase or squad.SupplyBase == "" then
+                local squad_distance, closest_sector = HUDA_GetShortestDistanceToCityAndBases(squad.CurrentSector)
+                squad.SupplyBase = closest_sector
             end
         end
     end

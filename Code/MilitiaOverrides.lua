@@ -67,7 +67,7 @@ function UnitProperties:GetPersonalMorale()
 	if unit.class == "MilitiaRookie" or string.find(unit.session_id, "MilitiaRookie") then
 		morale = morale - 3
 	elseif unit.class == "MilitiaVeteran" or string.find(unit.session_id, "MilitiaVeteran") then
-		morale = morale - 2
+		morale = morale - 1
 	elseif unit.class == "MilitiaElite" or string.find(unit.session_id, "MilitiaElite") then
 		morale = morale - 0
 	end

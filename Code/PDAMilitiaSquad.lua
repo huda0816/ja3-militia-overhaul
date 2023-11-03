@@ -381,7 +381,7 @@ PlaceObj("XTemplate", {
                         "GridY",
                         1,
                         "Text",
-                        Untranslated("<em>Costs per Day:</em> <MilitiaSquadCosts(context)>$")
+                        Untranslated("<em>Costs per Day:</em> <MilitiaSquadCosts(context)>$ (supplied from: <SupplyBase>)")
                     }),
                     PlaceObj("XTemplateWindow", {
                         "__class",
