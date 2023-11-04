@@ -14,7 +14,7 @@ return PlaceObj('ModDef', {
 	'id', "LXPER6t",
 	'author', "permanent666",
 	'version_major', 2,
-	'version', 4999,
+	'version', 5102,
 	'lua_revision', 233360,
 	'saved_with_revision', 343990,
 	'code', {
@@ -37,6 +37,7 @@ return PlaceObj('ModDef', {
 		"Code/MilitiaOverrides.lua",
 		"Code/MilitiaPDA.lua",
 		"Code/MilitiaPOIs.lua",
+		"Code/MilitiaPOW.lua",
 		"Code/MilitiaPerkEffects.lua",
 		"Code/MilitiaPersonalization.lua",
 		"Code/MilitiaSatelliteConflict.lua",
@@ -75,7 +76,7 @@ return PlaceObj('ModDef', {
 		"Code/Script.lua",
 	},
 	'has_options', true,
-	'saved', 1698978116,
-	'code_hash', -8143371175703174239,
+	'saved', 1699051527,
+	'code_hash', 8781952186524901357,
 	'steam_id', "3027227786",
 })

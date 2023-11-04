@@ -88,6 +88,10 @@ PlaceObj('ModItemCode', {
 	'CodeFileName', "Code/MilitiaPOIs.lua",
 }),
 PlaceObj('ModItemCode', {
+	'name', "MilitiaPOW",
+	'CodeFileName', "Code/MilitiaPOW.lua",
+}),
+PlaceObj('ModItemCode', {
 	'name', "MilitiaPerkEffects",
 	'CodeFileName', "Code/MilitiaPerkEffects.lua",
 }),
