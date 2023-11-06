@@ -27,7 +27,8 @@ function HUDA_MilitiaOperations:InitCooldownVar()
 end
 
 function HUDA_MilitiaOperations:SetCooldown(operationId, sector, cooldown)
-    if not self:IsValidOperation(operationId) or not sector.City then
+
+    if not self:IsValidOperation(operationId, sector.City) or not sector.City then
         return
     end
 
@@ -39,7 +40,7 @@ function HUDA_MilitiaOperations:SetCooldown(operationId, sector, cooldown)
 end
 
 function HUDA_MilitiaOperations:HasCooldown(operationId, sector)
-    if not self:IsValidOperation(operationId) or not sector.City then
+    if not self:IsValidOperation(operationId, sector.City) or not sector.City then
         return false
     end
 
@@ -55,7 +56,7 @@ function HUDA_MilitiaOperations:HasCooldown(operationId, sector)
 end
 
 function HUDA_MilitiaOperations:HasOngoingOperation(operationId, sector)
-    if not self:IsValidOperation(operationId) or not sector.City then
+    if not self:IsValidOperation(operationId, sector.City) or not sector.City then
         return false
     end
 
@@ -63,13 +64,14 @@ function HUDA_MilitiaOperations:HasOngoingOperation(operationId, sector)
 end
 
 function HUDA_MilitiaOperations:SetOngoingOperation(operationId, sector, ongoing)
-    if not self:IsValidOperation(operationId) or not sector.City then
+    if not self:IsValidOperation(operationId, sector.City) or not sector.City then
         return
     end
 
     gv_HUDA_MilitiaOperationCooldowns[operationId][sector.City].ongoing = ongoing
 end
 
-function HUDA_MilitiaOperations:IsValidOperation(operationID)
-    return table.find(self.operations, operationID) ~= nil
+function HUDA_MilitiaOperations:IsValidOperation(operationID, sector)
+
+    return table.find(self.operations, operationID) ~= nil 
 end
