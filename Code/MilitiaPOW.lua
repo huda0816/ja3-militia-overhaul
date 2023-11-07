@@ -48,6 +48,303 @@ function Unit:ShouldGetDowned(hit_descr)
     return hit_descr and hit_descr.prev_hit_points > 1
 end
 
+function Unit:IsBeingCaptured()
+    for _, unit in ipairs(g_Units) do
+        if unit:GetCaptureTarget() == self then
+            return true
+        end
+    end
+end
+
+function Unit:GetCaptureTarget()
+    if self.combat_behavior == "CapturePOW" and not self:IsDead() then
+        local args = self.combat_behavior_params[3]
+        return args.target
+    end
+end
+
+function Unit:GetCaptureItems()
+    if self.combat_behavior == "CapturePOW" and not self:IsDead() then
+        return GetUnitEquippedCaptureItems(self)
+    end
+end
+
+function GetUnitEquippedCaptureItems(unit)
+    -- try to find medkit first and than first aid
+    local item
+    local res = unit:ForEachItem("Medkit", function(itm, slot)
+        if itm.Condition > 0 then
+            item = itm
+            return "break"
+        end
+    end, item)
+    if res == "break" and item then
+        return item
+    end
+    local res = unit:ForEachItem("FirstAidKit", function(itm, slot)
+        if itm.Condition > 0 then
+            item = itm
+            return "break"
+        end
+    end, item)
+    return item
+end
+
+function Unit:EndCombatCapture(no_ui_update, instant)
+    print("Unit:EndCombatCapture", self.command)
+    local target = self:GetCaptureTarget()
+    self:RemoveStatusEffect("Capturing")
+    ObjModified(self)
+    if IsValid(target) then
+        target:RemoveStatusEffect("BeingCaptured")
+        ObjModified(target)
+    end
+
+    local normal_anim = self:TryGetActionAnim("Idle", self.stance)
+    if not instant then
+        self:PlayTransitionAnims(normal_anim)
+    end
+    self:SetCombatBehavior()
+    self:SetBehavior()
+    if not no_ui_update and ((self == SelectedObj or target == SelectedObj)) and g_Combat then
+        SetInGameInterfaceMode("IModeCombatMovement") -- force update to redraw the combat path areas now that movement is allowed
+    end
+
+    if self.command == "EndCombatCapture" then
+        self:SetCommand("Idle")
+    end
+end
+
+function Unit:CombatCapturePOW(target, medicine)
+    print("Unit:CombatCapturePOW")
+    target:AddStatusEffect("BeingCaptured")
+    ObjModified(target)
+    if IsValid(target) then
+        self:Face(target, 0)
+    end
+
+    if g_Combat then
+        -- play anim, etc
+        local heal_anim
+        heal_anim = "nw_Bandaging_Idle"
+        self:SetState(heal_anim, const.eKeepComponentTargets)
+
+        print("---------------")
+
+        self:AddStatusEffect("Capturing")
+        if not GetMercInventoryDlg() then
+            SetInGameInterfaceMode("IModeCombatMovement")
+        end
+        ObjModified(self)
+        Halt()
+    else
+        self:PushDestructor(function()
+            self:SetCombatBehavior()
+            self:SetBehavior()
+            self:RemoveStatusEffect("Capturing")
+            target:RemoveStatusEffect("BeingCaptured")
+            ObjModified(target)
+            ObjModified(self)
+        end)
+        self:AddStatusEffect("Capturing")
+        while IsValid(target) and not target:IsDead() and (target.HitPoints < target.MaxHitPoints or target:HasStatusEffect("Bleeding")) and medicine.Condition > 0 do
+            Sleep(5000)
+            target:GetBandaged(medicine, self)
+        end
+        self:SetState(self == target and "nw_Bandaging_Self_End" or "nw_Bandaging_End")
+        Sleep(self:TimeToAnimEnd() or 100)
+        self:PopAndCallDestructor()
+    end
+end
+
+function Unit:CapturePOW(action_id, cost_ap, args)
+    print("Unit:CapturePOW")
+    local goto_ap = args.goto_ap or 0
+    local action_cost = cost_ap - goto_ap
+    local pos = args.goto_pos
+    local target = args.target
+    local sat_view = args.sat_view or false -- in sat_view form inventory, skip all sleeps and anims
+    local target_self = target == self
+
+    if g_Combat then
+        if goto_ap > 0 then
+            self:PushDestructor(function(self)
+                self:GainAP(action_cost)
+            end)
+            local result = self:CombatGoto(action_id, goto_ap, args.goto_pos)
+            self:PopDestructor()
+            if not result then
+                self:GainAP(action_cost)
+                return
+            end
+        end
+    elseif not target_self then
+        self:GotoSlab(pos)
+    end
+
+    local myVoxel = SnapToPassSlab(self:GetPos())
+    if pos and myVoxel:Dist(pos) ~= 0 then
+        if self.behavior == "CapturePOW" then
+            self:SetBehavior()
+        end
+        if self.combat_behavior == "CapturePOW" then
+            self:SetCombatBehavior()
+        end
+        self:GainAP(action_cost)
+        return
+    end
+    local action = CombatActions[action_id]
+    local medicine = GetUnitEquippedMedicine(self)
+    if not medicine then
+        if self.behavior == "CapturePOW" then
+            self:SetBehavior()
+        end
+        if self.combat_behavior == "CapturePOW" then
+            self:SetCombatBehavior()
+        end
+        self:GainAP(action_cost)
+        return
+    end
+
+    self:SetBehavior("CapturePOW", { action_id, cost_ap, args })
+    self:SetCombatBehavior("CapturePOW", { action_id, cost_ap, args })
+
+    if not target_self then
+        self:Face(target, 200)
+        Sleep(200)
+    end
+
+    if not sat_view then
+        if self.stance ~= "Crouch" then
+            self:ChangeStance(false, 0, "Crouch")
+        end
+        self:SetState(target_self and "nw_Bandaging_Self_Start" or "nw_Bandaging_Start")
+        Sleep(self:TimeToAnimEnd() or 100)
+        if not args.provoked then
+            self:ProvokeOpportunityAttacks("attack interrupt")
+            args.provoked = true
+            self:SetBehavior("CapturePOW", { action_id, cost_ap, args })
+            self:SetCombatBehavior("CapturePOW", { action_id, cost_ap, args })
+        end
+        self:SetState(target_self and "nw_Bandaging_Self_Idle" or "nw_Bandaging_Idle")
+        if not g_Combat and not GetMercInventoryDlg() then
+            SetInGameInterfaceMode("IModeExploration")
+        end
+    end
+
+    self:SetCommand("CombatCapturePOW", target, medicine)
+end
+
+DefineClass.HUDA_MilitiaPOW = {}
+
+function HUDA_MilitiaPOW:CapturingBeginTurn(eff, unit)
+    Inspect(unit)
+
+    local pow = unit:GetCaptureTarget()
+    local tool = unit:GetCaptureMedicine()
+    if not pow or not tool or pow.command == "Die" or pow:IsDead() then
+        unit:RemoveStatusEffect("Capturing")
+    end
+end
+
+function HUDA_MilitiaPOW:CapturingEndTurn(eff, unit)
+    local pow = unit:GetCaptureTarget()
+    local tool = unit:GetCaptureMedicine()
+    if not IsValid(pow) or pow.command == "Die" or pow:IsDead() then
+        unit:RemoveStatusEffect("Capturing")
+        return
+    end
+    if pow:IsDowned() then
+        -- local stabilized = patient:GetStatusEffect("Stabilized")
+        -- stabilized = stabilized and stabilized:ResolveValue("stabilized")
+        -- if stabilized or RollSkillCheck(target, "Medical") then
+        -- 	patient:SetCommand("DownedRally", target, medicine)
+        -- else
+        -- 	patient:AddStatusEffect("Stabilized")
+        -- end
+    else
+        -- patient:GetBandaged(medicine, target)
+        -- if patient.HitPoints >= patient.MaxHitPoints then
+        -- 	patient:RemoveStatusEffect("BeingBandaged")
+        -- 	target:RemoveStatusEffect(self.class)
+        -- end
+    end
+end
+
+function HUDA_MilitiaPOW:CapturingOnAdded(eff, unit)
+    print("HUDA_MilitiaPOW:CapturingOnAdded")
+
+    local pow = unit:GetCaptureTarget()
+
+    if pow then
+        pow:RemoveStatusEffect("Downed")
+        pow:RemoveStatusEffect("Unconscious")
+        pow:RemoveStatusEffect("BleedingOut")
+    end
+    unit:RemoveStatusEffect("FreeMove")
+end
+
+function HUDA_MilitiaPOW:CapturingOnRemoved(eff, unit)
+    local pow = unit:GetCaptureTarget()
+
+    if pow and not pow:IsDead() and pow:IsDowned() then
+        pow:RemoveStatusEffect("Stabilized")
+        pow:AddStatusEffect("BleedingOut")
+        pow:RemoveStatusEffect("BeingCaptured")
+    elseif pow and not pow:IsDead() and pow:HasStatusEffect("Unconscious") then
+        -- bla
+    end
+
+    if not unit:IsDead() then
+        unit:ClearBehaviors("CapturePOW")
+        if CurrentThread() == unit.command_thread then
+            unit:QueueCommand("EndCombatCapture") -- make sure it does not break the RemoveStatusEffect call
+        else
+            unit:SetCommand("EndCombatCapture")
+        end
+    end
+end
+
+PlaceObj('CombatAction', {
+    ActivePauseBehavior = "instant",
+    ConfigurableKeybind = false,
+    Description = T(1344589948720816, --[[CombatAction StopBandaging Description]] "Cancel the capturing action."),
+    DisplayName = T(8561536980410816, --[[CombatAction StopBandaging DisplayName]] "Stop Capturing"),
+    GetActionDescription = function(self, units)
+        local unit = units[1]
+        if unit:IsBeingCaptured() then
+            return T(540349977342,
+                "Cancel the capturing action. The unit will be able to move but not regain any more HP.")
+        end
+        if not g_Combat then
+            return T(151546259528, "Cancel the capturing action.")
+        end
+        return self.Description
+    end,
+    GetUIState = function(self, units, args)
+        local unit = units[1]
+
+        if unit:GetCaptureTarget() or unit:IsBeingCaptured() then
+            return "enabled"
+        end
+        return "hidden"
+    end,
+    Icon = "Mod/LXPER6t/Icons/stop_capture_pow",
+    IdDefault = "StopCapturingdefault",
+    IsAimableAttack = false,
+    -- KeybindingFromAction = "actionRedirectBandage",
+    MultiSelectBehavior = "first",
+    RequireState = "any",
+    Run = function(self, unit, ap, ...)
+        if unit:GetCaptureTarget() then
+            unit:SetActionCommand("EndCombatCapture")
+        end
+    end,
+    SortKey = 9,
+    group = "Default",
+    id = "StopCapturing",
+})
+
 PlaceObj('CombatAction', {
     ActionPoints = 2000,
     ActivePauseBehavior = "queue",
@@ -74,7 +371,7 @@ PlaceObj('CombatAction', {
         local percent = MulDivRound(100, hp, unit.MaxHitPoints)
         if LastLoadedOrLoadingIMode == "IModeCombatMelee" then
             return T { 930612158384, "Select the unit you would like to bandage, healing them for <hp>% of their max HP.", hp =
-            percent }
+                percent }
         end
 
         return T { self.Description, hp = percent }
@@ -141,7 +438,7 @@ PlaceObj('CombatAction', {
     RequireState = "any",
     RequireWeapon = true,
     Run = function(self, unit, ap, ...)
-        unit:SetActionCommand("Bandage", self.id, ap, ...)
+        unit:SetActionCommand("CapturePOW", self.id, ap, ...)
     end,
     SortKey = 10,
     UIBegin = function(self, units, args)
@@ -151,7 +448,6 @@ PlaceObj('CombatAction', {
                     return a.Medical > b.Medical and self:GetAttackWeapons(a)
                 end)
             end
-
             CombatActionAttackStart(self, units, args, "IModeCombatMelee")
         end
     end,
@@ -256,7 +552,7 @@ function CombatActionAttackStart(self, units, args, mode, noChangeAction)
         if not isFreeAimMode and mode == "IModeCombatAreaAim" then
             local weapon = self:GetAttackWeapons(unit)
             isFreeAimMode = not IsOverwatchAction(self.id) and IsKindOf(weapon, "Firearm") and
-            not IsKindOfClasses(weapon, "HeavyWeapon", "FlareGun")
+                not IsKindOfClasses(weapon, "HeavyWeapon", "FlareGun")
         end
         isFreeAimMode = isFreeAimMode and self.id ~= "Bandage" and self.id ~= "CapturePOW"
 
@@ -495,7 +791,8 @@ function Targeting_UnitInMelee(dialog, blackboard, command, pt)
         -- round the cost to match before/after AP readings
         local before = SelectedObj:GetUIActionPoints() / const.Scale.AP
         local after = (SelectedObj:GetUIActionPoints() - apCost) /
-        const.Scale.AP                                                      -- free move is already accounted for in apCost
+            const.Scale
+            .AP -- free move is already accounted for in apCost
         apCost = (before - after) * const.Scale.AP
 
         if APIndicator and #APIndicator > 1 then
@@ -533,59 +830,96 @@ function Targeting_UnitInMelee(dialog, blackboard, command, pt)
     end
 end
 
-
 function CanCaptureUI(attacker, args)
-	local target = args and args.target
-	local pos = args and args.goto_pos
-	if not target then return false, AttackDisableReasons.NoTarget end
-	if not target:IsOnEnemySide(attacker) then return false, AttackDisableReasons.InvalidTarget end
+    local target = args and args.target
+    local pos = args and args.goto_pos
+    if not target then return false, AttackDisableReasons.NoTarget end
+    if not target:IsOnEnemySide(attacker) then return false, AttackDisableReasons.InvalidTarget end
 
-	local action = CombatActions.CapturePOW
-	local err = false
-	
-	local state, reason = action:GetUIState({attacker}, args)
-	if state ~= "enabled" then
-		return false, reason
-	end
-	
-	local cost = action:GetAPCost(attacker, args)
-	
-	if target ~= attacker and g_Combat then		
-		if not IsMeleeRangeTarget(attacker, nil, nil, target) then
-			local pos = attacker:GetClosestMeleeRangePos(target)
-			local cpath = GetCombatPath(attacker)
-			local ap = cpath:GetAP(pos)
-			if not ap then
-				err = AttackDisableReasons.NoAP
-			else
-				cost = cost + Max(0, ap - attacker.free_move_ap)
-			end
-			
-			--err = AttackDisableReasons.NotInBandageRange
-		end
-	end
-	if g_Combat and cost >= 0 and not attacker:UIHasAP(cost) then
-		err = g_Combat and AttackDisableReasons.NoAP or AttackDisableReasons.TooFar
-	end
-	
-	if not err and not target:IsDowned() and not target:HasStatusEffect("Unconscious") then
-		err = AttackDisableReasons.FullHP
-	end
+    local action = CombatActions.CapturePOW
+    local err = false
 
-	return not err, err
+    local state, reason = action:GetUIState({ attacker }, args)
+    if state ~= "enabled" then
+        return false, reason
+    end
+
+    local cost = action:GetAPCost(attacker, args)
+
+    if target ~= attacker and g_Combat then
+        if not IsMeleeRangeTarget(attacker, nil, nil, target) then
+            local pos = attacker:GetClosestMeleeRangePos(target)
+            local cpath = GetCombatPath(attacker)
+            local ap = cpath:GetAP(pos)
+            if not ap then
+                err = AttackDisableReasons.NoAP
+            else
+                cost = cost + Max(0, ap - attacker.free_move_ap)
+            end
+
+            --err = AttackDisableReasons.NotInBandageRange
+        end
+    end
+    if g_Combat and cost >= 0 and not attacker:UIHasAP(cost) then
+        err = g_Combat and AttackDisableReasons.NoAP or AttackDisableReasons.TooFar
+    end
+
+    if not err and not target:IsDowned() and not target:HasStatusEffect("Unconscious") then
+        err = AttackDisableReasons.FullHP
+    end
+
+    return not err, err
 end
 
-local HUDA_OriginalUpdateCursorImage =  IModeCommonUnitControl.UpdateCursorImage
+local HUDA_OriginalUpdateCursorImage = IModeCommonUnitControl.UpdateCursorImage
 
 function IModeCommonUnitControl:UpdateCursorImage()
-
     if self.action == CombatActions.CapturePOW then
-		if self.potential_target and CanCaptureUI(SelectedObj, { target = self.potential_target }) then
-			self.desktop:SetMouseCursor("Mod/LXPER6t/Icons/capture_cursor_valid.png")
-		else
-			self.desktop:SetMouseCursor("Mod/LXPER6t/Icons/capture_cursor_invalid.png")
-		end
+        if self.potential_target and CanCaptureUI(SelectedObj, { target = self.potential_target }) then
+            self.desktop:SetMouseCursor("Mod/LXPER6t/Icons/capture_cursor.png")
+        else
+            self.desktop:SetMouseCursor("Mod/LXPER6t/Icons/capture_cursor.png")
+        end
     else
         HUDA_OriginalUpdateCursorImage(self)
     end
+end
+
+local HUDA_OriginalRecalcUIActions = Unit.RecalcUIActions
+
+function Unit:RecalcUIActions(force)
+    local actions
+
+    if self:HasStatusEffect("Capturing") then
+        
+        local ui_actions = {
+            StopCapturing = "enabled",
+            ItemSkills = false
+        }
+
+        ui_actions[#ui_actions + 1] = "StopCapturing"
+
+        local old_actions = self.ui_actions
+
+        self.ui_actions = ui_actions
+
+        if self == Selection[1] then
+            local allMatch = false
+            -- Verify that any actions have changed.
+            if old_actions then
+                allMatch = true
+                for i, a in ipairs(old_actions) do
+                    if ui_actions[i] ~= a or old_actions[a] ~= ui_actions[a] then
+                        allMatch = false
+                        break
+                    end
+                end
+            end
+            if not allMatch or force then ObjModified("combat_bar") end
+        end
+
+        return ui_actions
+    end
+
+    return HUDA_OriginalRecalcUIActions(self, force)
 end

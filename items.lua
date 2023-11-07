@@ -5,10 +5,26 @@ PlaceObj('ModItemCharacterEffectCompositeDef', {
 	'msg_reactions', {},
 	'Conditions', {},
 	'Modifiers', {},
-	'DisplayName', T(827688611129, --[[ModItemCharacterEffectCompositeDef FarFromHome DisplayName]] "Far From Home"),
-	'Description', T(650675652571, --[[ModItemCharacterEffectCompositeDef FarFromHome Description]] "Militia soldiers who fight too far from their hometown, especially rookies, face various negative effects such as loss of morale."),
+	'DisplayName', T(745208738873, --[[ModItemCharacterEffectCompositeDef FarFromHome DisplayName]] "Far From Home"),
+	'Description', T(877298160616, --[[ModItemCharacterEffectCompositeDef FarFromHome Description]] "Militia soldiers who fight too far from their hometown, especially rookies, face various negative effects such as loss of morale."),
 	'type', "Debuff",
 	'Icon', "Mod/LXPER6t/Icons/farfromhome.png",
+	'Shown', true,
+	'ShownSatelliteView', true,
+}),
+PlaceObj('ModItemCharacterEffectCompositeDef', {
+	'Id', "Captured",
+	'object_class', "CharacterEffect",
+	'msg_reactions', {},
+	'Conditions', {},
+	'Modifiers', {},
+	'DisplayName', T(853091363003, --[[ModItemCharacterEffectCompositeDef Captured DisplayName]] "Captured"),
+	'Description', T(747540003476, --[[ModItemCharacterEffectCompositeDef Captured Description]] "This soldier was captured an will be treated as POW after the conflict ends."),
+	'OnAdded', function (self, obj)
+		HUDA_MilitiaPOW:POW(self, obj)
+	end,
+	'type', "Debuff",
+	'Icon', "Mod/LXPER6t/Icons/captured.png",
 	'Shown', true,
 	'ShownSatelliteView', true,
 }),
@@ -16,8 +32,49 @@ PlaceObj('ModItemCharacterEffectCompositeDef', {
 	'Id', "GCMilitia",
 	'object_class', "CharacterEffect",
 	'msg_reactions', {},
-	'DisplayName', T(920279260272, --[[ModItemCharacterEffectCompositeDef GCMilitia DisplayName]] "Grand Chien Militia"),
-	'Description', T(732797585317, --[[ModItemCharacterEffectCompositeDef GCMilitia Description]] "A perk every militia solider gets after bootcamp. Which allows them to clean and maintain their weapons."),
+	'DisplayName', T(986198520678, --[[ModItemCharacterEffectCompositeDef GCMilitia DisplayName]] "Grand Chien Militia"),
+	'Description', T(184266959725, --[[ModItemCharacterEffectCompositeDef GCMilitia Description]] "A perk every militia solider gets after bootcamp. Which allows them to clean and maintain their weapons."),
+}),
+PlaceObj('ModItemCharacterEffectCompositeDef', {
+	'Group', "System",
+	'Id', "Capturing",
+	'object_class', "StatusEffect",
+	'unit_reactions', {
+		PlaceObj('UnitReaction', {
+			Event = "OnBeginTurn",
+			Handler = function (self, target)
+				HUDA_MilitiaPOW:CapturingBeginTurn(self, target)
+			end,
+			param_bindings = false,
+		}),
+		PlaceObj('UnitReaction', {
+			Event = "OnEndTurn",
+			Handler = function (self, target)
+				HUDA_MilitiaPOW:CapturingEndTurn(self, target)
+			end,
+			param_bindings = false,
+		}),
+	},
+	'DisplayName', T(676208438277, --[[ModItemCharacterEffectCompositeDef Capturing DisplayName]] "Capturing"),
+	'Description', T(703904892870, --[[ModItemCharacterEffectCompositeDef Capturing Description]] "Capturing a downed or unconscious enemy. No more actions available this turn."),
+	'AddEffectText', T(337345942070, --[[ModItemCharacterEffectCompositeDef Capturing AddEffectText]] "Capturing"),
+	'OnAdded', function (self, obj)
+		HUDA_MilitiaPOW:CapturingOnAdded(self, obj)
+	end,
+	'OnRemoved', function (self, obj)
+		HUDA_MilitiaPOW:CapturingOnRemoved(self, obj)
+	end,
+	'Icon', "Mod/LXPER6t/Icons/capture.png",
+	'RemoveOnSatViewTravel', true,
+	'Shown', true,
+	'HasFloatingText', true,
+}),
+PlaceObj('ModItemCharacterEffectCompositeDef', {
+	'Group', "System",
+	'Id', "BeingCaptured",
+	'object_class', "StatusEffect",
+	'Icon', "Mod/LXPER6t/Icons/capture.png",
+	'RemoveOnSatViewTravel', true,
 }),
 PlaceObj('ModItemCode', {
 	'name', "1Options",
@@ -644,11 +701,11 @@ PlaceObj('ModItemSectorOperation', {
 	Professions = {
 		PlaceObj('SectorOperationProfession', {
 			'id', "Baseconstructor",
-			'display_name', T(456633975694, --[[ModItemSectorOperation HUDA_MilitiaBase display_name]] "Constructing merc"),
-			'description', T(542123161226, --[[ModItemSectorOperation HUDA_MilitiaBase description]] "The assigned Mercs are constructing a militia base"),
-			'display_name_all_caps', T(321450169278, --[[ModItemSectorOperation HUDA_MilitiaBase display_name_all_caps]] "CONSTRUCTING MERC"),
-			'display_name_plural', T(818504135663, --[[ModItemSectorOperation HUDA_MilitiaBase display_name_plural]] "Constructing mercs"),
-			'display_name_plural_all_caps', T(655476165221, --[[ModItemSectorOperation HUDA_MilitiaBase display_name_plural_all_caps]] "CONSTRUCTING MERCS"),
+			'display_name', T(159040206569, --[[ModItemSectorOperation HUDA_MilitiaBase display_name]] "Constructing merc"),
+			'description', T(797153789584, --[[ModItemSectorOperation HUDA_MilitiaBase description]] "The assigned Mercs are constructing a militia base"),
+			'display_name_all_caps', T(894126434783, --[[ModItemSectorOperation HUDA_MilitiaBase display_name_all_caps]] "CONSTRUCTING MERC"),
+			'display_name_plural', T(327035875605, --[[ModItemSectorOperation HUDA_MilitiaBase display_name_plural]] "Constructing mercs"),
+			'display_name_plural_all_caps', T(366629967410, --[[ModItemSectorOperation HUDA_MilitiaBase display_name_plural_all_caps]] "CONSTRUCTING MERCS"),
 		}),
 	},
 	ProgressCompleteThreshold = function (self, merc, sector, prediction)
@@ -687,17 +744,17 @@ PlaceObj('ModItemSectorOperation', {
 					self:ModifyProgress(progress_per_tick, sector)
 					self:CheckCompleted(merc, sector)
 	end,
-	description = T(740894076516, --[[ModItemSectorOperation HUDA_MilitiaBase description]] "Build a Militia Base as supply hub for local militia and to enable additional operations in this city. Having militia in this sector will reduce build time."),
-	display_name = T(637559576496, --[[ModItemSectorOperation HUDA_MilitiaBase display_name]] "Build Militia Base"),
+	description = T(126278268720, --[[ModItemSectorOperation HUDA_MilitiaBase description]] "Build a Militia Base as supply hub for local militia and to enable additional operations in this city. Having militia in this sector will reduce build time."),
+	display_name = T(787091394462, --[[ModItemSectorOperation HUDA_MilitiaBase display_name]] "Build Militia Base"),
 	icon = "Mod/LXPER6t/Images/mb_operation.png",
 	id = "HUDA_MilitiaBase",
 	image = "Mod/LXPER6t/Images/Screenshot0006 3.png",
-	log_msg_start = T(658896739649, --[[ModItemSectorOperation HUDA_MilitiaBase log_msg_start]] "<color EmStyle><mercs></color> started <color EmStyle>construction</color> in "),
+	log_msg_start = T(226507965799, --[[ModItemSectorOperation HUDA_MilitiaBase log_msg_start]] "<color EmStyle><mercs></color> started <color EmStyle>construction</color> in "),
 	min_requirement_stat = "Mechanical",
 	min_requirement_stat_value = 30,
 	related_stat = "Mechanical",
-	short_name = T(828758227811, --[[ModItemSectorOperation HUDA_MilitiaBase short_name]] "Militia Base"),
-	sub_title = T(135149608655, --[[ModItemSectorOperation HUDA_MilitiaBase sub_title]] "Build a militia base in this city"),
+	short_name = T(297978482872, --[[ModItemSectorOperation HUDA_MilitiaBase short_name]] "Militia Base"),
+	sub_title = T(976902501263, --[[ModItemSectorOperation HUDA_MilitiaBase sub_title]] "Build a militia base in this city"),
 	target_contribution = 5600,
 }),
 PlaceObj('ModItemSectorOperation', {
@@ -802,11 +859,11 @@ PlaceObj('ModItemSectorOperation', {
 	Professions = {
 		PlaceObj('SectorOperationProfession', {
 			'id', "Humanitarianworker",
-			'display_name', T(552772710263, --[[ModItemSectorOperation HUDA_MilitiaHumanitarianAid display_name]] "Humanitarian aid worker"),
-			'description', T(681863924196, --[[ModItemSectorOperation HUDA_MilitiaHumanitarianAid description]] "The assigned Mercs is organizing humanitarian aid"),
-			'display_name_all_caps', T(522503734361, --[[ModItemSectorOperation HUDA_MilitiaHumanitarianAid display_name_all_caps]] "HUMANITARIAN AID WORKER"),
-			'display_name_plural', T(326280427002, --[[ModItemSectorOperation HUDA_MilitiaHumanitarianAid display_name_plural]] "Humanitarian aid workers"),
-			'display_name_plural_all_caps', T(767238719377, --[[ModItemSectorOperation HUDA_MilitiaHumanitarianAid display_name_plural_all_caps]] "HUMANITARIAN AID WORKERS"),
+			'display_name', T(332743901016, --[[ModItemSectorOperation HUDA_MilitiaHumanitarianAid display_name]] "Humanitarian aid worker"),
+			'description', T(996277953616, --[[ModItemSectorOperation HUDA_MilitiaHumanitarianAid description]] "The assigned Mercs is organizing humanitarian aid"),
+			'display_name_all_caps', T(185882637464, --[[ModItemSectorOperation HUDA_MilitiaHumanitarianAid display_name_all_caps]] "HUMANITARIAN AID WORKER"),
+			'display_name_plural', T(727023878151, --[[ModItemSectorOperation HUDA_MilitiaHumanitarianAid display_name_plural]] "Humanitarian aid workers"),
+			'display_name_plural_all_caps', T(297564032009, --[[ModItemSectorOperation HUDA_MilitiaHumanitarianAid display_name_plural_all_caps]] "HUMANITARIAN AID WORKERS"),
 		}),
 	},
 	ProgressCompleteThreshold = function (self, merc, sector, prediction)
@@ -845,17 +902,17 @@ PlaceObj('ModItemSectorOperation', {
 					self:ModifyProgress(progress_per_tick, sector)
 					self:CheckCompleted(merc, sector)
 	end,
-	description = T(549078256743, --[[ModItemSectorOperation HUDA_MilitiaHumanitarianAid description]] "Support the local population with food and medical care. This action will increase the loyalty in this town. It takes less time if you have militia soldiers in this sector. The effectiveness is decreased if loyalty is already high."),
-	display_name = T(854708493092, --[[ModItemSectorOperation HUDA_MilitiaHumanitarianAid display_name]] "Humanitarian Aid"),
+	description = T(971158771229, --[[ModItemSectorOperation HUDA_MilitiaHumanitarianAid description]] "Support the local population with food and medical care. This action will increase the loyalty in this town. It takes less time if you have militia soldiers in this sector. The effectiveness is decreased if loyalty is already high."),
+	display_name = T(619527408131, --[[ModItemSectorOperation HUDA_MilitiaHumanitarianAid display_name]] "Humanitarian Aid"),
 	icon = "Mod/LXPER6t/Images/mb_operation.png",
 	id = "HUDA_MilitiaHumanitarianAid",
 	image = "Mod/LXPER6t/Images/Screenshot0007 2.png",
-	log_msg_start = T(126672438422, --[[ModItemSectorOperation HUDA_MilitiaHumanitarianAid log_msg_start]] "<color EmStyle><mercs></color> started <color EmStyle>humanitarian aid</color> in "),
+	log_msg_start = T(764959485507, --[[ModItemSectorOperation HUDA_MilitiaHumanitarianAid log_msg_start]] "<color EmStyle><mercs></color> started <color EmStyle>humanitarian aid</color> in "),
 	min_requirement_stat = "Medical",
 	min_requirement_stat_value = 50,
 	related_stat = "Medical",
-	short_name = T(499171152001, --[[ModItemSectorOperation HUDA_MilitiaHumanitarianAid short_name]] "Humanitarian Aid"),
-	sub_title = T(920772983165, --[[ModItemSectorOperation HUDA_MilitiaHumanitarianAid sub_title]] "Support the local population with food and medical care"),
+	short_name = T(152852420054, --[[ModItemSectorOperation HUDA_MilitiaHumanitarianAid short_name]] "Humanitarian Aid"),
+	sub_title = T(114155033054, --[[ModItemSectorOperation HUDA_MilitiaHumanitarianAid sub_title]] "Support the local population with food and medical care"),
 	target_contribution = 4000,
 }),
 PlaceObj('ModItemSectorOperation', {
@@ -951,11 +1008,11 @@ PlaceObj('ModItemSectorOperation', {
 	Professions = {
 		PlaceObj('SectorOperationProfession', {
 			'id', "Recruiter",
-			'display_name', T(193776921043, --[[ModItemSectorOperation HUDA_MilitiaRecruitmentDrive display_name]] "Recruiter"),
-			'description', T(483518555384, --[[ModItemSectorOperation HUDA_MilitiaRecruitmentDrive description]] "The assigned merc is recruiting new soldiers for the militia"),
-			'display_name_all_caps', T(529254295391, --[[ModItemSectorOperation HUDA_MilitiaRecruitmentDrive display_name_all_caps]] "RECRUITER"),
-			'display_name_plural', T(732259654582, --[[ModItemSectorOperation HUDA_MilitiaRecruitmentDrive display_name_plural]] "Recruiters"),
-			'display_name_plural_all_caps', T(422336268531, --[[ModItemSectorOperation HUDA_MilitiaRecruitmentDrive display_name_plural_all_caps]] "RECRUITERS"),
+			'display_name', T(930368567622, --[[ModItemSectorOperation HUDA_MilitiaRecruitmentDrive display_name]] "Recruiter"),
+			'description', T(933876869836, --[[ModItemSectorOperation HUDA_MilitiaRecruitmentDrive description]] "The assigned merc is recruiting new soldiers for the militia"),
+			'display_name_all_caps', T(353288356278, --[[ModItemSectorOperation HUDA_MilitiaRecruitmentDrive display_name_all_caps]] "RECRUITER"),
+			'display_name_plural', T(628923600548, --[[ModItemSectorOperation HUDA_MilitiaRecruitmentDrive display_name_plural]] "Recruiters"),
+			'display_name_plural_all_caps', T(709198832722, --[[ModItemSectorOperation HUDA_MilitiaRecruitmentDrive display_name_plural_all_caps]] "RECRUITERS"),
 		}),
 	},
 	ProgressCompleteThreshold = function (self, merc, sector, prediction)
@@ -982,16 +1039,16 @@ PlaceObj('ModItemSectorOperation', {
 					self:ModifyProgress(progress_per_tick, sector)
 					self:CheckCompleted(merc, sector)
 	end,
-	description = T(264356796650, --[[ModItemSectorOperation HUDA_MilitiaRecruitmentDrive description]] "Take to the streets and educate the population to find new recruits for your militia and increase the popularity of your cause. Leadership will influence the success of the operation."),
-	display_name = T(137084141378, --[[ModItemSectorOperation HUDA_MilitiaRecruitmentDrive display_name]] "Recruitment Drive"),
+	description = T(150715469507, --[[ModItemSectorOperation HUDA_MilitiaRecruitmentDrive description]] "Take to the streets and educate the population to find new recruits for your militia and increase the popularity of your cause. Leadership will influence the success of the operation."),
+	display_name = T(260127791656, --[[ModItemSectorOperation HUDA_MilitiaRecruitmentDrive display_name]] "Recruitment Drive"),
 	icon = "Mod/LXPER6t/Images/mb_operation.png",
 	id = "HUDA_MilitiaRecruitmentDrive",
 	image = "Mod/LXPER6t/Images/Screenshot0008-min.png",
-	log_msg_start = T(476684381491, --[[ModItemSectorOperation HUDA_MilitiaRecruitmentDrive log_msg_start]] "<color EmStyle><mercs></color> started <color EmStyle>recruitment drive</color> in "),
+	log_msg_start = T(453724855098, --[[ModItemSectorOperation HUDA_MilitiaRecruitmentDrive log_msg_start]] "<color EmStyle><mercs></color> started <color EmStyle>recruitment drive</color> in "),
 	min_requirement_stat = "Leadership",
 	related_stat = "Leadership",
-	short_name = T(927409186452, --[[ModItemSectorOperation HUDA_MilitiaRecruitmentDrive short_name]] "Recruitment Drive"),
-	sub_title = T(828620894319, --[[ModItemSectorOperation HUDA_MilitiaRecruitmentDrive sub_title]] "Find new recruits for your militia"),
+	short_name = T(783864086725, --[[ModItemSectorOperation HUDA_MilitiaRecruitmentDrive short_name]] "Recruitment Drive"),
+	sub_title = T(774878539640, --[[ModItemSectorOperation HUDA_MilitiaRecruitmentDrive sub_title]] "Find new recruits for your militia"),
 }),
 PlaceObj('ModItemSectorOperation', {
 	CheckCompleted = function (self, merc, sector)
@@ -1087,11 +1144,11 @@ PlaceObj('ModItemSectorOperation', {
 	Professions = {
 		PlaceObj('SectorOperationProfession', {
 			'id', "Trainer",
-			'display_name', T(799413595914, --[[ModItemSectorOperation MilitiaTraining display_name]] "Trainer"),
-			'description', T(945879897203, --[[ModItemSectorOperation MilitiaTraining description]] "The Trainer is working with the locals turning them into Militia troops."),
-			'display_name_all_caps', T(804691856827, --[[ModItemSectorOperation MilitiaTraining display_name_all_caps]] "TRAINER"),
-			'display_name_plural', T(794519817382, --[[ModItemSectorOperation MilitiaTraining display_name_plural]] "Trainers"),
-			'display_name_plural_all_caps', T(853622184378, --[[ModItemSectorOperation MilitiaTraining display_name_plural_all_caps]] "TRAINERS"),
+			'display_name', T(611605480227, --[[ModItemSectorOperation MilitiaTraining display_name]] "Trainer"),
+			'description', T(149705002966, --[[ModItemSectorOperation MilitiaTraining description]] "The Trainer is working with the locals turning them into Militia troops."),
+			'display_name_all_caps', T(480901630610, --[[ModItemSectorOperation MilitiaTraining display_name_all_caps]] "TRAINER"),
+			'display_name_plural', T(611281505724, --[[ModItemSectorOperation MilitiaTraining display_name_plural]] "Trainers"),
+			'display_name_plural_all_caps', T(601838101469, --[[ModItemSectorOperation MilitiaTraining display_name_plural_all_caps]] "TRAINERS"),
 		}),
 	},
 	ProgressCompleteThreshold = function (self, merc)
@@ -1122,30 +1179,30 @@ PlaceObj('ModItemSectorOperation', {
 		return HUDA_MilitiaTraining:SectorOperationStats(self, sector, check_only)
 	end,
 	SortKey = 30,
-	description = T(827791286078, --[[ModItemSectorOperation MilitiaTraining description]] "Whip the civilian population into shape, turning them into a local Militia able to defend against hostile troops. Picking a Trainer with high <color EmStyle>Leadership</color> and a high <color EmStyle>Loyalty</color> of the local population both contribute to faster training."),
-	display_name = T(205186893831, --[[ModItemSectorOperation MilitiaTraining display_name]] "Militia Training"),
+	description = T(881878923231, --[[ModItemSectorOperation MilitiaTraining description]] "Whip the civilian population into shape, turning them into a local Militia able to defend against hostile troops. Picking a Trainer with high <color EmStyle>Leadership</color> and a high <color EmStyle>Loyalty</color> of the local population both contribute to faster training."),
+	display_name = T(418007596601, --[[ModItemSectorOperation MilitiaTraining display_name]] "Militia Training"),
 	icon = "UI/SectorOperations/T_Icon_Activity_TrainingMilitia",
 	id = "MilitiaTraining",
 	image = "UI/Messages/Operations/train_militia",
-	log_msg_start = T(134670762857, --[[ModItemSectorOperation MilitiaTraining log_msg_start]] "<color EmStyle><mercs></color> started <color EmStyle>training Militia</color> in "),
+	log_msg_start = T(527611164282, --[[ModItemSectorOperation MilitiaTraining log_msg_start]] "<color EmStyle><mercs></color> started <color EmStyle>training Militia</color> in "),
 	param_bindings = {},
 	related_stat = "Leadership",
-	short_name = T(432995481483, --[[ModItemSectorOperation MilitiaTraining short_name]] "Militia"),
-	sub_title = T(295145590275, --[[ModItemSectorOperation MilitiaTraining sub_title]] "Militia training is available"),
+	short_name = T(389560956849, --[[ModItemSectorOperation MilitiaTraining short_name]] "Militia"),
+	sub_title = T(880409812799, --[[ModItemSectorOperation MilitiaTraining sub_title]] "Militia training is available"),
 	trained_rookies = 5,
 	trained_veterans = 0,
 }),
 PlaceObj('ModItemTextStyle', {
 	RolloverTextColor = 4291018156,
 	TextColor = 4291018156,
-	TextFont = T(571147011222, --[[ModItemTextStyle HUDASMALLPDASM TextFont]] "HMGothic Rough A, 10"),
+	TextFont = T(798285341994, --[[ModItemTextStyle HUDASMALLPDASM TextFont]] "HMGothic Rough A, 10"),
 	id = "HUDASMALLPDASM",
 }),
 PlaceObj('ModItemTextStyle', {
 	RolloverTextColor = 4281612093,
 	ShadowType = "outline",
 	TextColor = 4290724685,
-	TextFont = T(135301416710, --[[ModItemTextStyle HUDAProductOutOfStock TextFont]] "HMGothic Regular A, 16"),
+	TextFont = T(542927388596, --[[ModItemTextStyle HUDAProductOutOfStock TextFont]] "HMGothic Regular A, 16"),
 	group = "Zulu PDA",
 	id = "HUDAProductOutOfStock",
 }),
@@ -1153,14 +1210,14 @@ PlaceObj('ModItemTextStyle', {
 	RolloverTextColor = 4290132532,
 	ShadowType = "outline",
 	TextColor = 4290132532,
-	TextFont = T(346769001429, --[[ModItemTextStyle PDAMilitiaShopCouponCode TextFont]] "HMGothic Regular A, 14"),
+	TextFont = T(617638927914, --[[ModItemTextStyle PDAMilitiaShopCouponCode TextFont]] "HMGothic Regular A, 14"),
 	id = "PDAMilitiaShopCouponCode",
 }),
 PlaceObj('ModItemTextStyle', {
 	RolloverTextColor = 4286349920,
 	ShadowType = "outline",
 	TextColor = 4286349920,
-	TextFont = T(276217335556, --[[ModItemTextStyle PDAMilitiaShopCouponCodeValid TextFont]] "HMGothic Regular A, 14"),
+	TextFont = T(614640600113, --[[ModItemTextStyle PDAMilitiaShopCouponCodeValid TextFont]] "HMGothic Regular A, 14"),
 	id = "PDAMilitiaShopCouponCodeValid",
 }),
 }
