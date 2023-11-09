@@ -1,7 +1,6 @@
 function HUDA_GetModOptions(id, default, type)
 
 	if not CurrentModOptions then
-		print("HUDA_GetModOptions: CurrentModOptions is nil", id)
 		return default
 	end
 
@@ -17,7 +16,6 @@ end
 function HUDA_GetShopOptions(id, default, type)
 
 	if not CurrentModOptions then
-		print("HUDA_GetShopOptions: CurrentModOptions is nil", id)
 		return default
 	end
 
@@ -35,14 +33,6 @@ function HUDA_GetShopOptions(id, default, type)
 end
 
 function OnMsg.ApplyModOptions(mod_id)
-
-	if CurrentModOptions then
-        CombatLog("important", T { 0816238931952184, "CurrentModOptions are there inside applyhook" })
-        print("CurrentModOptions are there inside hook")
-    else
-        CombatLog("important", T { 0816238931952186, "CurrentModOptions is nil inside applyhook" })
-        print("CurrentModOptions is nil inside hook")
-    end
 
 	if CurrentModOptions then
 		for k, v in pairs(CurrentModOptions) do

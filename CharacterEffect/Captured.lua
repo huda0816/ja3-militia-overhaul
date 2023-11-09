@@ -8,14 +8,14 @@ DefineClass.Captured = {
 	msg_reactions = {},
 	Conditions = {},
 	Modifiers = {},
-	DisplayName = T(853091363003, --[[ModItemCharacterEffectCompositeDef Captured DisplayName]] "Captured"),
-	Description = T(747540003476, --[[ModItemCharacterEffectCompositeDef Captured Description]] "This soldier was captured an will be treated as POW after the conflict ends."),
-	OnAdded = function (self, obj)
-		HUDA_MilitiaPOW:POW(self, obj)
-	end,
+	DisplayName = T(918472276683, --[[ModItemCharacterEffectCompositeDef Captured DisplayName]] "Captured"),
+	Description = T(493607343582, --[[ModItemCharacterEffectCompositeDef Captured Description]] "This soldier was captured an will be treated as POW after the conflict ends."),
+	AddEffectText = T(977032397757, --[[ModItemCharacterEffectCompositeDef Captured AddEffectText]] "Captured"),
+	OnAdded = GetMissingSourceFallback(),
 	type = "Debuff",
 	Icon = "Mod/LXPER6t/Icons/captured.png",
 	Shown = true,
 	ShownSatelliteView = true,
+	HasFloatingText = true,
 }
 
