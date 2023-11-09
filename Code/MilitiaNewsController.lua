@@ -59,10 +59,10 @@ function OnMsg.MercHired(mercId, price, days, alreadyHired)
 
     local portrait = merc.Portrait
 
-    local text = HUDA_T(HUDA_MercHiredTexts[InteractionRandRange(1, #MercHiredTexts)],
+    local text = HUDA_T(HUDA_MercHiredTexts[InteractionRandRange(1, #HUDA_MercHiredTexts)],
         { mercName = name, affiliation = affiliation })
 
-    local title = HUDA_T(HUDA_MercHiredHeadlines[InteractionRandRange(1, #MercHiredHeadlines)], {
+    local title = HUDA_T(HUDA_MercHiredHeadlines[InteractionRandRange(1, #HUDA_MercHiredHeadlines)], {
         mercName = name, affiliation = affiliation
     })
 

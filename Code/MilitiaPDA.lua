@@ -165,6 +165,10 @@ function TFormat.MilitiaSquadCosts(squad)
     return HUDA_MilitiaFinances:GetDailyCostsPerSquad(squad)
 end
 
+function TFormat.MilitiaSupplyBase(squad)
+    return HUDA_MilitiaFinances:GetSupplyBase(squad)
+end
+
 function TFormat.MilitiaSquadOrigin(squad)
     if squad.BornInSector == "" then
         return "Unknown"

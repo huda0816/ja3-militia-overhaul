@@ -174,6 +174,12 @@ function HUDA_GetControlledCitySectors(city)
 	end
 end
 
+function HUDA_IsControlledCity(city)
+	local controlled_sectors = HUDA_GetControlledCitySectors(city)
+
+	return controlled_sectors and #controlled_sectors > 0 or false
+end
+
 function HUDA_GetGuardposts(own) -- own = true, only own guardposts, false = only enemy guardposts, nil = all guardposts
 	local guardposts = {}
 
@@ -208,7 +214,25 @@ function HUDA_GetShortestDistanceToCityAndBases(sectorId)
 	local closest_city
 
 	for k, city in pairs(gv_Cities) do
-		if (city.Loyalty > 30) then
+
+		local base, base_sector = HUDA_HasPOI("MilitiaBase", k)
+
+		if base then
+
+			local base_distance = GetSectorDistance(sectorId, base_sector)
+
+			if base_distance == 0 then
+				return 0, base_sector, k
+			end
+
+			if base_distance < distance then
+				distance = base_distance
+				closest_sector = base_sector
+				closest_city = k
+			end
+
+		elseif (city.Loyalty > 30) then
+
 			local city_sectors = HUDA_GetControlledCitySectors(k)
 
 			for _, city_sector in ipairs(city_sectors) do
@@ -246,7 +270,7 @@ function HUDA_GetShortestDistanceToCityAndBases(sectorId)
 	return distance, closest_sector, closest_city
 end
 
-function HUDA_GetClosestCity(sectorId)
+function HUDA_GetClosestCity(sectorId, controlled)
 	local distance = 1000
 	local closest_sector
 	local closest_city
@@ -255,16 +279,27 @@ function HUDA_GetClosestCity(sectorId)
 		local city_sectors = GetCitySectors(k)
 
 		for _, city_sector in ipairs(city_sectors) do
-			local city_distance = GetSectorDistance(sectorId, city_sector)
+			local valid = true
 
-			if city_distance == 0 then
-				return k, 0, city_sector
+			if controlled then
+				local sector = gv_Sectors[city_sector]
+				if sector.Side ~= "player1" and sector.Side ~= "player2" then
+					valid = false
+				end
 			end
 
-			if city_distance < distance then
-				distance = city_distance
-				closest_sector = city_sector
-				closest_city = k
+			if valid then
+				local city_distance = GetSectorDistance(sectorId, city_sector)
+
+				if city_distance == 0 then
+					return k, 0, city_sector
+				end
+
+				if city_distance < distance then
+					distance = city_distance
+					closest_sector = city_sector
+					closest_city = k
+				end
 			end
 		end
 	end
@@ -481,4 +516,24 @@ function HUDA_GetSquadName(squadId)
 	if squad and squad.Name ~= "" then
 		return squad.Name
 	end
+end
+
+function HUDA_HasMilitiaBase(sector)
+	local cityId = sector.City
+
+	if not cityId then
+		return false
+	end
+
+	local sectors = GetCitySectors(cityId)
+
+	for i, sector in ipairs(sectors) do
+		local sector = gv_Sectors[sector]
+
+		if sector and sector.MilitiaBase then
+			return true
+		end
+	end
+
+	return false
 end

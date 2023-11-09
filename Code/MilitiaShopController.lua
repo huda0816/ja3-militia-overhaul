@@ -145,7 +145,7 @@ end
 function HUDA_ShopController:SetTier(tier)
     self.ShopStatus.tier = tier
 
-    local currentTier = gv_HUDA_ShopStatus.tier or 1
+    local currentTier = gv_HUDA_ShopStatus and gv_HUDA_ShopStatus.tier or 1
 
     if tier > currentTier then
         gv_HUDA_ShopStatus.tier = tier
@@ -157,7 +157,7 @@ function HUDA_ShopController:CheckSectorStatus()
         return true
     end
 
-    local sector = gv_Sectors[self.SectorCondition]
+    local sector = gv_Sectors and gv_Sectors[self.SectorCondition] or false
 
     if not sector then
         return true

@@ -4,6 +4,8 @@ function OnMsg.NewDay()
     
     local repairThreshold = tonumber(HUDA_GetModOptions("MilitiaRepairThreshold", 80))
 
+    print("Militia Repair Threshold: " .. repairThreshold)
+
     if repairThreshold == 0 then
         return
     end

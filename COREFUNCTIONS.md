@@ -61,7 +61,7 @@ GiveCombatTask - CombatTasks - patch
 
 GetSectorOperationResource - SatelliteSectorOperations - full
 
-UnitProperties:GetPersonalMorale - ClassDef-Zulu.generated.lua - patch
+UnitBase:GetPersonalMorale - Unit.lua - patch
 
 IModeExploration:InitiateUnitMovement - IModeExploration - patch
 

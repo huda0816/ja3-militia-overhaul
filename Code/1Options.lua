@@ -1,4 +1,9 @@
 function HUDA_GetModOptions(id, default, type)
+
+	if not CurrentModOptions then
+		return default
+	end
+
 	id = "huda_" .. id
 
 	if type == "number" then
@@ -9,6 +14,11 @@ function HUDA_GetModOptions(id, default, type)
 end
 
 function HUDA_GetShopOptions(id, default, type)
+
+	if not CurrentModOptions then
+		return default
+	end
+
 	id = "huda_MilitiaShop" .. id
 
 	if CurrentModOptions[id] == nil then
@@ -23,6 +33,7 @@ function HUDA_GetShopOptions(id, default, type)
 end
 
 function OnMsg.ApplyModOptions(mod_id)
+
 	if CurrentModOptions then
 		for k, v in pairs(CurrentModOptions) do
 			if string.starts_with(k, "huda_MilitiaShop") then
