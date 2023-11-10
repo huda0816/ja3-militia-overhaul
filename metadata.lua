@@ -14,7 +14,7 @@ return PlaceObj('ModDef', {
 	'id', "LXPER6t",
 	'author', "permanent666",
 	'version_major', 3,
-	'version', 5336,
+	'version', 5406,
 	'lua_revision', 233360,
 	'saved_with_revision', 345543,
 	'code', {
@@ -77,10 +77,11 @@ return PlaceObj('ModDef', {
 		"Code/PDAMilitiaSquads.lua",
 		"Code/PeopleController.lua",
 		"Code/Script.lua",
+		"Code/PDAMilitiaPrisonPicker.lua",
 		"InventoryItem/HUDA_Zipties.lua",
 	},
 	'has_options', true,
-	'saved', 1699560061,
-	'code_hash', -4930193963453401310,
+	'saved', 1699576473,
+	'code_hash', -1325044220496667138,
 	'steam_id', "3027227786",
 })

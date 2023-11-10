@@ -291,6 +291,10 @@ PlaceObj('ModItemCode', {
 PlaceObj('ModItemCode', {
 	'CodeFileName', "Code/Script.lua",
 }),
+PlaceObj('ModItemCode', {
+	'name', "PDAMilitiaPrisonPicker",
+	'CodeFileName', "Code/PDAMilitiaPrisonPicker.lua",
+}),
 PlaceObj('ModItemConstDef', {
 	group = "Loyalty",
 	id = "ConflictRetreatPenalty",
