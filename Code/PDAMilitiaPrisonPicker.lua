@@ -93,28 +93,7 @@ PlaceObj("XTemplate", {
                 }, {
                     PlaceObj("XTemplateWindow", {
                         "comment",
-                        "image on right",
-                        "Margins",
-                        box(10, 0, 0, 0),
-                        "Dock",
-                        "right"
-                    }, {
-                        PlaceObj("XTemplateWindow", {
-                            "__class",
-                            "XImage",
-                            "Id",
-                            "idSelectedSectorImage",
-                            "VAlign",
-                            "top",
-                            "Image",
-                            "UI/PDA/ss_b2"
-                        })
-                    }),
-                    PlaceObj("XTemplateWindow", {
-                        "comment",
-                        "left content",
-                        "Dock",
-                        "left"
+                        "select prisons",
                     }, {
                         PlaceObj("XTemplateWindow", {
                             "Margins",
@@ -146,7 +125,7 @@ PlaceObj("XTemplate", {
                                 "Translate",
                                 true,
                                 "Text",
-                                "The prisoners will be sent to this sector"
+                                "Choose a sector where the prisoners will be sent to"
                             })
                         }),
                         PlaceObj("XTemplateWindow", {
@@ -181,7 +160,7 @@ PlaceObj("XTemplate", {
                                 end,
                                 "__context",
                                 function(parent, context, item, i, n)
-                                    return gv_Sectors[item]
+                                    return item
                                 end,
                                 "run_after",
                                 function(child, context, item, i, n, last)
@@ -195,7 +174,10 @@ PlaceObj("XTemplate", {
                                         id = sectorId
                                     }))
                                     child.idSectorSquare:SetBackground(color)
-                                    child:SetText(sector.display_name or "")
+                                    child:SetText((sector.display_name or "") ..
+                                    " " .. context.current .. "+" .. context.new .. "/" .. context.max)
+
+                                    child.idSectorGuards:SetText("Risk: " .. context.risk  .. " | Guards: " .. context.guards .. "/" .. context.neededGuards)
                                     child.idIcon:SetVisible(false)
                                     child.idIcon:SetFoldWhenHidden(true)
                                     if i == 1 then
@@ -208,6 +190,10 @@ PlaceObj("XTemplate", {
                                     "PDACommonButton",
                                     "Padding",
                                     box(0, 0, 8, 0),
+                                    "MinHeight",
+                                    40,
+                                    "MaxHeight",
+                                    40,
                                     "LayoutMethod",
                                     "HList",
                                     "LayoutHSpacing",
@@ -217,8 +203,8 @@ PlaceObj("XTemplate", {
                                         local sectorId = self.context.Id
 
                                         local pows = GetDialog(self).context.prisoners
-                                        
-                                        HUDA_POWSetPrisonersSector(pows, sectorId)
+
+                                        HUDA_MilitiaPOW:SetPrisonersSector(pows, sectorId)
 
                                         local dlg = GetDialog(self)
                                         dlg:Close()
@@ -230,15 +216,15 @@ PlaceObj("XTemplate", {
                                         "Id",
                                         "idSectorSquare",
                                         "Margins",
-                                        box(0, 0, 5, 6),
+                                        box(0, 0, 5, 0),
                                         "HAlign",
                                         "left",
                                         "VAlign",
-                                        "center",
+                                        "top",
                                         "MinWidth",
-                                        25,
+                                        38,
                                         "MaxWidth",
-                                        30
+                                        38
                                     }, {
                                         PlaceObj("XTemplateWindow", {
                                             "__class",
@@ -263,6 +249,30 @@ PlaceObj("XTemplate", {
                                             "center"
                                         })
                                     }),
+                                    PlaceObj("XTemplateWindow", {
+                                        "__class",
+                                        "XText",
+                                        "Id",
+                                        "idSectorGuards",
+                                        "Margins",
+                                        box(2, 0, 0, 0),
+                                        "HAlign",
+                                        "right",
+                                        "VAlign",
+                                        "center",
+                                        "Dock",
+                                        "right",
+                                        "Clip",
+                                        false,
+                                        "TextStyle",
+                                        "PDACommonButton",
+                                        "Translate",
+                                        true,
+                                        "TextHAlign",
+                                        "center",
+                                        "TextVAlign",
+                                        "center"
+                                    }),
                                     PlaceObj("XTemplateFunc", {
                                         "name",
                                         "OnSetRollover(self, rollover)",
@@ -272,10 +282,6 @@ PlaceObj("XTemplate", {
                                                 return
                                             end
                                             local sectorId = self.context.Id
-                                            local node = self:ResolveId("node")
-                                            local sectorIdLower = string.lower(sectorId)
-                                            local image = "UI/PDA/ss_" .. sectorIdLower
-                                            node.idSelectedSectorImage:SetImage(image or "UI/PDA/ss_i1")
                                         end
                                     }),
                                     PlaceObj("XTemplateFunc", {
@@ -293,7 +299,7 @@ PlaceObj("XTemplate", {
                                         function(self, selected)
                                             self:SetFocus(selected)
                                             self:SetImage(selected and "UI/PDA/os_system_buttons_yellow" or
-                                            "UI/PDA/os_system_buttons")
+                                                "UI/PDA/os_system_buttons")
                                         end
                                     })
                                 })

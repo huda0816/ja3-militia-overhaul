@@ -217,6 +217,10 @@ PlaceObj('ModItemCode', {
 	'CodeFileName', "Code/PDAMilitiaHyperlinkHeader.lua",
 }),
 PlaceObj('ModItemCode', {
+	'name', "PDAMilitiaPrisonPicker",
+	'CodeFileName', "Code/PDAMilitiaPrisonPicker.lua",
+}),
+PlaceObj('ModItemCode', {
 	'name', "PDAMilitiaShop",
 	'CodeFileName', "Code/PDAMilitiaShop.lua",
 }),
@@ -289,11 +293,8 @@ PlaceObj('ModItemCode', {
 	'CodeFileName', "Code/PeopleController.lua",
 }),
 PlaceObj('ModItemCode', {
-	'CodeFileName', "Code/Script.lua",
-}),
-PlaceObj('ModItemCode', {
-	'name', "PDAMilitiaPrisonPicker",
-	'CodeFileName', "Code/PDAMilitiaPrisonPicker.lua",
+	'name', "POPUPMilitiaPOWInterrogation",
+	'CodeFileName', "Code/POPUPMilitiaPOWInterrogation.lua",
 }),
 PlaceObj('ModItemConstDef', {
 	group = "Loyalty",
@@ -695,7 +696,7 @@ PlaceObj('ModItemSectorOperation', {
 		local mercs_available = GetAvailableMercs(sector, self, "Baseconstructor")
 		local mercs_current = GetOperationProfessionals(sector.Id,"Baseconstructor")
 		if #mercs_available == 0 and #mercs_current == 0 then
-				return false, T(449205258912, "No mercs with enough mechanical skills available")
+				return false, T(4492052589120815, "No mercs with enough mechanical skills available (min. 20)")
 		end
 		
 		return true
@@ -747,7 +748,7 @@ PlaceObj('ModItemSectorOperation', {
 			end
 		end
 		
-		return 50 + val/2 + Min(60 , militia * 15)
+		return 20 + val/2 + Min(60 , militia * 15)
 	end,
 	RequiredResources = {
 		"Money",
@@ -771,7 +772,7 @@ PlaceObj('ModItemSectorOperation', {
 	image = "Mod/LXPER6t/Images/Screenshot0006 3.png",
 	log_msg_start = T(455661349377, --[[ModItemSectorOperation HUDA_MilitiaBase log_msg_start]] "<color EmStyle><mercs></color> started <color EmStyle>construction</color> in "),
 	min_requirement_stat = "Mechanical",
-	min_requirement_stat_value = 30,
+	min_requirement_stat_value = 20,
 	related_stat = "Mechanical",
 	short_name = T(478440657882, --[[ModItemSectorOperation HUDA_MilitiaBase short_name]] "Militia Base"),
 	sub_title = T(752204746120, --[[ModItemSectorOperation HUDA_MilitiaBase sub_title]] "Build a militia base in this city"),
@@ -1069,6 +1070,119 @@ PlaceObj('ModItemSectorOperation', {
 	related_stat = "Leadership",
 	short_name = T(170631523598, --[[ModItemSectorOperation HUDA_MilitiaRecruitmentDrive short_name]] "Recruitment Drive"),
 	sub_title = T(685763153270, --[[ModItemSectorOperation HUDA_MilitiaRecruitmentDrive sub_title]] "Find new recruits for your militia"),
+}),
+PlaceObj('ModItemSectorOperation', {
+	CheckCompleted = function (self, merc, sector)
+		if self:ProgressCurrent(merc, sector) >= self:ProgressCompleteThreshold(merc, sector) then
+					self:Complete(sector)
+		end
+	end,
+	Complete = function (self, sector)
+		local mercs = GetOperationProfessionals(sector.Id, self.id)
+		local merc_names = {}
+		for _, merc in ipairs(mercs) do
+		    merc.tempOperationProfession = merc.OperationProfession
+			merc_names[#merc_names + 1] = merc.Nick
+			merc:SetCurrentOperation("Idle")
+		end
+		self:OnComplete(sector, mercs)
+		Msg("OperationCompleted", self, mercs, sector)
+	end,
+	Custom = false,
+	GetOperationCost = function (self, merc, profession, idx)
+		return {}
+	end,
+	GetSectorSlots = function (self, prof, sector)
+		return 1
+	end,
+	GetTimelineEventDescription = GetMissingSourceFallback(),
+	HasOperation = function (self, sector)
+		if sector.Guardpost or sector.MilitiaBase or sector.MilitiaPrison then
+			return true
+		end
+		
+		return false
+	end,
+	IsEnabled = function (self, sector)
+		if not gv_HUDA_CapturedPows or  #(gv_HUDA_CapturedPows[sector.Id] or {}) < 1 then
+			return false, T{0818764949480920, "There are no Prisoners to interrogate"}	
+		end
+		
+		return true
+	end,
+	ModifyProgress = function (self, value, sector)
+		local ac = sector.custom_operations and sector.custom_operations[self.id]
+		if ac then
+			ac.progress = ac.progress + value
+		end
+	end,
+	OnComplete = function (self, sector, mercs)
+		sector.custom_operations[self.id] = nil
+		HUDA_MilitiaPOW:OnComplete(self, sector, mercs)
+	end,
+	OnRemoveOperation = function (self, merc)
+		local sector = merc:GetSector()
+		
+		sector.custom_operations = sector.custom_operations or {}
+		sector.custom_operations[self.id] = nil
+	end,
+	OnSetOperation = function (self, merc, arg)
+		local sector = merc:GetSector()
+		sector.custom_operations = sector.custom_operations or {}
+		sector.custom_operations[self.id] = sector.custom_operations[self.id] or {progress = 0}
+	end,
+	Professions = {
+		PlaceObj('SectorOperationProfession', {
+			'id', "Goodcop",
+			'display_name', T(199514008021, --[[ModItemSectorOperation HUDA_MilitiaInterrogation display_name]] "Good Cop"),
+			'description', T(497492321822, --[[ModItemSectorOperation HUDA_MilitiaInterrogation description]] "The assigned merc is interrogating"),
+			'display_name_all_caps', T(291581773610, --[[ModItemSectorOperation HUDA_MilitiaInterrogation display_name_all_caps]] "GOOD COP"),
+			'display_name_plural', T(703034304469, --[[ModItemSectorOperation HUDA_MilitiaInterrogation display_name_plural]] "Good Cop"),
+			'display_name_plural_all_caps', T(216907882961, --[[ModItemSectorOperation HUDA_MilitiaInterrogation display_name_plural_all_caps]] "GOOD COP"),
+		}),
+		PlaceObj('SectorOperationProfession', {
+			'id', "Badcop",
+			'display_name', T(142720333424, --[[ModItemSectorOperation HUDA_MilitiaInterrogation display_name]] "Bad Cop"),
+			'description', T(913906306168, --[[ModItemSectorOperation HUDA_MilitiaInterrogation description]] "The assigned merc is interrogating"),
+			'display_name_all_caps', T(695805000229, --[[ModItemSectorOperation HUDA_MilitiaInterrogation display_name_all_caps]] "BAD COP"),
+			'display_name_plural', T(925460519916, --[[ModItemSectorOperation HUDA_MilitiaInterrogation display_name_plural]] "Bad Cop"),
+			'display_name_plural_all_caps', T(621571625018, --[[ModItemSectorOperation HUDA_MilitiaInterrogation display_name_plural_all_caps]] "BAD COP"),
+		}),
+	},
+	ProgressCompleteThreshold = function (self, merc, sector, prediction)
+		return 3200
+	end,
+	ProgressCurrent = function (self, merc, sector, prediction)
+		return sector.custom_operations and sector.custom_operations[self.id] and sector.custom_operations[self.id].progress or 0
+	end,
+	ProgressPerTick = function (self, merc, prediction)
+		return 100
+	end,
+	SectorMercsTick = GetMissingSourceFallback(),
+	SectorOperationStats = function (self, sector, check_only)
+		return HUDA_MilitiaPOW:SectorOperationStats(self, sector, check_only)
+	end,
+	ShowInCombatBadge = false,
+	SortKey = 35,
+	Tick = function (self, merc)
+		local sector = merc:GetSector()
+		           local progress_per_tick = self:ProgressPerTick(merc)
+					if CheatEnabled("FastActivity") then
+						progress_per_tick = progress_per_tick*100
+					end
+					self:ModifyProgress(progress_per_tick, sector)
+					self:CheckCompleted(merc, sector)
+	end,
+	description = T(699636154117, --[[ModItemSectorOperation HUDA_MilitiaInterrogation description]] "Interview the prisoners to gain valuable information. Mercs with leadership are best suited for interrogation."),
+	display_name = T(305394829240, --[[ModItemSectorOperation HUDA_MilitiaInterrogation display_name]] "Interrogate POWs"),
+	icon = "Mod/LXPER6t/Icons/pow_operations.png",
+	id = "HUDA_MilitiaInterrogation",
+	image = "Mod/LXPER6t/Images/Screenshot0015.png",
+	log_msg_start = T(667429527941, --[[ModItemSectorOperation HUDA_MilitiaInterrogation log_msg_start]] "<color EmStyle><mercs></color> started <color EmStyle>interrogation</color> in "),
+	min_requirement_stat = "Leadership",
+	related_stat = "Leadership",
+	short_name = T(897046941960, --[[ModItemSectorOperation HUDA_MilitiaInterrogation short_name]] "Interrogate POWs"),
+	sub_title = T(846808999173, --[[ModItemSectorOperation HUDA_MilitiaInterrogation sub_title]] "Question the prisoners"),
 }),
 PlaceObj('ModItemSectorOperation', {
 	CheckCompleted = function (self, merc, sector)

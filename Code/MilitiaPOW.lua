@@ -1,58 +1,38 @@
 GameVar("gv_HUDA_CapturedPows", {})
 
-
-function HUDA_POWSetPrisonersSector(pows, sectorId)
-    gv_HUDA_CapturedPows = gv_HUDA_CapturedPows or {}
-
-    gv_HUDA_CapturedPows[sectorId] = gv_HUDA_CapturedPows[sectorId] or {}
-
-    for _, unit in ipairs(pows) do
-        table.insert(gv_HUDA_CapturedPows[sectorId], unit)
-
-        RemoveUnitFromSquad(unit)
-
-        local mapUnit = g_Units[unit.session_id]
-
-        if mapUnit then
-            DoneObject(mapUnit)
-        end
-    end
-end
-
-function HUDA_ChoosePrison(pows)
-    local sectors = gv_Sectors
-
-    local sector_posibilities = {}
-
-    print("HUDA_ChoosePrison", #pows)
-
-    for sector_id, sector in pairs(sectors) do
-        if (sector.MilitiaBase or sector.Guardpost) and sector.Side == "player1" then
-            table.insert(sector_posibilities, sector_id)
-        end
-    end
-
-    print("sector_posibilities", #sector_posibilities)
-
-    local popupHost = GetDialog("PDADialogSatellite")
-    popupHost = popupHost and popupHost:ResolveId("idDisplayPopupHost")
-
-    if #sector_posibilities <= 1 then
-        CreateMessageBox(popupHost, "Select Prison", "There are no prisons available to send the POWs to.")
-        return
-    end
-
-    local pickDlg = XTemplateSpawn("PDAMilitiaPrisonPicker", popupHost, {
-        sectors = sector_posibilities,
-        prisoners = pows,
-    })
-    pickDlg:Open()
-    return pickDlg
+if FirstLoad then
+    g_MilitiaInterrogationCompleteCounter = 0
+    g_MilitiaInterrogationCompletePopups = {}
 end
 
 function OnMsg.OpenSatelliteView()
-    print("OnMsg.OpenSatelliteView", gv_CurrentSectorId)
+    HUDA_MilitiaPOW:GetPOWs()
+end
 
+DefineClass.HUDA_MilitiaPOW = {
+}
+
+function HUDA_MilitiaPOW:HasPOWs(sectorId)
+    local powNum = 0
+
+    gv_HUDA_CapturedPows = gv_HUDA_CapturedPows or {}
+
+    if not sectorId then
+        for s, pows in pairs(gv_HUDA_CapturedPows) do
+            powNum = powNum + #pows
+        end
+    else
+        local pows = gv_HUDA_CapturedPows[sectorId]
+
+        if pows then
+            powNum = #pows
+        end
+    end
+
+    return powNum > 0, powNum
+end
+
+function HUDA_MilitiaPOW:GetPOWs()
     local sector = gv_Sectors[gv_CurrentSectorId]
 
     local enemies = false
@@ -72,13 +52,395 @@ function OnMsg.OpenSatelliteView()
         end
     end
 
-    print("pows", #pows, "enemies", enemies)
+    print("HUDA_MilitiaPOW:GetPOWs", gv_CurrentSectorId, enemies, #pows)
 
     if enemies or not next(pows) then
         return
     end
 
-    HUDA_ChoosePrison(pows)
+    self:ChoosePrison(pows)
+end
+
+function HUDA_MilitiaPOW:GetNumberOfGuards(sectorId)
+    local sector = gv_Sectors[sectorId]
+
+    local guards = 0
+
+    for _, squad in ipairs(sector.ally_and_militia_squads) do
+        guards = guards + #squad.units
+    end
+
+    return guards
+end
+
+function HUDA_MilitiaPOW:CalculateRisk(sectorId, new)
+    local reasons = {}
+
+    num = (new or 0) + self:GetCurrentPrisonersNumber(sectorId)
+
+    if num == 0 then
+        return 0, 100, 0, reasons
+    end
+
+    local max = self:GetMaxPrisoners(sectorId)
+
+    local guards = self:GetNumberOfGuards(sectorId)
+
+    local prisonerPercent = Max(MulDivScaled(num, 100, max), 100)
+
+    if prisonerPercent > 100 then
+        table.insert(reasons, "too many prisoners")
+    end
+
+    local neededGuards = MulDivScaled(num, prisonerPercent, 500)
+
+    local guardsCoverage = (guards > 0) and MulDivRound(guards, 100, neededGuards) or 0
+
+    if guardsCoverage < 100 then
+        table.insert(reasons, "not enough guards")
+    end
+
+    local risk = Max(100 - guardsCoverage, 0)
+
+    return risk, guardsCoverage, neededGuards, reasons
+end
+
+function HUDA_MilitiaPOW:GetRiskString(sectorId, new)
+    local risk, guardsCoverage, neededGuards, reasons = self:CalculateRisk(sectorId, new)
+
+    local riskString = "none"
+
+    if risk > 80 then
+        riskString = "very high"
+    elseif risk > 60 then
+        riskString = "high"
+    elseif risk > 40 then
+        riskString = "medium"
+    elseif risk > 10 then
+        riskString = "low"
+    end
+
+    return riskString, risk, guardsCoverage, neededGuards, reasons
+end
+
+function HUDA_MilitiaPOW:GetMaxPrisoners(sectorId)
+    local sector = gv_Sectors[sectorId]
+
+    local maxPrisoners = 0
+
+    if sector.MilitiaBase then
+        maxPrisoners = 10
+    elseif sector.Guardpost then
+        maxPrisoners = 10
+    elseif sectorId == "L6" then
+        maxPrisoners = 40
+    end
+
+    return maxPrisoners
+end
+
+function HUDA_MilitiaPOW:GetCurrentPrisoners(sectorId)
+    local currentPrisoners = {}
+
+    if gv_HUDA_CapturedPows and gv_HUDA_CapturedPows[sectorId] then
+        currentPrisoners = gv_HUDA_CapturedPows[sectorId]
+    end
+
+    return currentPrisoners
+end
+
+function HUDA_MilitiaPOW:GetCurrentPrisonersNumber(sectorId)
+    local currentPrisoners = self:GetCurrentPrisoners(sectorId)
+
+    return #currentPrisoners
+end
+
+function HUDA_MilitiaPOW:GetPrisonData(sectorId, new)
+    local currentPrisoners = self:GetCurrentPrisoners(sectorId)
+    local maxPrisoners = self:GetMaxPrisoners(sectorId)
+    local guards = self:GetNumberOfGuards(sectorId)
+    local riskString, risk, guardsCoverage, neededGuards, reasons = self:GetRiskString(sectorId, new)
+
+    return {
+        Id = sectorId,
+        max = maxPrisoners,
+        current = #currentPrisoners,
+        currentPrisoners = currentPrisoners,
+        guards = guards,
+        neededGuards = neededGuards,
+        risk = riskString,
+        reasons = reasons,
+        new = new or 0,
+    }
+end
+
+function HUDA_MilitiaPOW:GetPrisonDescription(sectorId)
+    local prisonInfo = self:GetPrisonData(sectorId)
+
+    if prisonInfo then
+        return T { 1000999105101280817, "<newline><em>POW INFORMATION</em><newline><newline>Prisoners: <prisoners>/<capacity><newline>Revolt risk: <risk>", prisoners = prisonInfo.current, capacity = prisonInfo.max, risk = prisonInfo.risk }
+    end
+end
+
+function HUDA_MilitiaPOW:ChoosePrison(pows)
+    local sectors = gv_Sectors
+
+    local sector_posibilities = {}
+
+    local powsNum = #(pows or {})
+
+    for sector_id, sector in pairs(sectors) do
+        if (sector.MilitiaBase or sector.Guardpost or sector_id == "L6") and sector.Side == "player1" then
+            local prisonInfo = self:GetPrisonData(sector_id, powsNum)
+
+            if (prisonInfo.current + powsNum) <= prisonInfo.max * 2 then
+                table.insert(sector_posibilities, prisonInfo)
+            end
+        end
+    end
+
+    local popupHost = GetDialog("PDADialogSatellite")
+    popupHost = popupHost and popupHost:ResolveId("idDisplayPopupHost")
+
+    if #sector_posibilities < 1 then
+        CreateMessageBox(popupHost, "Select Prison", "There are no prisons available to send the POWs to.")
+        return
+    end
+
+    local pickDlg = XTemplateSpawn("PDAMilitiaPrisonPicker", popupHost, {
+        sectors = sector_posibilities,
+        prisoners = pows,
+    })
+    pickDlg:Open()
+    return pickDlg
+end
+
+function HUDA_MilitiaPOW:SetPrisonersSector(pows, sectorId)
+    gv_HUDA_CapturedPows = gv_HUDA_CapturedPows or {}
+
+    gv_HUDA_CapturedPows[sectorId] = gv_HUDA_CapturedPows[sectorId] or {}
+
+    for _, unit in ipairs(pows) do
+        table.insert(gv_HUDA_CapturedPows[sectorId], unit)
+
+        RemoveUnitFromSquad(unit)
+
+        local mapUnit = g_Units[unit.session_id]
+
+        if mapUnit then
+            DoneObject(mapUnit)
+        end
+    end
+end
+
+function HUDA_MilitiaPOW:SectorOperationStats(op, sector, check_only)
+    if check_only then
+        return true
+    end
+
+    local prisonInformation = self:GetPrisonData(sector.Id)
+
+    local lines = {}
+
+    lines[#lines + 1] = {
+        text = T(08142319880486560829, "Prisoners"),
+        value = T { 08162573281645840834, "<current>/<max>", current = prisonInformation.current, max = prisonInformation.max }
+    }
+
+    lines[#lines + 1] = {
+        text = T(08162319880486560820, "Revolte risk"),
+        value = T { 08162573281645840845, "<value>", value = prisonInformation.risk }
+    }
+
+    -- local progressVal = op:ProgressCurrent()
+
+    return lines --, progressVal
+end
+
+function HUDA_MilitiaPOW:OnComplete(op, sector, mercs)
+    local goodCop = nil;
+    local badCop = nil;
+
+    for _, merc in ipairs(mercs) do
+        if merc.tempOperationProfession == "Goodcop" then
+            goodCop = merc
+        elseif merc.tempOperationProfession == "Badcop" then
+            badCop = merc
+        end
+    end
+
+    local goodCopRating = DivRound(goodCop.Leadership, 2)
+    local badCopRating = DivRound(badCop.Leadership, 2)
+
+    local goodCopPerks = goodCop:GetPerks()
+    local badCopPerks = badCop:GetPerks()
+
+    local perkRatings = {
+        Optimist = {
+            Good = 10,
+            Bad = -10,
+        },
+        Negotiator = {
+            Good = 40,
+            Bad = 0,
+        },
+        Scoundrel = {
+            Good = 20,
+            Bad = 20,
+        },
+        Spiritual = {
+            Good = -10,
+            Bad = -20,
+        },
+        Psycho = {
+            Good = -40,
+            Bad = 40,
+        },
+        Pessimist = {
+            Good = -10,
+            Bad = 10,
+        },
+        Loner = {
+            Good = -20,
+            Bad = -20,
+        }
+    }
+
+
+    for _, perk in ipairs(goodCopPerks) do
+        if perkRatings[perk.class] then
+            goodCopRating = goodCopRating + perkRatings[perk.class].Good
+        end
+    end
+
+    for _, perk in ipairs(badCopPerks) do
+        if perkRatings[perk.class] then
+            badCopRating = badCopRating + perkRatings[perk.class].Bad
+        end
+    end
+
+    print("Good Cop Rating: " .. goodCopRating)
+    print("Bad Cop Rating: " .. badCopRating)
+
+    local teamRating = goodCopRating + badCopRating
+
+    print("Team Rating: " .. teamRating)
+
+    local successRoll = InteractionRandRange(30, 170, "Interrogation Success Roll")
+
+    print("Success Roll: " .. successRoll)
+
+    local success = successRoll < teamRating
+
+    local successMargin = teamRating - successRoll
+
+    print("Success: " .. tostring(success) .. " Margin: " .. successMargin)
+
+    local goodOutcomes = {
+        "intel",
+        "stash",
+        "ransom",
+        "militia",
+    }
+
+    local badOutcomes = {
+        "nothing",
+        "hurt",
+        "escape",
+        "death",
+    }
+
+    if success then
+        local randMax = 2
+
+        if successMargin > 80 and goodCopRating > 100 then
+            randMax = 3
+        end
+
+        local rand = InteractionRand(randMax)
+
+        local outcome = goodOutcomes[rand + 1]
+
+        print("Good Outcome: " .. outcome)
+    else
+        local randMax = 0
+        local randMin = 0
+
+        if successMargin < -30 then
+            randMax = 2
+
+            if successMargin < -100 then
+                randMin = 1
+            end
+
+            if HasPerk(goodCop, "Psycho") or HasPerk(badCop, "Psycho") then
+                randMax = 3
+            end
+        end
+
+        print("Rand Max: " .. randMax)
+
+        local rand = InteractionRandRange(randMin, randMax, "Bad Outcome Roll")
+
+        print("Rand: " .. rand)
+
+        local outcome = badOutcomes[rand + 1]
+
+        print("Bad Outcome: " .. outcome)
+    end
+
+    NetUpdateHash("CompleteCurrentMilitiaInterrorgation")
+    local eventId = g_MilitiaInterrogationCompleteCounter
+    g_MilitiaInterrogationCompleteCounter = g_MilitiaInterrogationCompleteCounter + 1
+    local start_time = Game.CampaignTime
+    CreateMapRealTimeThread(function()
+        local popupHost = GetDialog("PDADialogSatellite")
+        popupHost = popupHost and popupHost:ResolveId("idDisplayPopupHost")
+
+        local buyAgainText = T { 08164602612170816, "Do you want interrogate the next prisoner?" }
+
+        local dlg = CreateQuestionBox(
+            popupHost,
+            T(295710973806, "Interrogation finished"),
+            T { 522643975325,
+                "Interrogation is finished: <result>",
+                result = ""
+            },
+            T(689884995409, "Yes"),
+            T(782927325160, "No"),
+            { sector = sector, mercs = mercs, textLower = buyAgainText },
+            function()
+                return true
+            end,
+            nil,
+            "POPUPMilitiaPOWInterrogation")
+
+        assert(g_MilitiaInterrogationCompletePopups[eventId] == nil)
+        g_MilitiaInterrogationCompletePopups[eventId] = dlg
+        NetSyncEvent("ProcessMilitiaInterrogationPopupResults", dlg:Wait(), eventId, sector.Id,
+            UnitDataToSessionIds(mercs), start_time)
+        g_MilitiaInterrogationCompletePopups[eventId] = nil
+    end)
+end
+
+function NetSyncEvents.ProcessMilitiaInterrogationPopupResults(result, event_id, sector_id, mercs, start_time)
+    if result == "ok" then
+        local sector = gv_Sectors[sector_id]
+        if sector.started_operations["HUDA_MilitiaInterrogation"] ~= start_time then --other player already started it
+            for _, merc in ipairs(mercs) do
+                local mercT = gv_UnitData[merc]
+                NetSyncEvents.MercSetOperation(merc, "HUDA_MilitiaInterrogation",
+                    mercT.tempOperationProfession == "Goodcop" and "Goodcop" or "Badcop", nil, 1, false)
+                mercT.tempOperationProfession = nil
+            end
+            NetSyncEvents.LogOperationStart("HUDA_MilitiaInterrogation", sector.Id, "log")
+            NetSyncEvents.StartOperation(sector.Id, "HUDA_MilitiaInterrogation", start_time, sector.training_stat)
+        end
+    end
+    if g_MilitiaInterrogationCompletePopups[event_id] then
+        g_MilitiaInterrogationCompletePopups[event_id]:Close()
+        g_MilitiaInterrogationCompletePopups[event_id] = nil
+    end
 end
 
 function Unit:ShouldGetDowned(hit_descr)
@@ -243,7 +605,6 @@ function Unit:CombatCapturePOW(target, ties)
     end
 
     if g_Combat then
-        print("g_Combat")
         -- play anim, etc
         local heal_anim
         heal_anim = "nw_Bandaging_Idle"

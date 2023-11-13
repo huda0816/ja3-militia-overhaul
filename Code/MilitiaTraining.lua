@@ -38,7 +38,7 @@ function RollForMilitiaPromotion(sector)
 	for _, squad in ipairs(squads) do
 		local unitIds = table.copy(squad.units)
 		for _, id in ipairs(unitIds) do
-			local chance = 100
+			local chance = 10
 			local roll = InteractionRand(100, "MilitiaPromotion")
 			if chance > roll then
 				local unitData = gv_UnitData[id]
@@ -598,34 +598,45 @@ function HUDA_MilitiaTraining:IsEnabled(op, sector)
 		return false, T(0817764949488129, "No militia training possible in this sector")
 	end
 
-	local city = self:GetCity(sector)
+	local city = self:GetCity(sector)	
 
-	local militia_squad_id = sector.militia_squad_id
+	local least_exp_templ = self:GetLeastExpMilitia(sector)
 
-	if not militia_squad_id then
-		if gv_HUDA_MilitiaRecruits[city] > 0 then
-			return true
-		else
-			return false, T(0816764949488129, "No more recruits in this city")
-		end
-	end
-
-	local militia_squad = gv_Squads[militia_squad_id]
-
-	if #(militia_squad.units or "") < sector.MaxMilitia and gv_HUDA_MilitiaRecruits[city] > 0 then
+	if least_exp_templ == "MilitiaRookie" then
 		return true
 	end
 
-	local ud = GetLeastExpMilitia(militia_squad.units)
-	local least_exp_templ = ud and ud.class
-	if least_exp_templ == "MilitiaVeteran" or least_exp_templ == "MilitiaElite" then
-		if #(militia_squad.units or "") < sector.MaxMilitia and gv_HUDA_MilitiaRecruits[city] <= 0 then
-			return false, T(0816764949488129, "No more recruits in this city")
-		else
-			return false, T(764949488129, "Reached militia limit")
-		end
+	if gv_HUDA_MilitiaRecruits[city] > 0 then
+			return true
 	end
-	return true
+
+    return false, T(0816764949488129, "No more recruits in this city")
+
+end
+
+function HUDA_MilitiaTraining:GetLeastExpMilitia(sector)
+
+	if not sector then
+		return false
+	end
+
+	local militia_squads = sector.militia_squads
+
+	if not militia_squads then
+		return false
+	end
+
+	local units = {}
+
+	for _, squad in ipairs(militia_squads) do
+		for _, unit in ipairs(squad.units) do
+			table.insert(units, unit)
+		end
+	end	
+
+	local ud = GetLeastExpMilitia(units)
+	return ud and ud.class
+
 end
 
 function HUDA_MilitiaTraining:SectorOperationStats(op, sector, check_only)
