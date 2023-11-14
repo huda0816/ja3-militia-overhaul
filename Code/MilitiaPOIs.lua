@@ -53,13 +53,13 @@ for index, poi in ipairs(HUDA_MilitiaPOIs) do
     end
 end
 
-function OnMsg.ZuluGameLoaded()
-    for k, sector in pairs(gv_Sectors) do
-        if k == "L6" and sector.Side == "player1" then
-            sector.MilitiaPrison = true
-        end
-    end
-end
+-- function OnMsg.ZuluGameLoaded()
+--     for k, sector in pairs(gv_Sectors) do
+--         if k == "L6" and sector.Side == "player1" then
+--             sector.MilitiaPrison = true
+--         end
+--     end
+-- end
 
 local HUDA_OriginalGetSatelliteIconImages = GetSatelliteIconImages
 
@@ -125,42 +125,42 @@ function HUDA_HasPOI(poiId, cityId)
     return false
 end
 
-local HUDA_OriginalGetGuardpostRollover = GetGuardpostRollover
+-- local HUDA_OriginalGetGuardpostRollover = GetGuardpostRollover
 
-function GetGuardpostRollover(sector)
-    if sector.Side ~= "player1" and sector.Side ~= "ally" then
-        return HUDA_OriginalGetGuardpostRollover(sector)
-    end
+-- function GetGuardpostRollover(sector)
+--     if sector.Side ~= "player1" and sector.Side ~= "ally" then
+--         return HUDA_OriginalGetGuardpostRollover(sector)
+--     end
 
-    local descr = T { 1000999105101280829, "Outposts under player control uncover fog of war in adjacent sectors" }
+--     local descr = T { 1000999105101280829, "Outposts under player control uncover fog of war in adjacent sectors" }
 
-    local prisonDescr = HUDA_MilitiaPOW:GetPrisonDescription(sector.Id)
+--     local prisonDescr = HUDA_MilitiaPOW:GetPrisonDescription(sector.Id)
 
-    if prisonDescr then
-        descr = table.concat({ descr, prisonDescr }, "\n\n")
-    end
+--     if prisonDescr then
+--         descr = table.concat({ descr, prisonDescr }, "\n\n")
+--     end
 
-    return descr
-end
+--     return descr
+-- end
 
-local HUDA_OriginalGetPOITextForRollover = PointOfInterestRolloverClass.GetPOITextForRollover
+-- local HUDA_OriginalGetPOITextForRollover = PointOfInterestRolloverClass.GetPOITextForRollover
 
-function PointOfInterestRolloverClass:GetPOITextForRollover(buildingId, sector)
+-- function PointOfInterestRolloverClass:GetPOITextForRollover(buildingId, sector)
     
-    if not table.find(HUDA_MilitiaPOIs, "id", buildingId) then
-        return HUDA_OriginalGetPOITextForRollover(self, buildingId, sector)
-    end
+--     if not table.find(HUDA_MilitiaPOIs, "id", buildingId) then
+--         return HUDA_OriginalGetPOITextForRollover(self, buildingId, sector)
+--     end
 
-    if not buildingId or not sector or not g_SatelliteUI then return end
+--     if not buildingId or not sector or not g_SatelliteUI then return end
 
-    local poiPreset = table.find_value(POIDescriptions, "id", buildingId)
-    if not poiPreset then return end
+--     local poiPreset = table.find_value(POIDescriptions, "id", buildingId)
+--     if not poiPreset then return end
 
-    local prisonDescr = HUDA_MilitiaPOW:GetPrisonDescription(sector.Id)
+--     local prisonDescr = HUDA_MilitiaPOW:GetPrisonDescription(sector.Id)
 
-    if prisonDescr then
-        return table.concat({ poiPreset.descr, prisonDescr }, "\n\n")
-    end
+--     if prisonDescr then
+--         return table.concat({ poiPreset.descr, prisonDescr }, "\n\n")
+--     end
 
-    return poiPreset.descr
-end
+--     return poiPreset.descr
+-- end

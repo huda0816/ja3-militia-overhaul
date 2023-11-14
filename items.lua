@@ -289,12 +289,16 @@ PlaceObj('ModItemCode', {
 	'CodeFileName', "Code/PDAMilitiaSquads.lua",
 }),
 PlaceObj('ModItemCode', {
+	'name', "POPUPMilitiaPOWInterrogation",
+	'CodeFileName', "Code/POPUPMilitiaPOWInterrogation.lua",
+}),
+PlaceObj('ModItemCode', {
 	'name', "PeopleController",
 	'CodeFileName', "Code/PeopleController.lua",
 }),
 PlaceObj('ModItemCode', {
-	'name', "POPUPMilitiaPOWInterrogation",
-	'CodeFileName', "Code/POPUPMilitiaPOWInterrogation.lua",
+	'name', "MilitiaPOWInterrogation",
+	'CodeFileName', "Code/MilitiaPOWInterrogation.lua",
 }),
 PlaceObj('ModItemConstDef', {
 	group = "Loyalty",
@@ -1118,7 +1122,7 @@ PlaceObj('ModItemSectorOperation', {
 	end,
 	OnComplete = function (self, sector, mercs)
 		sector.custom_operations[self.id] = nil
-		HUDA_MilitiaPOW:OnComplete(self, sector, mercs)
+		HUDA_MilitiaPOWInterrogation:OnComplete(self, sector, mercs)
 	end,
 	OnRemoveOperation = function (self, merc)
 		local sector = merc:GetSector()
@@ -1150,7 +1154,7 @@ PlaceObj('ModItemSectorOperation', {
 		}),
 	},
 	ProgressCompleteThreshold = function (self, merc, sector, prediction)
-		return 3200
+		return 4800
 	end,
 	ProgressCurrent = function (self, merc, sector, prediction)
 		return sector.custom_operations and sector.custom_operations[self.id] and sector.custom_operations[self.id].progress or 0
@@ -1160,7 +1164,7 @@ PlaceObj('ModItemSectorOperation', {
 	end,
 	SectorMercsTick = GetMissingSourceFallback(),
 	SectorOperationStats = function (self, sector, check_only)
-		return HUDA_MilitiaPOW:SectorOperationStats(self, sector, check_only)
+		return HUDA_MilitiaPOWInterrogation:SectorOperationStats(self, sector, check_only)
 	end,
 	ShowInCombatBadge = false,
 	SortKey = 35,
@@ -1173,16 +1177,16 @@ PlaceObj('ModItemSectorOperation', {
 					self:ModifyProgress(progress_per_tick, sector)
 					self:CheckCompleted(merc, sector)
 	end,
-	description = T(699636154117, --[[ModItemSectorOperation HUDA_MilitiaInterrogation description]] "Interview the prisoners to gain valuable information. Mercs with leadership are best suited for interrogation."),
-	display_name = T(305394829240, --[[ModItemSectorOperation HUDA_MilitiaInterrogation display_name]] "Interrogate POWs"),
+	description = T(571761217427, --[[ModItemSectorOperation HUDA_MilitiaInterrogation description]] "Interrogate the prisoners to obtain valuable information. Mercenaries with high leadership are best suited for interrogations. There are also perks that influence the outcome of the interrogation."),
+	display_name = T(305394829240, --[[ModItemSectorOperation HUDA_MilitiaInterrogation display_name]] "Interrogation"),
 	icon = "Mod/LXPER6t/Icons/pow_operations.png",
 	id = "HUDA_MilitiaInterrogation",
 	image = "Mod/LXPER6t/Images/Screenshot0015.png",
 	log_msg_start = T(667429527941, --[[ModItemSectorOperation HUDA_MilitiaInterrogation log_msg_start]] "<color EmStyle><mercs></color> started <color EmStyle>interrogation</color> in "),
 	min_requirement_stat = "Leadership",
 	related_stat = "Leadership",
-	short_name = T(897046941960, --[[ModItemSectorOperation HUDA_MilitiaInterrogation short_name]] "Interrogate POWs"),
-	sub_title = T(846808999173, --[[ModItemSectorOperation HUDA_MilitiaInterrogation sub_title]] "Question the prisoners"),
+	short_name = T(897046941960, --[[ModItemSectorOperation HUDA_MilitiaInterrogation short_name]] "Interrogation"),
+	sub_title = T(846808999173, --[[ModItemSectorOperation HUDA_MilitiaInterrogation sub_title]] "Interrogate the prisoners"),
 }),
 PlaceObj('ModItemSectorOperation', {
 	CheckCompleted = function (self, merc, sector)
