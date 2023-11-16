@@ -1,6 +1,6 @@
 function HUDA_GetModOptions(id, default, type)
 
-	if not CurrentModOptions then
+	if nil == CurrentModOptions then
 		return default
 	end
 
@@ -15,7 +15,7 @@ end
 
 function HUDA_GetShopOptions(id, default, type)
 
-	if not CurrentModOptions then
+	if nil == CurrentModOptions then
 		return default
 	end
 
@@ -34,7 +34,7 @@ end
 
 function OnMsg.ApplyModOptions(mod_id)
 
-	if CurrentModOptions then
+	if CurrentModOptions and mod_id == CurrentModId then
 		for k, v in pairs(CurrentModOptions) do
 			if string.starts_with(k, "huda_MilitiaShop") then
 				if (k == "huda_MilitiaShopTier") then

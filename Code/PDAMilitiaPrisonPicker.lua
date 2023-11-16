@@ -155,7 +155,6 @@ PlaceObj("XTemplate", {
                             PlaceObj("XTemplateForEach", {
                                 "array",
                                 function(parent, context)
-                                    -- Inspect(parent)
                                     return context.sectors
                                 end,
                                 "__context",

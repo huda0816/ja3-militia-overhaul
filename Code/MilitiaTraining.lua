@@ -210,11 +210,6 @@ function SpawnMilitia(trainAmount, sector, bFromOperation, rookies, veterans)
 
 	local militia_squad = gv_Squads[militia_squad_id]
 
-
-	sector.militia_squad_id = militia_squad_id
-
-	local militia_squad = gv_Squads[militia_squad_id]
-
 	local count = { MilitiaRookie = 0, MilitiaVeteran = 0 }
 	for i, unit_id in ipairs(militia_squad and militia_squad.units) do
 		local class = gv_UnitData[unit_id].class
@@ -311,18 +306,12 @@ function HUDA_MergeMilitia(new, original)
 		'Medical',
 	}
 
-	print(new.applied_modifiers)
-
 	for k, v in pairs(original) do
 		if not protected[k] then
 			if HUDA_ArrayContains(stats, k) and HUDA_IsMilitiaPromoted(original, new) then
 				local randV = v + InteractionRandRange(1, 3, "MilitiaPromotion")
 
-				print("MilitiaPromotion: " .. k .. " " .. v .. " -> " .. randV)
-
 				local baseDiff = randV - new['base_' .. k]
-
-				print("MilitiaPromotion: " .. k .. " " .. new['base_' .. k] .. " -> " .. baseDiff)
 
 				new[k] = randV
 
@@ -865,10 +854,7 @@ function HUDA_MilitiaTraining:HandleConflictEnd(sector, playerAttacking, playerW
 end
 
 function HUDA_MilitiaTraining:HandleMilitiaDies(unit, killer, results)
-	print("HandleMilitiaDies", unit.JoinLocation)
-
-
-
+	
 	if not unit.JoinLocation then
 		return
 	end
