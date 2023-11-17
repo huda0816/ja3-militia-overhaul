@@ -635,6 +635,10 @@ PlaceObj('ModItemOptionToggle', {
 	'DisplayName', 'Deactivate "Far from home" Character effect',
 }),
 PlaceObj('ModItemOptionToggle', {
+	'name', "huda_MilitiaNoDownedEnemies",
+	'DisplayName', "Deactivate the downing of enemies and militia",
+}),
+PlaceObj('ModItemOptionToggle', {
 	'name', "huda_MilitiaNoLoyaltyLoss",
 	'DisplayName', "No loyalty loss in towns with not enough militia",
 	'Help', "If this option is selected militia won't impact loyalty",
@@ -692,8 +696,6 @@ PlaceObj('ModItemSectorOperation', {
 		local baseCost = 2000
 		
 		local variableCosts = MulDivRound(1000, 100 - loyalty, 100)
-		
-		print(loyalty, variableCosts)
 		
 		local cost = baseCost + variableCosts
 		
@@ -1225,7 +1227,6 @@ PlaceObj('ModItemSectorOperation', {
 }),
 PlaceObj('ModItemSectorOperation', {
 	CheckCompleted = function (self, merc, sector)
-		print("checkprogress", self:ProgressCurrent(merc, sector))
 		if self:ProgressCurrent(merc, sector) >= self:ProgressCompleteThreshold(merc, sector) then
 						self:Complete(sector)
 		end

@@ -1,52 +1,23 @@
 -- Msg("PreSquadDespawned", squad_id, squad.CurrentSector, reason)
 
-g_DespawnedE9Squad = false
-
-function OnMsg.NewHour()
-	g_DespawnedE9Squad = false
-end
+g_thedespawned = false
 
 function OnMsg.PreSquadDespawned(squad_id, sector, reason)
-	if sector == "E9" then
-		g_DespawnedE9Squad = squad_id
+
+	local squad = gv_Squads[squad_id]
+
+	local biffSector = gv_Sectors["A8"]
+
+	if squad.militia and not g_thedespawned and sector == "E9" and biffSector.ally_squads and #biffSector.ally_squads > 0 then
+		
+		local popupHost = GetDialog("PDADialogSatellite")
+		popupHost = popupHost and popupHost:ResolveId("idDisplayPopupHost")
+
+		local dlg = CreateMessageBox(popupHost, "Squad vanishes in Refugee Camp",
+		"We lost contact to our militia Squad in the Refugee Camp. We should send a squad to investigate the situation. (Do not send a militia squad)")
+
+		g_thedespawned = true
 	end
-end
-
-function OnMsg.QuestParamChanged(questId, varId, prevVal, newVal)
-	if
-		not g_DespawnedE9Squad or
-		not questId == "04_Betrayal" or
-		not varId == "RefugeCampEnemyControl" or
-		not newVal or
-		prevVal then
-		return
-	end
-
-	g_DespawnedE9Squad = false
-
-	-- local conflictDlg = GetDialog("SatelliteConflict")
-
-	-- Inspect(conflictDlg)
-
-	-- if conflictDlg then
-	-- 	conflictDlg:Close()
-	-- end
-
-	local popupHost = GetDialog("PDADialogSatellite")
-	popupHost = popupHost and popupHost:ResolveId("idDisplayPopupHost")
-
-	local dlg = CreateMessageBox(popupHost, "Squad vanishes in Refugee Camp",
-		"We lost contact to our militia Squad in the Refugee Camp. We should send a squad to investigate the situation. (If there is a combat dialog: please press retreat. Your squad is gone anyway.)")
-
-	dlg:Wait()
-
-	-- local conflictDlg = GetDialog("SatelliteConflict")
-
-	-- if conflictDlg then
-	-- 	conflictDlg:Close()
-	-- end
-
-	-- Inspect(conflictDlg)
 end
 
 function UIEnterSectorInternal(sector_id, force)

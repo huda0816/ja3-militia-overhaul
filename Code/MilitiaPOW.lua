@@ -5,18 +5,12 @@ if FirstLoad then
     g_MilitiaInterrogationCompletePopups = {}
 end
 
-function OnMsg.ExplorationStart()
-    print("HUDA_MilitiaPOW:OnMsg.ExplorationStart()")
-end
-
 function OnMsg.ClosePDA()
-    print("HUDA_MilitiaPOW:OnMsg.ClosePDA()")
-
+    
     local units = g_Units
 
     for _, unit in ipairs(units) do
         if unit.HireStatus == "Captured" then
-            print("HUDA_MilitiaPOW:OnMsg.ClosePDA() - Captured")
             unit:Captured()
         end
     end
@@ -411,7 +405,16 @@ function HUDA_MilitiaPOW:HandleBleedingOut(bo, target)
     end
 end
 
+local HUDA_OriginalShouldGetDowned = Unit.ShouldGetDowned
+
 function Unit:ShouldGetDowned(hit_descr)
+
+    if CurrentModOptions["huda_MilitiaNoDownedEnemies"] then
+
+        return HUDA_OriginalShouldGetDowned(self, hit_descr)
+
+    end
+
     if hit_descr and hit_descr.was_downed then
         return false
     end

@@ -177,8 +177,34 @@ function CompleteCurrentMilitiaTraining(sector, mercs, rookies, veterans)
 	end)
 end
 
+function HUDA_SpawnEmmaSquads(trainAmount, sector)
+	local militia_squad_id = CreateNewSatelliteSquad({
+		Side = "ally",
+		CurrentSector = sector.Id,
+		militia = true,
+		Name = T(121560205347, "MILITIA")
+	})
+
+	sector.militia_squad_id = sector.militia_squad_id or militia_squad_id
+
+	local militia_squad = gv_Squads[militia_squad_id]
+
+	for i = 1, trainAmount do
+		CreateMilitiaUnitData(MilitiaUpgradePath[2], sector, militia_squad)
+	end
+
+	HUDA_MilitiaPersonalization:PersonalizeSquad(militia_squad.UniqueId)
+
+	HUDA_MilitiaPersonalization:Personalize(militia_squad.units, true)
+end
+
 function SpawnMilitia(trainAmount, sector, bFromOperation, rookies, veterans)
 	assert(MilitiaUpgradePath and #MilitiaUpgradePath > 0)
+
+	if not bFromOperation then
+		HUDA_SpawnEmmaSquads(trainAmount, sector)
+		return
+	end
 
 	local militia_id = sector.militia_squad_id
 
@@ -587,7 +613,7 @@ function HUDA_MilitiaTraining:IsEnabled(op, sector)
 		return false, T(0817764949488129, "No militia training possible in this sector")
 	end
 
-	local city = self:GetCity(sector)	
+	local city = self:GetCity(sector)
 
 	local least_exp_templ = self:GetLeastExpMilitia(sector)
 
@@ -596,15 +622,13 @@ function HUDA_MilitiaTraining:IsEnabled(op, sector)
 	end
 
 	if gv_HUDA_MilitiaRecruits[city] > 0 then
-			return true
+		return true
 	end
 
-    return false, T(0816764949488129, "No more recruits in this city")
-
+	return false, T(0816764949488129, "No more recruits in this city")
 end
 
 function HUDA_MilitiaTraining:GetLeastExpMilitia(sector)
-
 	if not sector then
 		return false
 	end
@@ -621,11 +645,10 @@ function HUDA_MilitiaTraining:GetLeastExpMilitia(sector)
 		for _, unit in ipairs(squad.units) do
 			table.insert(units, unit)
 		end
-	end	
+	end
 
 	local ud = GetLeastExpMilitia(units)
 	return ud and ud.class
-
 end
 
 function HUDA_MilitiaTraining:SectorOperationStats(op, sector, check_only)
@@ -854,7 +877,6 @@ function HUDA_MilitiaTraining:HandleConflictEnd(sector, playerAttacking, playerW
 end
 
 function HUDA_MilitiaTraining:HandleMilitiaDies(unit, killer, results)
-	
 	if not unit.JoinLocation then
 		return
 	end
