@@ -1358,6 +1358,19 @@ PlaceObj('HUDAMilitiaShopInventoryItem', {
     "Night Vision Goggles (NVGs) are advanced optical devices that amplify low levels of ambient light, allowing you to see in the dark. They're essential for nocturnal operations."
 })
 
+PlaceObj('HUDAMilitiaShopInventoryItem', {
+    id = "HUDA_Zipties",
+    order = 70,
+    stock = 10,
+    basePrice = 200,
+    topSeller = false,
+    category = "misc",
+    tier = 1,
+    availability = 100,
+    description =
+    "Zip ties are a versatile tool for restraining and securing people and objects. They're essential for capturing POWs"
+})
+
 
 PlaceObj('HUDAMilitiaShopInventoryItem', {
     id = "FAMAS",

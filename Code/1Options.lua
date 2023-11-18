@@ -1,40 +1,44 @@
 function HUDA_GetModOptions(id, default, type)
 
-	if not CurrentModOptions then
-		return default
-	end
+	return default
 
-	id = "huda_" .. id
+	-- if nil == CurrentModOptions then
+	-- 	return default
+	-- end
 
-	if type == "number" then
-		return tonumber(CurrentModOptions[id]) or default
-	end
+	-- id = "huda_" .. id
 
-	return CurrentModOptions[id] or default
+	-- if type == "number" then
+	-- 	return tonumber(CurrentModOptions[id]) or default
+	-- end
+
+	-- return CurrentModOptions[id] or default
 end
 
 function HUDA_GetShopOptions(id, default, type)
 
-	if not CurrentModOptions then
-		return default
-	end
+	return default
 
-	id = "huda_MilitiaShop" .. id
+	-- if nil == CurrentModOptions then
+	-- 	return default
+	-- end
 
-	if CurrentModOptions[id] == nil then
-		return default
-	end
+	-- id = "huda_MilitiaShop" .. id
 
-	if type == "number" then
-		return tonumber(CurrentModOptions[id])
-	end
+	-- if CurrentModOptions[id] == nil then
+	-- 	return default
+	-- end
 
-	return CurrentModOptions[id]
+	-- if type == "number" then
+	-- 	return tonumber(CurrentModOptions[id])
+	-- end
+
+	-- return CurrentModOptions[id]
 end
 
 function OnMsg.ApplyModOptions(mod_id)
 
-	if CurrentModOptions then
+	if mod_id == CurrentModId and CurrentModOptions then
 		for k, v in pairs(CurrentModOptions) do
 			if string.starts_with(k, "huda_MilitiaShop") then
 				if (k == "huda_MilitiaShopTier") then

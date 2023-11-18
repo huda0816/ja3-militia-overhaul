@@ -1,52 +1,23 @@
 -- Msg("PreSquadDespawned", squad_id, squad.CurrentSector, reason)
 
-g_DespawnedE9Squad = false
-
-function OnMsg.NewHour()
-	g_DespawnedE9Squad = false
-end
+g_thedespawned = false
 
 function OnMsg.PreSquadDespawned(squad_id, sector, reason)
-	if sector == "E9" then
-		g_DespawnedE9Squad = squad_id
+
+	local squad = gv_Squads[squad_id]
+
+	local biffSector = gv_Sectors["A8"]
+
+	if squad.militia and not g_thedespawned and sector == "E9" and biffSector.ally_squads and #biffSector.ally_squads > 0 then
+		
+		local popupHost = GetDialog("PDADialogSatellite")
+		popupHost = popupHost and popupHost:ResolveId("idDisplayPopupHost")
+
+		local dlg = CreateMessageBox(popupHost, "Squad vanishes in Refugee Camp",
+		"We lost contact to our militia Squad in the Refugee Camp. We should send a squad to investigate the situation. (Do not send a militia squad)")
+
+		g_thedespawned = true
 	end
-end
-
-function OnMsg.QuestParamChanged(questId, varId, prevVal, newVal)
-	if
-		not g_DespawnedE9Squad or
-		not questId == "04_Betrayal" or
-		not varId == "RefugeCampEnemyControl" or
-		not newVal or
-		prevVal then
-		return
-	end
-
-	g_DespawnedE9Squad = false
-
-	-- local conflictDlg = GetDialog("SatelliteConflict")
-
-	-- Inspect(conflictDlg)
-
-	-- if conflictDlg then
-	-- 	conflictDlg:Close()
-	-- end
-
-	local popupHost = GetDialog("PDADialogSatellite")
-	popupHost = popupHost and popupHost:ResolveId("idDisplayPopupHost")
-
-	local dlg = CreateMessageBox(popupHost, "Squad vanishes in Refugee Camp",
-		"We lost contact to our militia Squad in the Refugee Camp. We should send a squad to investigate the situation. (If there is a combat dialog: please press retreat. Your squad is gone anyway.)")
-
-	dlg:Wait()
-
-	-- local conflictDlg = GetDialog("SatelliteConflict")
-
-	-- if conflictDlg then
-	-- 	conflictDlg:Close()
-	-- end
-
-	-- Inspect(conflictDlg)
 end
 
 function UIEnterSectorInternal(sector_id, force)
@@ -286,51 +257,7 @@ end
 local HUDA_OriginalDropLoot = Unit.DropLoot
 
 function Unit:DropLoot(container)
-	local is_npc = self:IsNPC()
-	
-	local debugText =  _InternalTranslate(self.Name) .. " dropping loot: (roll must be lower)"
-	
-	-- Locked items never drop.
-	-- Go over the equipped items, drop them to "Inventory" based on their drop chance,
-	-- Equipped items from Mercs always drop(except locked items). Otherwise check the drop chance.
-	local droped_items = 0
-	self:ForEachItem(function(item, slot_name, left, top, self, container, is_npc)
-		if slot_name == "InventoryDead" then return end
-		self:RemoveItem(slot_name, item)	
-		
-		local dropped
-		local roll = self:Random(100)
-		local slot = container and "Inventory" or "InventoryDead"
-		
-		debugText = debugText .. "\n " ..  _InternalTranslate(item.DisplayName) .. ": roll " .. roll .. "/" .. item.drop_chance .. "% chance" 
 
-		if not item.locked and (not is_npc or roll < item.drop_chance) then
-			local addTo = container or self
-			
-			local pos, err = addTo:CanAddItem(slot, item)
-			assert(pos, "Couldn't FIND pos in Inventory to place dropped item. Err: '" .. err .. "'")
-			if pos then
-				dropped, err = addTo:AddItem(slot, item, point_unpack(pos))
-				assert(dropped, "Couldn't PLACE dropped item in Inventory. Err: '" .. err .. "'")
-			end
-		end
-		
-		if not dropped then
-			DoneObject(item)
-		elseif slot == "InventoryDead" then
-			droped_items = droped_items + (item:IsLargeItem() and 2 or 1)
-		end
-	end, self, container, is_npc)
-
-	if droped_items > 0 then
-		self.max_dead_slot_tiles = droped_items
-	end
-
-	CombatLog("debug", debugText)
-end
-
-
-function Unit:DropLoot(container)
 	if self.militia then
 		local droped_items = 0
 		local is_npc = false
