@@ -38,7 +38,7 @@ end
 
 function OnMsg.ApplyModOptions(mod_id)
 
-	if CurrentModOptions and mod_id == CurrentModId then
+	if mod_id == CurrentModId and CurrentModOptions then
 		for k, v in pairs(CurrentModOptions) do
 			if string.starts_with(k, "huda_MilitiaShop") then
 				if (k == "huda_MilitiaShopTier") then

@@ -631,12 +631,12 @@ PlaceObj('ModItemOptionToggle', {
 	'Help', "Restart or Game (not Campaign) required. If this option is selected you will not control militia in battle and cannot fight offensively with militia squads.",
 }),
 PlaceObj('ModItemOptionToggle', {
-	'name', "huda_MilitiaNoFarFromHome",
-	'DisplayName', 'Deactivate "Far from home" Character effect',
-}),
-PlaceObj('ModItemOptionToggle', {
 	'name', "huda_MilitiaNoDownedEnemies",
 	'DisplayName', "Deactivate the downing of enemies and militia",
+}),
+PlaceObj('ModItemOptionToggle', {
+	'name', "huda_MilitiaNoFarFromHome",
+	'DisplayName', 'Deactivate "Far from home" Character effect',
 }),
 PlaceObj('ModItemOptionToggle', {
 	'name', "huda_MilitiaNoLoyaltyLoss",
@@ -806,7 +806,7 @@ PlaceObj('ModItemSectorOperation', {
 					self:ModifyProgress(progress_per_tick, sector)
 					self:CheckCompleted(merc, sector)
 	end,
-	description = T(536819957492, --[[ModItemSectorOperation HUDA_MilitiaBase description]] "Build a Militia Base as supply hub for local militia and to enable additional operations in this city. Having militia in this sector will reduce build time."),
+	description = T(536819957492, --[[ModItemSectorOperation HUDA_MilitiaBase description]] "Build a Militia Base as supply hub for local militia and to enable additional operations in this city. Additionally it will enable you to order equipment from the I.M.P.M.S.S to this location. Having militia in this sector will reduce build time."),
 	display_name = T(795766408263, --[[ModItemSectorOperation HUDA_MilitiaBase display_name]] "Build Militia Base"),
 	icon = "Mod/LXPER6t/Images/mb_operation.png",
 	id = "HUDA_MilitiaBase",

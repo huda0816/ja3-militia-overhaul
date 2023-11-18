@@ -1,3 +1,5 @@
+GameVar("gv_HUDA_NeededMilitia", {})
+
 function OnMsg.NewDay()
     HUDA_CheckCityOccupation()
 end
@@ -52,4 +54,40 @@ function HUDA_CheckCityOccupation()
             end
         end
     end
+end
+
+
+function HUDA_GetNeededMilitiaSoldiers(cityId)
+
+    local neededSoldiers, currentSoldiers = 0, 0
+
+    local city_sectors = HUDA_GetControlledCitySectors(cityId)
+
+    if city_sectors and #city_sectors > 0 then
+        for i, value in ipairs(city_sectors) do
+            local sector = gv_Sectors[value]
+
+            if sector then
+                local squads = sector.ally_and_militia_squads
+
+                for i, squad in ipairs(squads) do
+                    currentSoldiers = currentSoldiers + #squad.units
+                end
+            end
+        end
+
+        neededSoldiers = #city_sectors * 4
+    end
+
+    return neededSoldiers, currentSoldiers
+end
+
+function TFormat.cityLoyaltyConditional(ctx, cityId)
+	local loyalty = GetCityLoyalty(cityId)
+    if not gv_PlayerCityCounts or not gv_PlayerCityCounts.cities or not gv_PlayerCityCounts.cities[cityId] then
+		return false
+	end
+    local neededSoldiers, currentSoldiers = HUDA_GetNeededMilitiaSoldiers(cityId)
+
+	return Untranslated(" (" .. tostring(loyalty) .. "%)" .. "\n" .. tostring(currentSoldiers) .. "/" .. tostring(neededSoldiers) .." Soldiers")
 end

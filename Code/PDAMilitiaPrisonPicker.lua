@@ -152,6 +152,109 @@ PlaceObj("XTemplate", {
                             "SetFocusOnOpen",
                             true
                         }, {
+                            PlaceObj("XTemplateTemplate", {
+                                "__template",
+                                "PDACommonButton",
+                                "Padding",
+                                box(0, 0, 8, 0),
+                                "MinHeight",
+                                40,
+                                "MaxHeight",
+                                40,
+                                "LayoutMethod",
+                                "HList",
+                                "LayoutHSpacing",
+                                0,
+                                "OnPress",
+                                function(self, gamepad)
+                                    local pows = GetDialog(self).context.prisoners
+
+                                    HUDA_MilitiaPOW:SetPrisonersSector(pows)
+
+                                    local dlg = GetDialog(self)
+                                    dlg:Close()
+                                end
+                            }, {
+                                PlaceObj("XTemplateWindow", {
+                                    "__class",
+                                    "XSquareWindow",
+                                    "Margins",
+                                    box(0, 0, 5, 0),
+                                    "Background",
+                                    RGBA(191, 67, 97, 255),
+                                    "HAlign",
+                                    "left",
+                                    "VAlign",
+                                    "top",
+                                    "MinWidth",
+                                    38,
+                                    "MaxWidth",
+                                    38
+                                }, {
+                                    PlaceObj("XTemplateWindow", {
+                                        "__class",
+                                        "XText",
+                                        "Text",
+                                        "x",
+                                        "Margins",
+                                        box(2, 0, 0, 0),
+                                        "HAlign",
+                                        "center",
+                                        "VAlign",
+                                        "center",
+                                        "Clip",
+                                        false,
+                                        "TextStyle",
+                                        "PDASatelliteRollover_SectorTitle",
+                                        "Translate",
+                                        true,
+                                        "TextHAlign",
+                                        "center",
+                                        "TextVAlign",
+                                        "center"
+                                    })
+                                }),
+                                PlaceObj("XTemplateWindow", {
+                                    "__class",
+                                    "XText",
+                                    "Text",
+                                    "Hand over the prisoners to the local authorities",
+                                    "Margins",
+                                    box(2, 0, 0, 0),
+                                    "HAlign",
+                                    "left",
+                                    "VAlign",
+                                    "center",
+                                    "Clip",
+                                    false,
+                                    "TextStyle",
+                                    "PDACommonButton",
+                                    "Translate",
+                                    true,
+                                    "TextHAlign",
+                                    "left",
+                                    "TextVAlign",
+                                    "center"
+                                }),
+                                PlaceObj("XTemplateFunc", {
+                                    "name",
+                                    "IsSelectable(self)",
+                                    "func",
+                                    function(self)
+                                        return true
+                                    end
+                                }),
+                                PlaceObj("XTemplateFunc", {
+                                    "name",
+                                    "SetSelected(self, selected)",
+                                    "func",
+                                    function(self, selected)
+                                        self:SetFocus(selected)
+                                        self:SetImage(selected and "UI/PDA/os_system_buttons_yellow" or
+                                            "UI/PDA/os_system_buttons")
+                                    end
+                                })
+                            }),
                             PlaceObj("XTemplateForEach", {
                                 "array",
                                 function(parent, context)
@@ -174,9 +277,10 @@ PlaceObj("XTemplate", {
                                     }))
                                     child.idSectorSquare:SetBackground(color)
                                     child:SetText((sector.display_name or "") ..
-                                    " " .. context.current .. "+" .. context.new .. "/" .. context.max)
+                                        " " .. context.current .. "+" .. context.new .. "/" .. context.max)
 
-                                    child.idSectorGuards:SetText("Risk: " .. context.risk  .. " | Guards: " .. context.guards .. "/" .. context.neededGuards)
+                                    child.idSectorGuards:SetText("Risk: " ..
+                                        context.risk .. " | Guards: " .. context.guards .. "/" .. context.neededGuards)
                                     child.idIcon:SetVisible(false)
                                     child.idIcon:SetFoldWhenHidden(true)
                                     if i == 1 then

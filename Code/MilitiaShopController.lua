@@ -1202,11 +1202,9 @@ function HUDA_ShopController:ChooseAddress()
             end
         end
     else
-        for i, sectorId in ipairs(self.ValidDeliverySectors) do
-            local sector = gv_Sectors[sectorId]
-
-            if sector.Side == "player1" then
-                sector_posibilities[#sector_posibilities + 1] = sectorId
+        for id, sector in pairs(gv_Sectors) do
+            if sector.Side == "player1" and (HUDA_ArrayContains(self.ValidDeliverySectors, id) or sector.MilitiaBase)  then
+                sector_posibilities[#sector_posibilities + 1] = id
             end
         end
     end

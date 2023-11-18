@@ -6,7 +6,6 @@ if FirstLoad then
 end
 
 function OnMsg.ClosePDA()
-    
     local units = g_Units
 
     for _, unit in ipairs(units) do
@@ -43,13 +42,15 @@ function HUDA_MilitiaPOW:RollForRevolt()
     end
 
     for sectorId, prisoners in pairs(gv_HUDA_CapturedPows) do
-        local prisonData = self:GetPrisonData(sectorId)
+        if sectorId ~= "LOCALE" then
+            local prisonData = self:GetPrisonData(sectorId)
 
-        if prisonData then
-            local roll = InteractionRandRange(20, 100)
+            if prisonData then
+                local roll = InteractionRandRange(20, 100)
 
-            if roll < prisonData.riskPercent then
-                self:Revolt(sectorId)
+                if roll < prisonData.riskPercent then
+                    self:Revolt(sectorId)
+                end
             end
         end
     end
@@ -135,7 +136,8 @@ function HUDA_MilitiaPOW:Revolt(sectorId)
 
     local dlg = CreateMessageBox(popupHost, Untranslated("Prison Break!"),
         TConcat(
-            { T { 9647881607660815, "An uprising has occurred in sector <em><sector></em>. The prisoners ", sector = sectorId }, revoltResult }, ""))
+            { T { 9647881607660815, "An uprising has occurred in sector <em><sector></em>. The prisoners ", sector = sectorId },
+                revoltResult }, ""))
 end
 
 function wadd(sessionId)
@@ -193,26 +195,29 @@ function HUDA_MilitiaPOW:DeliverPOWs()
     for _, squad in ipairs(sector.enemy_squads) do
         if squad.Side ~= "neutral" then
             enemies = true
-        else
-            for _, unitId in ipairs(squad.units) do
-                local unit = gv_UnitData[unitId]
-
-                if unit and unit.HireStatus == "Captured" then
-                    table.insert(pows, unit)
-                end
-            end
         end
     end
 
-    if enemies or not next(pows) then
+    if enemies then
         return
     end
 
-    for _, unit in ipairs(pows) do
-        unit.villain = false
-        unit:RemoveStatusEffect("Downed")
-        unit:RemoveStatusEffect("Unconscious")
-        unit:RemoveStatusEffect("BleedingOut")
+    local units = g_Units
+
+    for _, unit in ipairs(units) do
+        if unit.HireStatus == "Captured" then
+            unit.villain = false
+            unit:RemoveStatusEffect("Downed")
+            unit:RemoveStatusEffect("Unconscious")
+            unit:RemoveStatusEffect("BleedingOut")
+            local container = GetDropContainer(unit)
+            unit:DropLoot(container)
+            table.insert(pows, unit)
+        end
+    end
+
+    if not next(pows) then
+        return
     end
 
     self:ChoosePrison(pows)
@@ -360,11 +365,6 @@ function HUDA_MilitiaPOW:ChoosePrison(pows)
     local popupHost = GetDialog("PDADialogSatellite")
     popupHost = popupHost and popupHost:ResolveId("idDisplayPopupHost")
 
-    if #sector_posibilities < 1 then
-        CreateMessageBox(popupHost, "Select Prison", "There are no prisons available to send the POWs to.")
-        return
-    end
-
     local pickDlg = XTemplateSpawn("PDAMilitiaPrisonPicker", popupHost, {
         sectors = sector_posibilities,
         prisoners = pows,
@@ -374,8 +374,10 @@ function HUDA_MilitiaPOW:ChoosePrison(pows)
 end
 
 function HUDA_MilitiaPOW:SetPrisonersSector(pows, sectorId)
-    gv_HUDA_CapturedPows = gv_HUDA_CapturedPows or {}
 
+    sectorId = sectorId or "LOCALE"
+
+    gv_HUDA_CapturedPows = gv_HUDA_CapturedPows or {}
     gv_HUDA_CapturedPows[sectorId] = gv_HUDA_CapturedPows[sectorId] or {}
 
     for _, unit in ipairs(pows) do
@@ -405,17 +407,52 @@ function HUDA_MilitiaPOW:HandleBleedingOut(bo, target)
     end
 end
 
+function HUDA_MilitiaPOW:IsNoDowner(unit)
+    if unit.species ~= "Human" or unit.villain or unit.ImportantNPC or unit.infected or unit.group == "NPC" then
+        return true
+    end
+
+    local excludedList = {
+        "LegionRaider_Jose",
+        "JoseFamily_All",
+        "HermanRaiders",
+        "AbuserPoacher_All",
+        "Crocs",
+        "Knights",
+        "Nobles",
+        "RimvilleGuardsAll",
+        "SmileyThugs",
+        "RefugeeRaiders",
+        "PierreAndGuards",
+        "LegionImpostors",
+        "Fighters"
+    }
+
+    if not unit.Groups or #unit.Groups < 1 then
+        return false
+    end
+
+    for _, group in ipairs(unit.Groups) do
+        if HUDA_ArrayContains(excludedList, group) then
+            return true
+        end
+    end
+
+    return false
+end
+
 local HUDA_OriginalShouldGetDowned = Unit.ShouldGetDowned
 
 function Unit:ShouldGetDowned(hit_descr)
-
-    if CurrentModOptions["huda_MilitiaNoDownedEnemies"] then
-
+    if CurrentModOptions["huda_MilitiaNoDownedEnemies"] or HUDA_MilitiaPOW:IsNoDowner(self) then
         return HUDA_OriginalShouldGetDowned(self, hit_descr)
-
     end
 
     if hit_descr and hit_descr.was_downed then
+        return false
+    end
+
+    if hit_descr and hit_descr.spot == "Head" then
         return false
     end
 
@@ -426,7 +463,7 @@ function Unit:ShouldGetDowned(hit_descr)
 
         local downroll = InteractionRand(7, "Downed")
 
-        local overkill = hit_descr.raw_damage - hit_descr.prev_hit_points
+        local overkill = hit_descr and (hit_descr.raw_damage - hit_descr.prev_hit_points) or 0
 
         local threshold = 10
 
@@ -511,22 +548,6 @@ function Unit:Captured()
     self:SyncWithSession("map")
     Msg("VillainDefeated", self, self.on_die_attacker)
     Halt()
-end
-
-function OnMsg.EnemyCaptured(unit)
-    if not g_Combat then
-        lCheckMapConflictResolved()
-    end
-end
-
-function OnMsg.EnemyCaptured(unit)
-    UpdateDeadGroups(unit.Groups)
-end
-
-function OnMsg.EnemyCaptured(unit)
-    if unit and unit.ui_badge then
-        unit.ui_badge:UpdateMode()
-    end
 end
 
 function Unit:IsBeingCaptured()
@@ -1171,4 +1192,24 @@ function Unit:RecalcUIActions(force)
     end
 
     return HUDA_OriginalRecalcUIActions(self, force)
+end
+
+local HUDA_OriginalExitCombat = Unit.ExitCombat
+
+function Unit:ExitCombat()
+    if self:IsDowned() then
+        local squad = self.Squad and gv_Squads[self.Squad] or false
+
+        if squad and squad.Side == "enemy1" then
+            self:Die()
+            return
+        end
+    end
+
+    HUDA_OriginalExitCombat(self)
+end
+
+-- patch for core bug
+function lCheckMapConflictResolved()
+    CheckMapConflictResolved()
 end

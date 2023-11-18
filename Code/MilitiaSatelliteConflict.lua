@@ -257,51 +257,7 @@ end
 local HUDA_OriginalDropLoot = Unit.DropLoot
 
 function Unit:DropLoot(container)
-	local is_npc = self:IsNPC()
-	
-	local debugText =  _InternalTranslate(self.Name) .. " dropping loot: (roll must be lower)"
-	
-	-- Locked items never drop.
-	-- Go over the equipped items, drop them to "Inventory" based on their drop chance,
-	-- Equipped items from Mercs always drop(except locked items). Otherwise check the drop chance.
-	local droped_items = 0
-	self:ForEachItem(function(item, slot_name, left, top, self, container, is_npc)
-		if slot_name == "InventoryDead" then return end
-		self:RemoveItem(slot_name, item)	
-		
-		local dropped
-		local roll = self:Random(100)
-		local slot = container and "Inventory" or "InventoryDead"
-		
-		debugText = debugText .. "\n " ..  _InternalTranslate(item.DisplayName) .. ": roll " .. roll .. "/" .. item.drop_chance .. "% chance" 
 
-		if not item.locked and (not is_npc or roll < item.drop_chance) then
-			local addTo = container or self
-			
-			local pos, err = addTo:CanAddItem(slot, item)
-			assert(pos, "Couldn't FIND pos in Inventory to place dropped item. Err: '" .. err .. "'")
-			if pos then
-				dropped, err = addTo:AddItem(slot, item, point_unpack(pos))
-				assert(dropped, "Couldn't PLACE dropped item in Inventory. Err: '" .. err .. "'")
-			end
-		end
-		
-		if not dropped then
-			DoneObject(item)
-		elseif slot == "InventoryDead" then
-			droped_items = droped_items + (item:IsLargeItem() and 2 or 1)
-		end
-	end, self, container, is_npc)
-
-	if droped_items > 0 then
-		self.max_dead_slot_tiles = droped_items
-	end
-
-	CombatLog("debug", debugText)
-end
-
-
-function Unit:DropLoot(container)
 	if self.militia then
 		local droped_items = 0
 		local is_npc = false
