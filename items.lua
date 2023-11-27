@@ -216,6 +216,18 @@ PlaceObj('ModItemCode', {
 	'CodeFileName', "Code/MilitiaTraining.lua",
 }),
 PlaceObj('ModItemCode', {
+	'name', "MilitiaTransfer",
+	'CodeFileName', "Code/MilitiaTransfer.lua",
+}),
+PlaceObj('ModItemCode', {
+	'name', "MilitiaTransferOR",
+	'CodeFileName', "Code/MilitiaTransferOR.lua",
+}),
+PlaceObj('ModItemCode', {
+	'name', "MilitiaTransferPDA",
+	'CodeFileName', "Code/MilitiaTransferPDA.lua",
+}),
+PlaceObj('ModItemCode', {
 	'name', "MilitiaTutorial",
 	'CodeFileName', "Code/MilitiaTutorial.lua",
 }),
@@ -336,8 +348,8 @@ PlaceObj('ModItemCode', {
 	'CodeFileName', "Code/PeopleController.lua",
 }),
 PlaceObj('ModItemCode', {
-	'name', "MilitiaItemsSale",
-	'CodeFileName', "Code/MilitiaItemsSale.lua",
+	'name', "MilitiaTransferXDrag",
+	'CodeFileName', "Code/MilitiaTransferXDrag.lua",
 }),
 PlaceObj('ModItemConstDef', {
 	group = "Loyalty",
@@ -1385,9 +1397,6 @@ PlaceObj('ModItemSectorOperation', {
 			merc:SetCurrentOperation("Idle")
 		end
 		self:OnComplete(sector, mercs)
-		if next(merc_names) then
-			CombatLog("important", T{258083168009, "<em><mercs></em> completed <em><activity></em> in <SectorName(sector)>", mercs = ConcatListWithAnd(merc_names),activity = self.display_name, sector = sector})
-		end
 		Msg("OperationCompleted", self, mercs, sector)
 	end,
 	Custom = false,
@@ -1400,6 +1409,12 @@ PlaceObj('ModItemSectorOperation', {
 	end,
 	IsEnabled = function (self, sector)
 		return true
+	end,
+	ModifyProgress = function (self, value, sector)
+		local ac = sector.custom_operations and sector.custom_operations[self.id]
+		if ac then
+			ac.progress = ac.progress + value
+		end
 	end,
 	OnComplete = function (self, sector, mercs)
 		HUDA_MilitiaTransfer:OnComplete(self, sector, mercs)
@@ -1441,13 +1456,25 @@ PlaceObj('ModItemSectorOperation', {
 		}),
 	},
 	ProgressCompleteThreshold = function (self, merc, sector, prediction)
-		return 100
+		return 1200
 	end,
 	ProgressCurrent = function (self, merc, sector, prediction)
 		return sector.custom_operations and sector.custom_operations[self.id] and sector.custom_operations[self.id].progress or 0
 	end,
 	ProgressPerTick = function (self, merc, prediction)
-		return 1
+		local _, val = self:GetRelatedStat(merc)
+		local sector = merc:GetSector()
+		local militia_id = sector.militia_squad_id
+		local militia = 0
+		
+		if militia_id then
+			local squad = gv_Squads[militia_id]
+			if squad then
+		   	militia = #squad.units
+			end
+		end
+		
+		return 40 + val/4 + Min(60 , militia * 15)
 	end,
 	SectorMercsTick = GetMissingSourceFallback(),
 	SortKey = 50,
@@ -1460,14 +1487,14 @@ PlaceObj('ModItemSectorOperation', {
 					self:ModifyProgress(progress_per_tick, sector)
 					self:CheckCompleted(merc, sector)
 	end,
-	description = T(755251452409, --[[ModItemSectorOperation HUDA_MilitiaSellItems description]] "This logistics operation makes it possible to collect items in a city, transfer them to other sectors or sell them to Arulco's emerging new army."),
+	description = T(755251452409, --[[ModItemSectorOperation HUDA_MilitiaSellItems description]] "This logistics operation makes it possible to collect items in a city, transport them to other sectors, or sell them to Arulco's emerging army. Stronger mercenaries can complete the operation faster. If there are militias in this sector, the speed of operations will be increased."),
 	display_name = T(644135474473, --[[ModItemSectorOperation HUDA_MilitiaSellItems display_name]] "Collect & Transfer"),
 	icon = "UI/SectorOperations/T_Icon_Activity_Traveling",
 	id = "HUDA_MilitiaSellItems",
-	image = "UI/Messages/Operations/repair_item",
+	image = "Mod/LXPER6t/Images/Screenshot0017.png",
 	related_stat = "Strength",
 	short_name = T(455632938641, --[[ModItemSectorOperation HUDA_MilitiaSellItems short_name]] "Collect Items, Transfer or sell them"),
-	sub_title = T(600149283128, --[[ModItemSectorOperation HUDA_MilitiaSellItems sub_title]] "Collect items in the city, transfer or sell them"),
+	sub_title = T(600149283128, --[[ModItemSectorOperation HUDA_MilitiaSellItems sub_title]] "Collect, transfer or sell items"),
 }),
 PlaceObj('ModItemTextStyle', {
 	RolloverTextColor = 4291018156,
