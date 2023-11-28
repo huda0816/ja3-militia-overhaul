@@ -1,39 +1,35 @@
 function HUDA_GetModOptions(id, default, type)
 
-	return default
+	if nil == CurrentModOptions then
+		return default
+	end
 
-	-- if nil == CurrentModOptions then
-	-- 	return default
-	-- end
+	id = "huda_" .. id
 
-	-- id = "huda_" .. id
+	if type == "number" then
+		return tonumber(CurrentModOptions[id]) or default
+	end
 
-	-- if type == "number" then
-	-- 	return tonumber(CurrentModOptions[id]) or default
-	-- end
-
-	-- return CurrentModOptions[id] or default
+	return CurrentModOptions[id] or default
 end
 
 function HUDA_GetShopOptions(id, default, type)
 
-	return default
+	if nil == CurrentModOptions then
+		return default
+	end
 
-	-- if nil == CurrentModOptions then
-	-- 	return default
-	-- end
+	id = "huda_MilitiaShop" .. id
 
-	-- id = "huda_MilitiaShop" .. id
+	if CurrentModOptions[id] == nil then
+		return default
+	end
 
-	-- if CurrentModOptions[id] == nil then
-	-- 	return default
-	-- end
+	if type == "number" then
+		return tonumber(CurrentModOptions[id])
+	end
 
-	-- if type == "number" then
-	-- 	return tonumber(CurrentModOptions[id])
-	-- end
-
-	-- return CurrentModOptions[id]
+	return CurrentModOptions[id]
 end
 
 function OnMsg.ApplyModOptions(mod_id)
