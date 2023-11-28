@@ -238,7 +238,7 @@ end
 function HUDA_MilitiaPOW:CalculateRisk(sectorId, new)
     local reasons = {}
 
-    num = (new or 0) + self:GetCurrentPrisonersNumber(sectorId)
+    local num = (new or 0) + self:GetCurrentPrisonersNumber(sectorId)
 
     if num == 0 then
         return 0, 100, 0, reasons

@@ -56,7 +56,7 @@ function HUDA_ConflictTracker:ResolveConflict(sector, playerAttacked, playerWon,
     local conflict = self:GetConflict(sector.Id)
 
     if not conflict then
-        print("No unresolved conflict found for sector " .. sectorId .. ".")
+        print("No unresolved conflict found for sector " .. sector.Id .. ".")
         return
     end
 
