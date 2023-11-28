@@ -58,18 +58,15 @@ function HUDA_MilitiaTransfer:QueueHasItems(sectorId)
 end
 
 function HUDA_MilitiaTransfer:GetFilter(sectorId)
-
     local sector = gv_Sectors[sectorId]
 
     sector.custom_operations = sector.custom_operations or {}
     sector.custom_operations[self.opId] = sector.custom_operations[self.opId] or {}
 
     return sector.custom_operations[self.opId].filter or {}
-
 end
 
 function HUDA_MilitiaTransfer:SetFilter(sectorId, filter)
-    
     local sector = gv_Sectors[sectorId]
 
     sector.custom_operations = sector.custom_operations or {}
@@ -86,12 +83,20 @@ function HUDA_MilitiaTransfer:Filter(sectorId, category, source)
     if table.find(categories, category) then
         table.remove_value(categories, category)
         if source then
-            source:SetTextColor(GameColors.grey_70)
+            source:SetBackground(RGBA(255, 255, 255, 255))
+            source:SetFocusedBackground(RGBA(255, 255, 255, 255))
+            source:SetRolloverBackground(RGBA(255, 255, 255, 255))
+            source:SetTextColor(RGB(32, 25, 47))
+            source:SetRolloverTextColor(RGB(32, 25, 47))
         end
     else
         table.insert(categories, category)
         if source then
-            source:SetTextColor(GameColors.Player)
+            source:SetBackground(GameColors.Player)
+            source:SetFocusedBackground(GameColors.Player)
+            source:SetRolloverBackground(GameColors.Player)
+            source:SetTextColor(RGB(255, 255, 255))
+            source:SetRolloverTextColor(RGB(255, 255, 255))
         end
     end
 
@@ -99,21 +104,24 @@ function HUDA_MilitiaTransfer:Filter(sectorId, category, source)
 end
 
 function HUDA_MilitiaTransfer:SetButtonState(button)
-
     local active = self:GetFilterState(button)
 
     if active then
-        button:SetTextColor(GameColors.Player)
-        button:SetRolloverText(T{ 258083168009082612, "Click to disable filter" })
+        button:SetBackground(GameColors.Player)
+        button:SetFocusedBackground(GameColors.Player)
+        button:SetRolloverBackground(GameColors.Player)
+        button:SetTextColor(RGB(255, 255, 255))
+        button:SetRolloverTextColor(RGB(255, 255, 255))
     else
-        button:SetTextColor(GameColors.grey_70)
-        button:SetRolloverText(T{ 258083168009082713, "Click to enable filter" })
+        button:SetBackground(RGBA(255, 255, 255, 255))
+        button:SetFocusedBackground(RGBA(255, 255, 255, 255))
+        button:SetRolloverBackground(RGBA(255, 255, 255, 255))
+        button:SetTextColor(RGB(32, 25, 47))
+        button:SetRolloverTextColor(RGB(32, 25, 47))
     end
-
 end
 
 function HUDA_MilitiaTransfer:GetFilterState(button)
-
     local sectorId = button.context.Id
 
     local filter = self:GetFilter(sectorId)
@@ -137,7 +145,6 @@ function HUDA_MilitiaTransfer:GetFilterState(button)
     end
 
     return table.find(filter, buttonCat) and true or false
-
 end
 
 function HUDA_MilitiaTransfer:GetTotalPrice(sectorId)
@@ -625,6 +632,19 @@ function NetSyncEvents.HudaChangeSectorOperationItemsOrder(sector_id, operation_
     local tbl = HUDA_MilitiaTransfer:SetQueue(sector, operation_id, TableWithItemsFromNet(sector_items_queued))
     -- ObjModified(sector)
     ObjModified(tbl)
+end
+
+local HUDA_OriginalInterruptSectorOperation = NetSyncEvents.InterruptSectorOperation
+
+function NetSyncEvents.InterruptSectorOperation(sector_id, operation, reason)
+    
+    if operation == "HUDA_MilitiaSellItems" then
+        local sector = gv_Sectors[sector_id]
+        sector.operations_temp_data[operation] = false
+        sector.custom_operations[operation] = nil
+    end
+
+    HUDA_OriginalInterruptSectorOperation(sector_id, operation, reason)
 end
 
 PlaceObj('SatelliteTimelineEventDef', {

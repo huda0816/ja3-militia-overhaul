@@ -19,9 +19,9 @@ DefineClass.Capturing = {
 			end,
 		}),
 	},
-	DisplayName = T(124552607340, --[[ModItemCharacterEffectCompositeDef Capturing DisplayName]] "Capturing"),
-	Description = T(437350905663, --[[ModItemCharacterEffectCompositeDef Capturing Description]] "Capturing a downed or unconscious enemy. No more actions available this turn."),
-	AddEffectText = T(147219111219, --[[ModItemCharacterEffectCompositeDef Capturing AddEffectText]] "Capturing"),
+	DisplayName = T(148745064166, --[[ModItemCharacterEffectCompositeDef Capturing DisplayName]] "Capturing"),
+	Description = T(819876370844, --[[ModItemCharacterEffectCompositeDef Capturing Description]] "Capturing a downed or unconscious enemy. No more actions available this turn."),
+	AddEffectText = T(462403006623, --[[ModItemCharacterEffectCompositeDef Capturing AddEffectText]] "Capturing"),
 	OnAdded = function (self, obj)
 		HUDA_MilitiaPOW:CapturingOnAdded(self, obj)
 	end,

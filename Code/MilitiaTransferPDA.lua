@@ -33,28 +33,13 @@ PlaceObj('XTemplate', {
         'Translate', true,
         'ColumnsUse', "abcca",
     }, {
-        -- PlaceObj('XTemplateFunc', {
-        --     'name', "OnSetRollover(self, rollover)",
-        --     'func', function (self, rollover)
-        --         PDACommonButtonClass.OnSetRollover(self,rollover)
-        --     end,
-        -- }),
         PlaceObj('XTemplateFunc', {
-			'name', "Open",
-			'func', function (self, ...)
-                print("PDAHUDAOPActionButtonClass Open")
-                PDACommonButtonClass.Open(self)
-				HUDA_MilitiaTransfer:SetButtonState(self)
-			end,
-		}),
-        -- PlaceObj('XTemplateFunc', {
-		-- 	'name', "OnLayoutComplete(self, ...)",
-		-- 	'func', function (self, ...)
-        --         print("PDAHUDAOPActionButtonClass OnLayoutComplete")
-        --         PDACommonButtonClass.OnLayoutComplete(self,...)
-		-- 		HUDA_MilitiaTransfer:SetButtonState(self)
-		-- 	end,
-		-- }),
+            'name', "Open",
+            'func', function(self, ...)
+            PDACommonButtonClass.Open(self)
+            HUDA_MilitiaTransfer:SetButtonState(self)
+        end,
+        })
     }),
 })
 
