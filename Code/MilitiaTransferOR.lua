@@ -147,7 +147,7 @@ if FirstLoad then
         local operation_id = host.mode_param.operation
         local sector = host.context
         local operation = SectorOperations[operation_id]
-        if not operation_id == HUDA_MilitiaTransfer:GetOpId() then
+        if operation_id ~= HUDA_MilitiaTransfer:GetOpId() then
             return "hidden"
         end
         if GetDialog("SectorOperationsAssignDlgUI") then
