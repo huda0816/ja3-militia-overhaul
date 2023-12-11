@@ -187,7 +187,16 @@ function HUDA_MilitiaPOW:HasPOWs(sectorId)
 end
 
 function HUDA_MilitiaPOW:DeliverPOWs()
+
+    if not gv_CurrentSectorId then
+        return
+    end
+
     local sector = gv_Sectors[gv_CurrentSectorId]
+
+    if not sector then
+        return
+    end
 
     local enemies = false
     local pows = {}
@@ -374,7 +383,6 @@ function HUDA_MilitiaPOW:ChoosePrison(pows)
 end
 
 function HUDA_MilitiaPOW:SetPrisonersSector(pows, sectorId)
-
     sectorId = sectorId or "LOCALE"
 
     gv_HUDA_CapturedPows = gv_HUDA_CapturedPows or {}

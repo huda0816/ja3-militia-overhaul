@@ -621,11 +621,13 @@ function HUDA_MilitiaTraining:IsEnabled(op, sector)
 		return true
 	end
 
-	if gv_HUDA_MilitiaRecruits[city] > 0 then
+	gv_HUDA_MilitiaRecruits = gv_HUDA_MilitiaRecruits or {}
+
+	if (gv_HUDA_MilitiaRecruits[city] or 0) > 0 then
 		return true
 	end
 
-	return false, T(0816764949488129, "No more recruits in this city")
+	return false, T(0816764949488129, "No recruits available in this city")
 end
 
 function HUDA_MilitiaTraining:GetLeastExpMilitia(sector)

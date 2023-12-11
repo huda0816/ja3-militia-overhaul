@@ -44,14 +44,27 @@ function InitBrowserModes()
     end
 end
 
-function OnMsg.SquadSpawned(id)
+-- function OnMsg.SquadSpawned(id)
+--     if gv_HUDA_Website_Status.launched then
+--         return
+--     end
+
+--     local squad = gv_Squads[id]
+
+--     if not squad or not squad.militia then
+--         return
+--     end
+
+--     HUDA_LaunchWebsite()
+-- end
+
+function OnMsg.OperationCompleted(operation, mercs, sector)
+
     if gv_HUDA_Website_Status.launched then
         return
     end
 
-    local squad = gv_Squads[id]
-
-    if not squad or not squad.militia then
+    if operation.id ~= "HUDA_MilitiaBase" then
         return
     end
 

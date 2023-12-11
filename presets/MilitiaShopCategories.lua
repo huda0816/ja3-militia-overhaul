@@ -32,7 +32,7 @@ PlaceObj('HUDAMilitiaShopCategory', {
 
 PlaceObj('HUDAMilitiaShopCategory', {
     id = "rifles",
-    title = "Rifles & Snipers",
+    title = "Rifles",
     description = "Browse precision rifles and powerful sniper rifles.",
     weight = 4000,
     order = 50
@@ -91,7 +91,7 @@ PlaceObj('HUDAMilitiaShopCategory', {
     id = "tools",
     title = "Tools",
     description = "Essential tools and equipment for your missions.",
-    weight = 1000,
+    weight = 500,
     order = 130
 })
 
@@ -99,7 +99,7 @@ PlaceObj('HUDAMilitiaShopCategory', {
     id = "misc",
     title = "Misc",
     description = "Assorted miscellaneous items for various needs.",
-    weight = 1000,
+    weight = 500,
     order = 140
 })
 
@@ -122,7 +122,7 @@ PlaceObj('HUDAMilitiaShopCategory', {
 
 PlaceObj('HUDAMilitiaShopCategory', {
     id = "throwables",
-    title = "Grenades",
+    title = "Throwables",
     description = "An assortment of grenades and tactical throwables.",
     weight = 500,
     order = 170

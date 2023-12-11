@@ -51,6 +51,7 @@ function OnMsg.SectorSideChanged(sectorId, oldSide, newSide)
 end
 
 function OnMsg.ZuluGameLoaded(game)
+    gv_HUDA_ShopStatus.tier = Min(3, gv_HUDA_ShopStatus.tier or 1)
     HUDA_ShopController:InitGVs()
 end
 
@@ -95,10 +96,10 @@ function HUDA_ShopController:InitGVs()
 
     self:UpdateCouponCodes()
     self:Restock()
+    self:UpdateTopSellers()
 end
 
 function HUDA_ShopController:Init()
-
     if gv_HUDA_ShopStatus.initialized then
         return
     end
@@ -245,6 +246,24 @@ function HUDA_ShopController:UpdateTopSellers()
     local orders = gv_HUDA_ShopOrders
 
     if not next(orders) then
+        local products = gv_HUDA_ShopInventory
+
+        if not next(products) then
+            return
+        end
+
+        local top = {}
+
+        for _, product in ipairs(products) do
+            local roll = InteractionRand(100, "topSellers")
+
+            if roll > 80 then
+                table.insert(top, { id = product.id, count = 0 })
+            end
+        end
+
+        gv_HUDA_ShopStatus.topSellers = top
+
         return
     end
 
@@ -426,6 +445,162 @@ function HUDA_ShopController:MaybeRestock(sectors)
 end
 
 function HUDA_ShopController:Restock()
+    local tier = Min(3, gv_HUDA_ShopStatus.tier or 1)
+
+    local filteredProducts = {}
+
+    ForEachPreset("InventoryItemCompositeDef", function(preset)
+        local item = g_Classes[preset.id]
+        if item.CanAppearInShop and item.CanAppearStandard and item.Tier <= tier and item.RestockWeight > 0 then
+            table.insert(filteredProducts, item)
+        end
+    end)
+
+    local products = {}
+
+    for i, productData in ipairs(filteredProducts) do
+        local roll = InteractionRand(100, "HUDA_ShopAvailability")
+
+        local product = {}
+
+        productData.RestockWeight = productData.RestockWeight or 100
+        productData.Tier = productData.Tier or 1
+        productData.MaxStock = productData.MaxStock or 0
+
+        product.basePrice = productData.Cost or 0
+
+        if productData.MaxStock > 0 and productData.RestockWeight > 0 and roll < (productData.RestockWeight or 100) + ((tier - productData.Tier) * 10) then
+            local tierBonus = 1 + ((tier - productData.Tier) * 0.5)
+
+            local stock = round(productData.MaxStock * tierBonus, 1)
+
+            if self.StockMultiplier then
+                stock = round(stock * self.StockMultiplier, 1)
+            else
+                local stockRoll = InteractionRandRange(80, 120, "HUDA_ShopStock")
+
+                stock = MulDivRound(stock, stockRoll, 100)
+            end
+
+            if stock > 0 then
+                product.stock = stock * (productData.ShopStackSize or 1)
+
+                table.insert(products, {
+                    product = product,
+                    productData = productData
+                })
+            end
+        end
+    end
+
+    gv_HUDA_ShopInventory = self:PrepareProducts(products)
+end
+
+function HUDA_ShopController:PrepareProducts(products)
+    local preparedProducts = {}
+
+    if not next(gv_HUDA_ShopStatus.arrived) then
+        gv_HUDA_ShopStatus.arrived = {}
+        for i, product in ipairs(products) do
+            table.insert(gv_HUDA_ShopStatus.arrived, product.productData.Id)
+        end
+    end
+
+    for i, productArr in ipairs(products) do
+        local product = self:PrepareProduct(productArr.product, productArr.productData)
+
+        table.insert(preparedProducts, product)
+    end
+
+    self:CheckNewArrivals(preparedProducts)
+
+    return preparedProducts
+end
+
+function HUDA_ShopController:PrepareProduct(product, productData)
+    if not table.find(gv_HUDA_ShopStatus.arrived, productData.Id) then
+        product.new = true
+
+        table.insert(gv_HUDA_ShopStatus.arrived, productData.Id)
+    else
+        product.new = false
+    end
+
+    product.id = productData.class
+    product.tier = productData.Tier or 1
+    product.basePrice = MulDivRound((productData.Cost or 0) / (productData.ShopStackSize or 1), 95, 100)
+    product.description = productData.Description or ""
+    product.name = productData.DisplayName
+    product.image = productData.Icon
+    product.weight = productData.Weight and round(productData.Weight * 1000, 1) or nil
+    product.maxStack = productData.MaxStacks or 1
+    product.order = 10
+
+    product.category = self:MapProductCategory(productData)
+
+    local category = HUDA_ArrayFind(self.Categories, function(i, category)
+        return category.id == product.category
+    end)
+
+    if productData.ShopStackSize then
+        product.minAmount = productData.ShopStackSize
+    elseif category then
+        product.minAmount = category.minAmount
+    else
+        product.minAmount = 1
+    end
+
+    if productData.Caliber then
+        product.caliber = productData.Caliber
+        product.caliberName = self:GetCaliberName(productData.Caliber)
+    end
+
+    return product
+end
+
+function HUDA_ShopController:MapProductCategory(productData)
+    local category = productData:GetCategory().id
+
+    local subCategory = productData:GetSubCategory().id
+
+    if string.find(productData.class, "SkillMag") then
+        return "magazines"
+    elseif category == "Weapons" and subCategory == "Handguns" then
+        return "pistols"
+    elseif category == "Weapons" and subCategory == "AssaultRifles" then
+        return "assault"
+    elseif category == "Weapons" and subCategory == "Shotguns" then
+        return "shotguns"
+    elseif category == "Weapons" and subCategory == "Rifles" then
+        return "rifles"
+    elseif category == "Weapons" and subCategory == "MachineGuns" then
+        return "machineguns"
+    elseif category == "Weapons" and subCategory == "MeleeWeapons" then
+        return "melee"
+    elseif category == "Weapons" and subCategory == "HeavyWeapons" then
+        return "heavy"
+    elseif category == "Weapons" and subCategory == "SubmachineGuns" then
+        return "smgs"
+    elseif category == "Ammo" then
+        return "ammo"
+    elseif category == "Armor" then
+        return "armor"
+    elseif category == "Other" and subCategory == "Grenade" then
+        return "throwables"
+        -- elseif category == "Other" and subCategory == "Components" then
+        --     return "explosives"
+        -- elseif category == "Other" and subCategory == "Resource" then
+        --     return "crafting"
+    elseif category == "Other" and subCategory == "Medicine" then
+        return "medical"
+    elseif category == "Other" and subCategory == "Tool" then
+        return "tools"
+    end
+
+    return "misc"
+end
+
+function HUDA_ShopController:RestockOld()
     Msg("HUDAMilitaShopBeforeRestock")
 
     local tier = gv_HUDA_ShopStatus.tier or 1
@@ -438,6 +613,8 @@ function HUDA_ShopController:Restock()
 
     for i, product in ipairs(filteredProducts) do
         local roll = InteractionRand(100, "HUDA_ShopAvailability")
+
+
 
         product.availability = product.availability or 100
         product.tier = product.tier or 1
@@ -692,7 +869,7 @@ function HUDA_ShopController:GetProducts(query, noqueryupdate)
     return preparedProducts
 end
 
-function HUDA_ShopController:PrepareProducts(products)
+function HUDA_ShopController:PrepareProductsOld(products)
     local preparedProducts = {}
 
     if not next(gv_HUDA_ShopStatus.arrived) then
@@ -733,7 +910,7 @@ function HUDA_ShopController:CheckNewArrivals(products)
     self:SendMails("NewArrivals", { equipment = newProductsStr })
 end
 
-function HUDA_ShopController:PrepareProduct(product)
+function HUDA_ShopController:PrepareProductOld(product)
     local productData = g_Classes[product.id]
 
     if productData == nil then
@@ -752,7 +929,7 @@ function HUDA_ShopController:PrepareProduct(product)
     product.name = productData.DisplayName
     product.image = productData.Icon
     product.weight = (product.weight ~= 0 and product.weight) or
-    (productData.Weight and round(productData.Weight * 1000, 1) or nil)
+        (productData.Weight and round(productData.Weight * 1000, 1) or nil)
     product.maxStack = productData.MaxStacks or 1
     product.minAmount = product.minAmount or productData.MinAmount or nil
 
@@ -1203,7 +1380,7 @@ function HUDA_ShopController:ChooseAddress()
         end
     else
         for id, sector in pairs(gv_Sectors) do
-            if sector.Side == "player1" and (HUDA_ArrayContains(self.ValidDeliverySectors, id) or sector.MilitiaBase)  then
+            if sector.Side == "player1" and (HUDA_ArrayContains(self.ValidDeliverySectors, id) or sector.MilitiaBase) then
                 sector_posibilities[#sector_posibilities + 1] = id
             end
         end
@@ -1244,9 +1421,9 @@ function HUDA_ShopController:Pay(cart)
 end
 
 function HUDA_ShopController:CheckTierStatus(mail)
-    local currentTier = gv_HUDA_ShopStatus.tier or 1
+    local currentTier = Min(3, gv_HUDA_ShopStatus.tier or 1)
 
-    if currentTier == 5 then
+    if currentTier == 3 then
         return
     end
 
@@ -1263,12 +1440,8 @@ function HUDA_ShopController:CheckTierStatus(mail)
     local newTier = currentTier
 
     if militiaNum >= 64 then
-        newTier = 5
-    elseif militiaNum >= 48 then
-        newTier = 4
-    elseif militiaNum >= 32 then
         newTier = 3
-    elseif militiaNum >= 16 then
+    elseif militiaNum >= 32 then
         newTier = 2
     elseif militiaNum >= 4 then
         newTier = 1
