@@ -1,8 +1,176 @@
+-- backgrounds: Student, Rich Kid, Revolutionary, ExLegion, ExArmy, SlumKid, ExCriminal, ExCop, Doctor/Nurse, Worker, Miner, Farmer, Teacher, Journalist, Refugee, ExGangMember, Prominent, Athlete
+
+-- Prominent
+-- very rare
+-- Location: Everywhere
+-- Equipment: Up to tier 3
+-- Equipment: 2x Armor, 1x Firearm
+-- Special: Increases militia popularity in GC. Everytime someone dies in the squad the prominent has to roll to stay in the militia.
+-- Loyalty: medium
+-- Possible Specialization: Leader
+
+-- Athlete
+-- very rare
+-- Location: Everywhere
+-- Equipment: Up to tier 2
+-- Equipment: 1x Armor, 1x Firearm
+-- Special: Higher Dexterity, Higher Agility, Higher Strength
+-- Loyalty: medium
+-- Possible Specialization: none
+
+-- Student
+-- common
+-- Location: Everywhere
+-- Equipment: Up to tier 1
+-- Equipment: 1x Weapon and 1x Armor
+-- Special: Lower stats. Everytime someone dies in the squad the student has to roll to stay in the militia.
+-- Loyalty: medium
+-- Possible Specialization: ExplosiveExpert
+
+-- Refugee
+-- common
+-- Location: Refugee Camp
+-- Equipment: Up to tier 1
+-- Equipment: 1x Melee or 1x Handgun
+-- Special: Only recruitable in refugee camp
+-- Loyalty: high
+-- Possible Specialization: none
+
+-- Journalist
+-- rare
+-- Location: Everywhere
+-- Equipment: Up to tier 1
+-- Equipment: 1x Handgun
+-- Special: Higher wisdom stats, Rolls everyday to increase loyalty in the town he is in.
+-- Loyalty: medium
+-- Possible Specialization: Leader
+
+-- Teacher
+-- rare
+-- Location: Everywhere
+-- Equipment: Up to tier 1
+-- Equipment: 1x Armor, 1x Handgun
+-- Special: Higher wisdom and leadership stats
+-- Loyalty: medium
+-- Possible Specialization: Leader
+
+-- Farmer
+-- common
+-- Location: Everywhere
+-- Equipment: Up to tier 1
+-- Equipment: 1x Melee, 1x Armor
+-- Special: Higher strength stats
+-- Loyalty: medium
+-- Possible Specialization: none
+
+-- Miner
+-- common
+-- Location: Everywhere
+-- Equipment: Up to tier 1
+-- Equipment: 1x Explosives
+-- Special: Higher Explosives skill
+-- Loyalty: medium
+-- Possible Specialization: ExplosiveExpert
+
+-- Worker
+-- common
+-- Location: Everywhere
+-- Equipment: Up to tier 1
+-- Equipment: 1x Melee or 1x Handgun
+-- Special: Higher mechanic skill
+-- Loyalty: medium
+-- Possible Specialization: Mechanic
+
+-- Doctor/Nurse
+-- rare
+-- Location: Everywhere
+-- Equipment: Up to tier 1
+-- Equipment: 1x Armor, 1x medkit
+-- Special: Higher medical skill
+-- Loyalty: medium
+-- Possible Specialization: Doctor
+
+-- ExCop
+-- rare
+-- Location: Everywhere
+-- Equipment: Up to tier 2
+-- Equipment: 1x Handgun, 1x Armor
+-- Special: Higher stats, Doesn't like to be in the same squad as criminals (ExCriminal, ExGangMember, ExLegion) roll to stay in the squad if there is a criminal in the squad.
+-- Loyalty: medium
+-- Possible Specialization: Leader, Marksmen
+
+-- ExCriminal
+-- rare
+-- Location: Everywhere
+-- Equipment: Up to tier 2
+-- Equipment: 1x Firearm, 1x Melee
+-- Special: Can steal money from the militia. (Someone stole money in sector ..)
+-- Loyalty: low
+-- Possible Specialization: ExplosiveExpert
+
+-- RichKid
+-- rare
+-- Location: Pantagruel, Post Cacao
+-- Special: Fully equipped
+-- Equipment: Up to tier 3
+-- Equipment: 2x Armor, 1x Firearm
+-- Special: Lower stats. Everytime someone dies in the squad the rich kid has to roll to stay in the militia.
+-- Loyalty: medium
+-- Possible Specialization: none
+
+-- Revolutionary
+-- common
+-- Location: Pantagruel
+-- Equipment: Up to tier 2
+-- Equipment: 1x Armor, 1x Firearm
+-- Special: Only joins if you do not break with communists, will quit if you break with communists
+-- Loyalty: high
+-- Possible Specialization: Leader
+
+-- ExLegion
+-- rare
+-- Location: Everywhere
+-- Equipment: Up to tier 1
+-- Equipment: 1x Armor, 1x Handgun or 1x Melee
+-- Special: Is not affected by morale loss in battle, can betray you and join the enemy
+-- Loyalty: low
+-- Possible Specialization: none
+
+-- ExGangMember
+-- rare
+-- Location: Everywhere
+-- Equipment: Up to tier 1E
+-- Equipment: 1x Melee
+-- Special: There is a chance that the gang member will obtain a item (xy obtained a new ... we are not sure where he got it from but loyalty decreased)
+-- Loyalty: low
+-- Possible Specialization: none
+
+-- ExArmy
+-- very rare
+-- Location: Everywhere
+-- Equipment: Up to tier 2
+-- Equipment: 1x Armor, 1x Firearm
+-- Special: Higher stats and higher morale in battle
+-- Loyalty: medium
+-- Possible Specialization: Marksmen, ExplosiveExpert
+
+-- SlumKid
+-- common
+-- Location: Everywhere
+-- Equipment: Up to tier 1
+-- Equipment: 1x Melee
+-- Special: Will find items in the sector
+-- Loyalty: high
+-- Possible Specialization: none
+
+
+
 local hasJoinlocation = false
 local hasJoindate = false
 local hasStatsRandomized = false
 local hasHandledEquipment = false
 local hasOldSessionIds = false
+local hasArcheType = false
 for _, prop in ipairs(UnitProperties.properties) do
     if prop.id == 'JoinLocation' then
         hasJoinlocation = true
@@ -18,6 +186,9 @@ for _, prop in ipairs(UnitProperties.properties) do
     end
     if prop.id == 'OldSessionIds' then
         hasOldSessionIds = true
+    end
+    if prop.id == 'ArcheType' then
+        hasArcheType = true
     end
 end
 
@@ -66,6 +237,15 @@ if not hasOldSessionIds then
     }
 end
 
+if not hasArcheType then
+    SatelliteSquad.properties[#SatelliteSquad.properties + 1] = {
+        category = "General",
+        id = "ArcheType",
+        editor = "text",
+        default = {},
+    }
+end
+
 local hasSquadBornIn = false
 
 local hasSquadSupplyBase = false
@@ -97,7 +277,291 @@ if not hasSquadSupplyBase then
     }
 end
 
-DefineClass.HUDA_MilitiaPersonalization = {}
+DefineClass.HUDA_MilitiaPersonalization = {
+    archetypes = {
+        prominent = {
+            weight = -10,
+            max = 1,
+            equipment = {
+                { category = "Weapons", tier = 3,               subCategories = { "SubmachineGuns", "AssaultRifles", "Handguns" }, condition = "almostNew", chance = 100, ammo = "high" },
+                { category = "Armor",   subCategory = "Helmet", tierRange = { 2, 3 },                                              condition = "almostNew", chance = 100 },
+                { category = "Armor",   subCategory = "Armor",  tierRange = { 2, 3 },                                              condition = "almostNew", chance = 100 },
+            }
+        },
+        athlete = {
+            weight = 5,
+            equipment = {
+                { category = "Weapons", tier = 2,               condition = "almostNew", chance = 100,            ammo = "medium" },
+                { category = "Armor",   subCategory = "Helmet", tierRange = { 1, 2 },    condition = "almostNew", chance = 100 },
+                { category = "Armor",   subCategory = "Armor",  tierRange = { 1, 2 },    condition = "almostNew", chance = 100 },
+            }
+        },
+        student = {
+            weight = 100,
+            equipment = {
+                { category = "Weapons", subCategories = { "Handguns" },        tier = 1, ammo = "low" },
+                { category = "Armor",   subCategories = { "Armor", "Helmet" }, tier = 1 },
+            }
+        },
+        refugee = {
+            weight = 100,
+            citiesExclusive = { "Refugee Camp" },
+            equipment = {
+                { category = "Weapons", subCategories = { "MeleeWeapons", "Handguns" }, tier = 1, ammo = "low" },
+                { category = "Armor",   subCategories = { "Armor", "Helmet" },          tier = 1, },
+            }
+        },
+        journalist = {
+            weight = 5,
+            equipment = {
+                { category = "Weapons", subCategories = { "Handguns" },        tier = 1, condition = "good", ammo = "low" },
+                { category = "Armor",   subCategories = { "Armor", "Helmet" }, tier = 1, condition = "good", },
+            }
+        },
+        teacher = {
+            weight = 5,
+            equipment = {
+                { category = "Weapons", subCategories = { "Handguns" },        tier = 1, condition = "good", ammo = "medium" },
+                { category = "Armor",   subCategories = { "Armor", "Helmet" }, tier = 1, condition = "good", },
+            }
+        },
+        farmer = {
+            weight = 100,
+            equipment = {
+                { category = "Weapons", subCategories = { "MeleeWeapons" },       tierRange = { 1, 2 } },
+                { category = "Weapons", subCategories = { "Shotguns", "Rifles" }, tier = 1,            chance = 50, ammo = "low" },
+                { category = "Armor",   subCategories = { "Armor", "Helmet" },    tier = 1, },
+            }
+        },
+        miner = {
+            weight = 100,
+            equipment = {
+                { category = "Weapons", subCategories = { "Shotguns", "SubmachineGuns", "AssaultRifles", "Handguns" }, tier = 1, ammo = "low" },
+                { category = "Weapons", subCategories = { "Grenade" },                                                 tier = 1, },
+                { category = "Armor",   subCategories = { "Armor", "Helmet" },                                         tier = 1, },
+            }
+        },
+        worker = {
+            weight = 100,
+            equipment = {
+                { category = "Weapons", subCategories = { "Shotguns", "SubmachineGuns", "AssaultRifles", "Handguns" }, tier = 1, ammo = "low" },
+                { category = "Armor",   subCategories = { "Armor", "Helmet" },                                         tier = 1, },
+            }
+        },
+        doctor = {
+            weight = 5,
+            equipment = {
+                { category = "Weapons",  subCategories = { "Handguns", "SubmachineGuns" }, tier = 2,             condition = "good", ammo = "medium" },
+                { category = "Armor",    subCategories = { "Armor", "Helmet" },            tierRange = { 1, 2 }, condition = "good", },
+                { category = "Medicine", tier = 1,                                         condition = "good", },
+            }
+        },
+        exCop = {
+            weight = 5,
+            equipment = {
+                { category = "Weapons", subCategories = { "Handguns", "Shotguns" }, tier = 2,             condition = "good", ammo = "medium" },
+                { category = "Armor",   subCategories = { "Armor", "Helmet" },      tierRange = { 1, 2 }, condition = "good", },
+            }
+        },
+        exCriminal = {
+            weight = 5,
+            equipment = {
+                { category = "Weapons", subCategories = { "Handguns" },     tierRange = { 1, 2 }, condition = "good", ammo = "medium" },
+                { category = "Weapons", subCategories = { "MeleeWeapons" }, tier = { 1 },         condition = "good" },
+            }
+        },
+        richKid = {
+            weight = -5,
+            cities = { "Port Cacao", "Pantagruel" },
+            equipment = {
+                { category = "Weapons", tier = 2,               subCategories = { "AssaultRifles" }, condition = "almostNew", chance = 100, ammo = "high" },
+                { category = "Weapons", tierRange = { 1, 2 },   subCategories = { "Handguns" },      condition = "almostNew", ammo = "high" },
+                { category = "Armor",   subCategory = "Helmet", tier = 2,                            condition = "almostNew", chance = 100 },
+                { category = "Armor",   subCategory = "Armor",  tier = 2,                            condition = "almostNew", chance = 100 },
+            }
+        },
+        revolutionary = {
+            weight = 100,
+            cities = { "Pantagruel" },
+            equipment = {
+                { category = "Weapons", tier = 1,               subCategories = { "SubmachineGuns", "AssaultRifles" }, condition = "almostNew", chance = 100, ammo = "high" },
+                { category = "Armor",   subCategory = "Helmet", tier = 1,                                              condition = "almostNew" },
+                { category = "Armor",   subCategory = "Armor",  tier = 1,                                              condition = "almostNew" },
+            }
+        },
+        exLegion = {
+            weight = 5,
+            equipment = {
+                { category = "Weapons", tier = 1,                           subCategories = { "Shotguns", "SubmachineGuns", "AssaultRifles", "Handguns" }, condition = "almostNew", chance = 100, ammo = "medium" },
+                { category = "Weapons", subCategories = { "MeleeWeapons" }, tierRange = { 1, 2 }, },
+                { category = "Armor",   subCategory = "Helmet",             tier = 1, },
+                { category = "Armor",   subCategory = "Armor",              tier = 1, },
+            }
+        },
+        exGangMember = {
+            weight = 5,
+            equipment = {
+                { category = "Weapons", subCategories = { "MeleeWeapons" }, tierRange = { 1, 2 }, chance = 100 },
+                { category = "Weapons", subCategories = { "Handguns" },     tier = 1,             chance = 100, ammo = "high" },
+            }
+        },
+        exArmy = {
+            weight = 5,
+            equipment = {
+                { category = "Weapons", tier = 2,               subCategories = { "AssaultRifles" }, condition = "almostNew", chance = 100, ammo = "high" },
+                { category = "Armor",   subCategory = "Helmet", tierRange = { 1, 2 },                condition = "almostNew", chance = 100 },
+                { category = "Armor",   subCategory = "Armor",  tierRange = { 1, 2 },                condition = "almostNew", chance = 100 },
+            }
+        },
+        slumKid = {
+            weight = 100,
+            equipment = {
+                { category = "Weapons", subCategories = { "MeleeWeapons" },    tier = 1, condition = "bad" },
+                { category = "Weapons", subCategories = { "Handguns" },        tier = 1, condition = "bad", ammo = "none" },
+                { category = "Armor",   subCategories = { "Armor", "Helmet" }, tier = 1, condition = "bad", },
+            }
+        },
+    }
+}
+
+function HUDA_MilitiaPersonalization:FilterArcheTypes(city)
+    local filteredArchetypes = {}
+
+    local units = gv_UnitData
+
+    local militia = table.filter(units, function(k, v) return v.militia end)
+
+    for name, v in pairs(self.archetypes) do
+        if v.cities and not HUDA_ArrayContains(v.cities, city) then
+            goto continue
+        end
+
+        if v.citiesExclusive and HUDA_ArrayContains(v.citiesExclusive, city) then
+            filteredArchetypes = {}
+
+            filteredArchetypes[name] = v
+
+            return filteredArchetypes
+        end
+
+        if v.max and v.max > 0 then
+            local count = table.count(table.filter(militia, function(k, v) return v.ArcheType == name end))
+
+            if count >= v.max then
+                goto continue
+            end
+        end
+
+        filteredArchetypes[name] = v
+
+        ::continue::
+    end
+
+    return filteredArchetypes
+end
+
+function HUDA_MilitiaPersonalization:GetArchetype(unit)
+    local sectorId = unit.JoinLocation
+
+    local sector = gv_Sectors[sectorId]
+
+    local city = sector and sector.City
+
+    gv_HUDA_MilitiaModifier = gv_HUDA_MilitiaModifier or {}
+
+    local popularity = gv_HUDA_MilitiaModifier[city] or 100
+
+    local popularitySurplus = Max(0, popularity - 100)
+
+    local filteredArchetypes = self:FilterArcheTypes(city)
+
+    return self:DrawArchetype(filteredArchetypes, popularitySurplus)
+end
+
+function HUDA_MilitiaPersonalization:DrawArchetype(archetypes, popularitySurplus)
+    local total = 0
+
+    for name, v in pairs(archetypes) do
+        total = total + Min(100, v.weight + popularitySurplus)
+    end
+
+    local rand = InteractionRandRange(1, total)
+
+    local currentWeight = 0
+
+    for name, v in pairs(archetypes) do
+        currentWeight = currentWeight + Min(100, v.weight + popularitySurplus)
+
+        if rand <= currentWeight then
+            return name
+        end
+    end
+end
+
+function HUDA_MilitiaPersonalization:GetRandomItems(unit)
+    local equipment = unit.ArcheType and self.archetypes[unit.ArcheType] and self.archetypes[unit.ArcheType].equipment or
+        {}
+
+    for _, v in ipairs(equipment) do
+        local roll = InteractionRand(100)
+
+        local chance = v.chance or 90
+
+        local preparedEquipment = {}
+
+        if roll <= chance then
+            preparedEquipment = v
+
+            if preparedEquipment.condition == "almostNew" then
+                preparedEquipment.conditionRange = { 90, 98 }
+            elseif preparedEquipment.condition == "good" then
+                preparedEquipment.conditionRange = { 80, 90 }
+            elseif preparedEquipment.condition == "bad" then
+                preparedEquipment.conditionRange = { 30, 50 }
+            else
+                preparedEquipment.conditionRange = { 70, 80 }
+            end
+
+            preparedEquipment.condition = nil
+
+            local ammo = {}
+
+            if preparedEquipment.ammo == "high" then
+                ammo.amountRange = { 100, 200 }
+            elseif preparedEquipment.ammo == "medium" then
+                ammo.amountRange = { 50, 100 }
+            elseif preparedEquipment.ammo == "low" then
+                ammo.amountRange = { 10, 50 }
+            else
+                ammo = nil
+            end
+
+            local item, ammo = HUDA_MilitiaRandomItems:GetItem(preparedEquipment, ammo)
+
+            if item then
+                if unit:CanAddItem("Handheld A", item) then
+                    unit:AddItem("Handheld A", item)
+                elseif unit:CanAddItem("Head", item) then
+                    unit:AddItem("Head", item)
+                elseif unit:CanAddItem("Torso", item) then
+                    unit:AddItem("Torso", item)
+                elseif unit:CanAddItem("Legs", item) then
+                    unit:AddItem("Legs", item)
+                else
+                    unit:AddItem("Inventory", item)
+                end
+
+                if ammo then
+                    item:Reload(ammo, "suspend_fx")
+                    unit:AddItem("Inventory", ammo)
+                end
+
+                CombatLog("debug",
+                    Untranslated { "<nick> is an <archetype> and got <item> with <ammo> ammo", nick = unit.Nick, archetype = unit.ArcheType, item = item.class, ammo = ammo and ammo.Amount or 0 })
+            end
+        end
+    end
+end
 
 function HUDA_MilitiaPersonalization:Personalize(unit_ids, first)
     local units = {}
@@ -128,16 +592,6 @@ function HUDA_MilitiaPersonalization:Personalize(unit_ids, first)
                 end
             end
 
-            if not unit.HandledEquipment then
-                if HUDA_GetModOptions("militiaNoWeapons") == true and not first then
-                    unit:ForEachItem(function(item, slot)
-                        unit:RemoveItem(slot, item)
-                    end)
-                end
-
-                unit.HandledEquipment = true
-            end
-
             if not unit.JoinDate or unit.JoinDate == 0 then
                 unit.JoinDate = Game.CampaignTime
 
@@ -152,6 +606,26 @@ function HUDA_MilitiaPersonalization:Personalize(unit_ids, first)
                 if gunit then
                     gunit.JoinLocation = unit.JoinLocation
                 end
+            end
+
+            if not unit.ArcheType or unit.ArcheType == "" then
+                unit.ArcheType = self:GetArchetype(unit)
+
+                if gunit then
+                    gunit.ArcheType = unit.ArcheType
+                end
+            end
+
+            if not unit.HandledEquipment then
+                if HUDA_GetModOptions("militiaNoWeapons") == true and not first then
+                    unit:ForEachItem(function(item, slot)
+                        unit:RemoveItem(slot, item)
+                    end)
+
+                    self:GetRandomItems(unit)
+                end
+
+                unit.HandledEquipment = true
             end
 
             if not unit.Specialization or unit.Specialization == "None" then
@@ -309,7 +783,7 @@ function HUDA_MilitiaPersonalization:RandomizeStats(unit)
             v = v + 10
         end
 
-        local randV = Min(100, InteractionRandRange(v - 6, v + 6)) 
+        local randV = Min(100, InteractionRandRange(v - 6, v + 6))
 
         local baseDiff = randV - unit['base_' .. k]
 

@@ -885,7 +885,7 @@ function HUDA_MilitiaTraining:HandleMilitiaDies(unit, killer, results)
 
 	local joinSectorId = unit.JoinLocation
 
-	local joinSector = gv_Sectors(joinSectorId)
+	local joinSector = gv_Sectors[joinSectorId]
 
 	local city = self:GetCity(joinSector)
 
@@ -901,7 +901,7 @@ function HUDA_MilitiaTraining:HandleMilitiaDies(unit, killer, results)
 
 	self:ModifyModifier(-2, city)
 
-	local roll = Random(100)
+	local roll = InteractionRand(100)
 
 	-- if roll < 50 then
 	CityModifyLoyalty(city, -1,

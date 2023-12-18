@@ -25,19 +25,8 @@ function GetSquadManagementMilitiaSquads()
     return items
 end
 
-local sat_conflict = CustomSettingsMod.Utils.XTemplate_FindElementsByProp(XTemplates["SatelliteConflict"], "ActionId",
-    "actionFight")
-
-if sat_conflict then
-    sat_conflict.element.ActionState = function(self, host)
-        local sector = host.context
-        return CanGoInMap(sector.Id) and
-            #GetSquadsInSector(sector.Id, "excludeTravelling", true, "excludeArriving", "excludeRetreating") > 0
-    end
-end
-
-if FirstLoad then
-    local sm_content = CustomSettingsMod.Utils.XTemplate_FindElementsByProp(XTemplates["PDASquadManagement"], "Id",
+function OnMsg.DataLoaded()
+    local sm_content = HUDA_CustomSettingsUtils.XTemplate_FindElementsByProp(XTemplates["PDASquadManagement"], "Id",
         "idContent")
 
     if sm_content then
@@ -50,14 +39,14 @@ if FirstLoad then
         XTemplates["PDASquadManagement"][1][4].MaxWidth = 1300
     end
 
-    local drag_a_merc = CustomSettingsMod.Utils.XTemplate_FindElementsByProp(XTemplates["PDASquadManagement"], "Id",
+    local drag_a_merc = HUDA_CustomSettingsUtils.XTemplate_FindElementsByProp(XTemplates["PDASquadManagement"], "Id",
         "idDragAMerc")
 
     if drag_a_merc then
         drag_a_merc.element.Text = Untranslated("Drag here to create squad")
     end
 
-    for _, v in ipairs(CustomSettingsMod.Utils.XTemplate_FindElementsByProp(XTemplates["PDASquadManagement"], "ActionId", "idFilters", "first_on_branch")) do
+    for _, v in ipairs(HUDA_CustomSettingsUtils.XTemplate_FindElementsByProp(XTemplates["PDASquadManagement"], "ActionId", "idFilters", "first_on_branch")) do
         table.insert(v.ancestors[1], 1, PlaceObj("XTemplateAction", {
             "ActionId",
             "idMilitia",
@@ -88,7 +77,7 @@ if FirstLoad then
     end
 
 
-    local squad_names = CustomSettingsMod.Utils.XTemplate_FindElementsByProp(XTemplates["PDASquadManagement"], "Id",
+    local squad_names = HUDA_CustomSettingsUtils.XTemplate_FindElementsByProp(XTemplates["PDASquadManagement"], "Id",
         "idSquadName", "all")
 
     if squad_names then

@@ -1,4 +1,5 @@
-PlaceObj("XTemplate", {
+function OnMsg.DataLoaded()
+  PlaceObj("XTemplate", {
     __is_kind_of = "XContextControl",
     group = "Zulu PDA",
     id = "PDAMilitiaHyperlinkHeader",
@@ -207,4 +208,4 @@ PlaceObj("XTemplate", {
       end
     })
   })
-  
+end

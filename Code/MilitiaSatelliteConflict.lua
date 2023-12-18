@@ -53,8 +53,72 @@ function IsMerc(o)
 	return HUDA_OriginalIsMerc(o)
 end
 
-if FirstLoad then
-	local huda_enabled_button = CustomSettingsMod.Utils.XTemplate_FindElementsByProp(XTemplates["SatelliteConflict"],
+function OnMsg.DataLoaded()
+
+	XTemplates["SatelliteConflictSquadsAndMercs"][1].LayoutVSpacing = 15
+	XTemplates["SatelliteConflictSquadsAndEnemies"][1].LayoutVSpacing = 15
+	XTemplates["SatelliteConflictSquadsAndMercs"][1].Padding = box(0, 15, 0, 15)
+	XTemplates["SatelliteConflictSquadsAndEnemies"][1].Padding = box(0, 15, 0, 15)
+
+	local mercIcons = HUDA_CustomSettingsUtils.XTemplate_FindElementsByProp(XTemplates["SatelliteConflictSquadsAndMercs"], "__template", "HUDMerc", "all")
+
+	if mercIcons then
+
+		for _, v in ipairs(mercIcons) do
+			v.element.ScaleModifier = point(600, 600)
+		end
+
+	end
+
+	local squadLogo = HUDA_CustomSettingsUtils.XTemplate_FindElementsByProp(XTemplates["SatelliteConflictSquadsAndMercs"], "Id", "idLogo")
+
+	if squadLogo then
+		squadLogo.element.ScaleModifier = point(500, 500)
+	end
+
+	local enemyIcons = HUDA_CustomSettingsUtils.XTemplate_FindElementsByProp(XTemplates["SatelliteConflictSquadsAndEnemies"], "__template", "HUDMerc", "all")
+
+	if enemyIcons then
+
+		for _, v in ipairs(enemyIcons) do
+			v.element.ScaleModifier = point(600, 600)
+		end
+
+	end
+
+	local enemyLogo = HUDA_CustomSettingsUtils.XTemplate_FindElementsByProp(XTemplates["SatelliteConflictSquadsAndEnemies"], "Id", "idSquadImage")
+
+	if enemyLogo then
+		enemyLogo.element.ScaleModifier = point(500, 500)
+	end
+
+	local militiaLogo = HUDA_CustomSettingsUtils.XTemplate_FindElementsByProp(XTemplates["SatelliteConflictSquadsAndMercs"], "Id", "idSquadImage")
+
+	if militiaLogo then
+
+		local originalOnContextUpdate = militiaLogo.element.OnContextUpdate
+
+		militiaLogo.element.OnContextUpdate = function(self, context, ...)
+			if context.militia then
+				self:SetImage("Mod/LXPER6t/Icons/merc_squad_militia_2.png")
+			else
+				originalOnContextUpdate(self, context, ...)
+			end
+		end
+	end
+
+	local sat_conflict = HUDA_CustomSettingsUtils.XTemplate_FindElementsByProp(XTemplates["SatelliteConflict"], "ActionId",
+    "actionFight")
+
+	if sat_conflict then
+		sat_conflict.element.ActionState = function(self, host)
+			local sector = host.context
+			return CanGoInMap(sector.Id) and
+				#GetSquadsInSector(sector.Id, "excludeTravelling", true, "excludeArriving", "excludeRetreating") > 0
+		end
+	end
+
+	local huda_enabled_button = HUDA_CustomSettingsUtils.XTemplate_FindElementsByProp(XTemplates["SatelliteConflict"],
 		"comment", "red enabled")
 
 	if huda_enabled_button then
@@ -68,7 +132,7 @@ if FirstLoad then
 	end
 
 
-	local huda_disabled_button = CustomSettingsMod.Utils.XTemplate_FindElementsByProp(XTemplates["SatelliteConflict"],
+	local huda_disabled_button = HUDA_CustomSettingsUtils.XTemplate_FindElementsByProp(XTemplates["SatelliteConflict"],
 		"comment", "normal disabled")
 
 	if huda_disabled_button then
@@ -123,72 +187,91 @@ function SatelliteRetreat(sector_id, sides_to_retreat)
 			end
 		end
 	end
+
 	for i, squad in ipairs(squadsToRetreat) do
-		local prev_sector_id = sector.conflict.player_attacking and sector.conflict.prev_sector_id or
-			squad.PreviousSector
+		local prev_sector_id = (sector.conflict.player_attacking and sector.conflict.prev_sector_id) or squad.PreviousSector
 		if IsWaterSector(prev_sector_id) and squad.PreviousLandSector then
 			prev_sector_id = squad.PreviousLandSector
 		end
-		if prev_sector_id then
-			if IsSectorUnderground(sector_id) or IsSectorUnderground(prev_sector_id) then
-				SetSatelliteSquadCurrentSector(squad, prev_sector_id)
-			else
-				do
-					local badRetreat = false
-					local otherSideSquads = (squad.Side == "enemy1" or squad.Side == "enemy2") and
-						g_PlayerAndMilitiaSquads or g_EnemySquads
-					for i, os in ipairs(otherSideSquads) do
-						if os.CurrentSector == sector_id and os.route then
-							local nextDest = os.route[1] and os.route[1][1]
-							if nextDest == prev_sector_id then
-								badRetreat = true
-								break
-							end
-						end
+		if not prev_sector_id then goto continue end
+		
+		if (IsSectorUnderground(sector_id) and not IsSectorUnderground(prev_sector_id)) or
+			(IsSectorUnderground(prev_sector_id) and not IsSectorUnderground(sector_id)) then
+			SetSatelliteSquadCurrentSector(squad, prev_sector_id, true, true)
+		else
+			-- Find best retreat sector if previous sector is a bad idea.
+			local badRetreat = false
+			local otherSideSquads = (squad.Side == "enemy1" or squad.Side == "enemy2") and g_PlayerAndMilitiaSquads or g_EnemySquads
+			-- Check if any of the other side squads on my sector are travelling towards the one I want to retreat to.
+			for i, os in ipairs(otherSideSquads) do
+				if os.CurrentSector == sector_id and os.route then
+					local nextDest = os.route[1] and os.route[1][1]
+					if nextDest == prev_sector_id then
+						badRetreat = true
+						break
 					end
-					local prevSector = gv_Sectors[prev_sector_id]
-					local illegalRetreat = prevSector.Passability == "Water" or prevSector.Passability == "Blocked"
-					badRetreat = badRetreat or illegalRetreat
-					badRetreat = badRetreat or not not table.find(otherSideSquads, "CurrentSector", prev_sector_id)
-					if badRetreat then
-						local illegalRetreatFallback, foundSector = false, false
-						ForEachSectorCardinal(sector_id, function(otherSecId)
-							local considerThisSector = false
-							local otherSec = gv_Sectors[otherSecId]
-							if SideIsAlly(otherSec.Side, squad.Side) then
-								considerThisSector = true
-							elseif not table.find(otherSideSquads, "CurrentSector", otherSecId) then
-								considerThisSector = true
-							end
-							local forbiddenRoute = IsRouteForbidden({
-								{ otherSecId }
-							}, squad)
-							if illegalRetreat and not illegalRetreatFallback and not forbiddenRoute then
-								illegalRetreatFallback = otherSecId
-							end
-							if considerThisSector and not forbiddenRoute then
-								foundSector = true
-								prev_sector_id = otherSecId
-								return "break"
-							end
-						end)
-						if illegalRetreat and not foundSector and illegalRetreatFallback then
-							prev_sector_id = illegalRetreatFallback
-						end
-					end
-					local retreatRoute = GenerateRouteDijkstra(squad.CurrentSector, prev_sector_id, false, squad.units,
-						"retreat", squad.CurrentSector, squad.side)
-					retreatRoute = retreatRoute or { prev_sector_id }
-					local keepJoining = false
-					if squad.joining_squad then
-						local squadToJoin = gv_Squads[squad.joining_squad]
-						keepJoining = squadToJoin and squadToJoin.CurrentSector == prev_sector_id
-					end
-					SetSatelliteSquadRetreatRoute(squad, { retreatRoute }, keepJoining)
 				end
 			end
+			
+			-- Check if retreating into water.
+			local prevSector = gv_Sectors[prev_sector_id]
+			local illegalRetreat = prevSector.Passability == "Water" or prevSector.Passability == "Blocked"
+			badRetreat = badRetreat or illegalRetreat
+			
+			-- Check if retreating into enemies.
+			if not badRetreat then badRetreat = not not table.find(otherSideSquads, "CurrentSector", prev_sector_id) end
+			-- Try to find a better retreat position, such as one without other side squads.
+			if badRetreat then
+				local illegalRetreatFallback, foundSector = false, false
+				ForEachSectorCardinal(sector_id, function(otherSecId)
+					local considerThisSector = false
+					local otherSec = gv_Sectors[otherSecId]
+					if SideIsAlly(otherSec.Side, squad.Side) then -- If my side, then there aren't any baddies there.
+						considerThisSector = true
+					elseif not table.find(otherSideSquads, "CurrentSector", otherSecId) then
+						considerThisSector = true
+					end
+
+					local forbiddenRoute = IsRouteForbidden({{otherSecId}}, squad)
+				
+					-- If illegal retreat consider the first non-forbidden route sector, regardless of the
+					-- "other-side" conditions above.
+					if illegalRetreat and not illegalRetreatFallback and not forbiddenRoute then
+						illegalRetreatFallback = otherSecId
+					end
+
+					if considerThisSector and not forbiddenRoute then
+						foundSector = true
+						prev_sector_id = otherSecId
+						return "break"
+					end
+				end)
+				
+				if illegalRetreat and not foundSector and illegalRetreatFallback then
+					prev_sector_id = illegalRetreatFallback
+				end
+			end
+			
+			local retreatRoute = GenerateRouteDijkstra(squad.CurrentSector, prev_sector_id, false, squad.units, "retreat", squad.CurrentSector, squad.side)
+			if not retreatRoute then 
+				-- Ehh, what?
+				assert(false) -- Retreat route is invalid
+				retreatRoute = { prev_sector_id } -- Fallback to just get out of this sector.
+			end
+			
+			-- Try to retain the joining squad if it will retreat in the same direction it was going anyway
+			local keepJoining = false
+			if squad.joining_squad then
+				local squadToJoin = gv_Squads[squad.joining_squad]
+				keepJoining = squadToJoin and squadToJoin.CurrentSector == prev_sector_id
+			end
+
+			SetSatelliteSquadRetreatRoute(squad, { retreatRoute }, keepJoining)
 		end
+		
+		::continue::
 	end
+
 	ResolveConflict(sector, "no voice", false, "retreat")
 	ResumeCampaignTime("UI")
 end

@@ -863,7 +863,7 @@ end
 
 function HUDA_AARGenerator:GenerateVillainIntro(conflict)
     local intro = {}
-    intro.enemyLeader = conflict.enemy.leader.name or "Francis"
+    intro.enemyLeader = conflict.enemy and conflict.enemy.leader and conflict.enemy.leader.name or "Francis"
 
     local introVariant = self:GetRandomVariant(self.enemyLeaderVariants)
 

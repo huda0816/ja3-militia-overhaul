@@ -14,7 +14,7 @@ end
 -- Hooks
 
 function OnMsg.NewDay()
-    if not gv_HUDA_ShopStatus or not gv_HUDA_ShopStatus.initialized or not gv_HUDA_ShopStatus.open then
+    if not HUDA_ShopController:GetStatus("initialized") or not HUDA_ShopController:GetStatus("open") then
         return
     end
 
@@ -25,7 +25,7 @@ end
 function OnMsg.NewHour()
     local t = GetTimeAsTable(Game.CampaignTime)
 
-    if not gv_HUDA_ShopStatus.initialized then
+   if not HUDA_ShopController:GetStatus("initialized") then
         return
     end
 
@@ -33,7 +33,7 @@ function OnMsg.NewHour()
         HUDA_ShopController:RefreshOrders(t)
     end
 
-    if not gv_HUDA_ShopStatus.open then
+    if not HUDA_ShopController:GetStatus("open") then
         return
     end
 
@@ -51,7 +51,9 @@ function OnMsg.SectorSideChanged(sectorId, oldSide, newSide)
 end
 
 function OnMsg.ZuluGameLoaded(game)
-    gv_HUDA_ShopStatus.tier = Min(3, gv_HUDA_ShopStatus.tier or 1)
+
+    HUDA_ShopController:UpdateStatus("tier", Min(3, HUDA_ShopController:GetStatus("tier") or 1))
+    
     HUDA_ShopController:InitGVs()
 end
 
@@ -80,6 +82,24 @@ DefineClass.HUDA_ShopController = {
     }
 }
 
+function HUDA_ShopController:UpdateStatus(property, value)
+
+    gv_HUDA_ShopStatus = gv_HUDA_ShopStatus or {}
+
+    gv_HUDA_ShopStatus[property] = value
+
+end
+
+function HUDA_ShopController:GetStatus(property)
+
+    if not gv_HUDA_ShopStatus then
+        return nil
+    end
+
+    return gv_HUDA_ShopStatus[property]
+
+end
+
 function HUDA_ShopController:SetPresets(deliveryTypes, categories, inventoryTemplate, couponCodes)
     self.DeliveryTypes = table.raw_copy(deliveryTypes)
     self.Categories = table.raw_copy(categories)
@@ -90,7 +110,7 @@ function HUDA_ShopController:SetPresets(deliveryTypes, categories, inventoryTemp
 end
 
 function HUDA_ShopController:InitGVs()
-    if not gv_HUDA_ShopStatus.initialized then
+    if not self:GetStatus("initialized") then
         return
     end
 
@@ -100,7 +120,7 @@ function HUDA_ShopController:InitGVs()
 end
 
 function HUDA_ShopController:Init()
-    if gv_HUDA_ShopStatus.initialized then
+    if self:GetStatus("initialized") then
         return
     end
 
@@ -109,6 +129,8 @@ function HUDA_ShopController:Init()
     end
 
     Msg("HUDAMilitaShopBeforeInit")
+
+    gv_HUDA_ShopStatus = gv_HUDA_ShopStatus or {}
 
     gv_HUDA_ShopStatus = self.ShopStatus
 
@@ -135,10 +157,10 @@ function HUDA_ShopController:SetAlwaysOpen(value)
     self.AlwaysOpen = value
 
     if value then
-        gv_HUDA_ShopStatus.open = true
+        self:UpdateStatus("open", true)
     else
         if not self:CheckSectorStatus(false) then
-            gv_HUDA_ShopStatus.open = false
+            self:UpdateStatus("open", false)
         end
     end
 end
@@ -146,10 +168,10 @@ end
 function HUDA_ShopController:SetTier(tier)
     self.ShopStatus.tier = tier
 
-    local currentTier = gv_HUDA_ShopStatus and gv_HUDA_ShopStatus.tier or 1
+    local currentTier = self:GetStatus("tier") or 1
 
     if tier > currentTier then
-        gv_HUDA_ShopStatus.tier = tier
+        self:UpdateStatus("tier", tier)
     end
 end
 
@@ -172,19 +194,18 @@ function HUDA_ShopController:CheckSectorStatus()
 end
 
 function HUDA_ShopController:CheckSectorChange(sectorId, oldSide, newSide)
-    if not gv_HUDA_ShopStatus.initialized then
+    if not self:GetStatus("initialized") then
         return
     end
 
     if sectorId == self.SectorCondition then
         if newSide == "player1" then
-            gv_HUDA_ShopStatus.open = true
-
+            self:UpdateStatus("open", true)
             gv_HUDA_ShopCouponCodes.reopen30.used = false
 
             self:SendMails("HUDA_ShopReopened")
         elseif not self.AlwaysOpen then
-            gv_HUDA_ShopStatus.open = false
+            self:UpdateStatus("open", false)
 
             self:SendMails("HUDA_ShopClosed")
         end
@@ -262,7 +283,7 @@ function HUDA_ShopController:UpdateTopSellers()
             end
         end
 
-        gv_HUDA_ShopStatus.topSellers = top
+        self:UpdateStatus("topSellers", top)
 
         return
     end
@@ -291,11 +312,11 @@ function HUDA_ShopController:UpdateTopSellers()
 
     table.sort(top, function(a, b) return a.count > b.count end)
 
-    gv_HUDA_ShopStatus.topSellers = top
+    self:UpdateStatus("topSellers", top)
 end
 
 function HUDA_ShopController:GetTopSellers(number)
-    local top = gv_HUDA_ShopStatus.topSellers
+    local top = self:GetStatus("topSellers")
 
     local preparedProducts = gv_HUDA_ShopInventory
 
@@ -413,21 +434,21 @@ function HUDA_ShopController:GetDeliveryTypes()
 end
 
 function HUDA_ShopController:GetCurrentDeliveryAddress()
-    local id = gv_HUDA_ShopCart.sector or gv_HUDA_ShopStatus.deliverySector or "H2"
+    local id = gv_HUDA_ShopCart.sector or self:GetStatus("deliverySector") or "H2"
 
     return GetSectorName(gv_Sectors[id])
 end
 
 function HUDA_ShopController:MaybeRestock(sectors)
     if self.DailyRestock then
-        gv_HUDA_ShopStatus.lastRestock = 0
+        self:UpdateStatus("lastRestock", 0)
         self:Restock()
         return
     end
 
-    local daysSinceLastRestock = gv_HUDA_ShopStatus.lastRestock or 0
+    local daysSinceLastRestock = self:GetStatus("lastRestock") or 0
 
-    gv_HUDA_ShopStatus.lastRestock = daysSinceLastRestock + 1
+    self:UpdateStatus("lastRestock", daysSinceLastRestock + 1)
 
     if not daysSinceLastRestock or daysSinceLastRestock < 1 then
         return
@@ -439,13 +460,13 @@ function HUDA_ShopController:MaybeRestock(sectors)
         return
     end
 
-    gv_HUDA_ShopStatus.lastRestock = 0
+    self:UpdateStatus("lastRestock", 0)
 
     self:Restock()
 end
 
 function HUDA_ShopController:Restock()
-    local tier = Min(3, gv_HUDA_ShopStatus.tier or 1)
+    local tier = Min(3, self:GetStatus("tier") or 1)
 
     local filteredProducts = {}
 
@@ -499,11 +520,15 @@ end
 function HUDA_ShopController:PrepareProducts(products)
     local preparedProducts = {}
 
-    if not next(gv_HUDA_ShopStatus.arrived) then
-        gv_HUDA_ShopStatus.arrived = {}
+    if not next(self:GetStatus("arrived") or {}) then
+
+        local arrived = {}
+
         for i, product in ipairs(products) do
-            table.insert(gv_HUDA_ShopStatus.arrived, product.productData.Id)
+            table.insert(arrived, product.productData.Id)
         end
+
+        self:UpdateStatus("arrived", arrived)
     end
 
     for i, productArr in ipairs(products) do
@@ -518,10 +543,15 @@ function HUDA_ShopController:PrepareProducts(products)
 end
 
 function HUDA_ShopController:PrepareProduct(product, productData)
-    if not table.find(gv_HUDA_ShopStatus.arrived, productData.Id) then
+
+    local arrived = self:GetStatus("arrived") or {}
+
+    if not table.find(arrived, productData.Id) then
         product.new = true
 
-        table.insert(gv_HUDA_ShopStatus.arrived, productData.Id)
+        table.insert(arrived, productData.Id)
+
+        self:UpdateStatus("arrived", arrived)
     else
         product.new = false
     end
@@ -598,51 +628,6 @@ function HUDA_ShopController:MapProductCategory(productData)
     end
 
     return "misc"
-end
-
-function HUDA_ShopController:RestockOld()
-    Msg("HUDAMilitaShopBeforeRestock")
-
-    local tier = gv_HUDA_ShopStatus.tier or 1
-
-    local filteredProducts = table.ifilter(self.InventoryTemplate, function(_, product)
-        return tonumber(product.tier or 1) <= tonumber(tier)
-    end)
-
-    local products = {}
-
-    for i, product in ipairs(filteredProducts) do
-        local roll = InteractionRand(100, "HUDA_ShopAvailability")
-
-
-
-        product.availability = product.availability or 100
-        product.tier = product.tier or 1
-        product.stock = product.stock or 1
-        product.basePrice = product.basePrice or 0
-
-        if product.availability > 0 and roll < (product.availability or 100) + ((tier - product.tier) * 10) then
-            local prod = table.raw_copy(product)
-
-            local tierBonus = 1 + ((tier - product.tier) * 0.5)
-
-            local stock = round(product.stock * tierBonus, 1)
-
-            if self.StockMultiplier then
-                stock = round(stock * self.StockMultiplier, 1)
-            else
-                local stockRoll = InteractionRandRange(80, 120, "HUDA_ShopStock")
-
-                stock = MulDivRound(stock, stockRoll, 100)
-            end
-
-            prod.stock = stock
-
-            table.insert(products, prod)
-        end
-    end
-
-    gv_HUDA_ShopInventory = self:PrepareProducts(products)
 end
 
 function HUDA_ShopController:CheckAbandonedCart()
@@ -869,27 +854,6 @@ function HUDA_ShopController:GetProducts(query, noqueryupdate)
     return preparedProducts
 end
 
-function HUDA_ShopController:PrepareProductsOld(products)
-    local preparedProducts = {}
-
-    if not next(gv_HUDA_ShopStatus.arrived) then
-        gv_HUDA_ShopStatus.arrived = {}
-        for i, product in ipairs(products) do
-            table.insert(gv_HUDA_ShopStatus.arrived, product.id)
-        end
-    end
-
-    for i, product in ipairs(products) do
-        product = self:PrepareProduct(product)
-
-        table.insert(preparedProducts, product)
-    end
-
-    self:CheckNewArrivals(preparedProducts)
-
-    return preparedProducts
-end
-
 function HUDA_ShopController:CheckNewArrivals(products)
     local newProducts = table.ifilter(products, function(i, product)
         return product.new
@@ -908,49 +872,6 @@ function HUDA_ShopController:CheckNewArrivals(products)
     newProductsStr = string.sub(newProductsStr, 1, -3)
 
     self:SendMails("NewArrivals", { equipment = newProductsStr })
-end
-
-function HUDA_ShopController:PrepareProductOld(product)
-    local productData = g_Classes[product.id]
-
-    if productData == nil then
-        return product
-    end
-
-    if not table.find(gv_HUDA_ShopStatus.arrived, product.id) then
-        product.new = true
-
-        table.insert(gv_HUDA_ShopStatus.arrived, product.id)
-    else
-        product.new = false
-    end
-
-    product.description = product.description or productData.Description or ""
-    product.name = productData.DisplayName
-    product.image = productData.Icon
-    product.weight = (product.weight ~= 0 and product.weight) or
-        (productData.Weight and round(productData.Weight * 1000, 1) or nil)
-    product.maxStack = productData.MaxStacks or 1
-    product.minAmount = product.minAmount or productData.MinAmount or nil
-
-    if not product.minAmount then
-        local category = HUDA_ArrayFind(self.Categories, function(i, category)
-            return category.id == product.category
-        end)
-
-        if category then
-            product.minAmount = category.minAmount
-        else
-            product.minAmount = 1
-        end
-    end
-
-    if productData.Caliber then
-        product.caliber = productData.Caliber
-        product.caliberName = self:GetCaliberName(productData.Caliber)
-    end
-
-    return product
 end
 
 function HUDA_ShopController:GetQueryUrlParams(query)
@@ -1403,7 +1324,7 @@ end
 
 function HUDA_ShopController:ChangeDeliveryAddress(sectorId)
     gv_HUDA_ShopCart.sector = sectorId
-    gv_HUDA_ShopStatus.deliverySector = sectorId
+    self:UpdateStatus("deliverySector", sectorId)
     ObjModified("shop address")
 end
 
@@ -1421,7 +1342,7 @@ function HUDA_ShopController:Pay(cart)
 end
 
 function HUDA_ShopController:CheckTierStatus(mail)
-    local currentTier = Min(3, gv_HUDA_ShopStatus.tier or 1)
+    local currentTier = Min(3, self:GetStatus("tier") or 1)
 
     if currentTier == 3 then
         return
@@ -1448,7 +1369,8 @@ function HUDA_ShopController:CheckTierStatus(mail)
     end
 
     if newTier > currentTier then
-        gv_HUDA_ShopStatus.tier = newTier
+
+        self:UpdateStatus("tier", newTier)
 
         if mail then
             self:SendMails("newTier", { tier = newTier })

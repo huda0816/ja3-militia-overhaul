@@ -12,6 +12,14 @@ return {
 		'Shown', true,
 		'ShownSatelliteView', true,
 	}),
+	PlaceObj('ModItemCode', {
+		'name', "MilitiaRandomItems",
+		'CodeFileName', "Code/MilitiaRandomItems.lua",
+	}),
+	PlaceObj('ModItemCode', {
+		'name', "XTemplateUtility",
+		'CodeFileName', "Code/XTemplateUtility.lua",
+	}),
 	PlaceObj('ModItemCharacterEffectCompositeDef', {
 		'Id', "Captured",
 		'object_class', "CharacterEffect",
@@ -128,16 +136,8 @@ return {
 		'CodeFileName', "Code/MilitiaBiosAndNames.lua",
 	}),
 	PlaceObj('ModItemCode', {
-		'name', "MilitiaCompat",
-		'CodeFileName', "Code/MilitiaCompat.lua",
-	}),
-	PlaceObj('ModItemCode', {
 		'name', "MilitiaConflictTracker",
 		'CodeFileName', "Code/MilitiaConflictTracker.lua",
-	}),
-	PlaceObj('ModItemCode', {
-		'name', "MilitiaEquipment",
-		'CodeFileName', "Code/MilitiaEquipment.lua",
 	}),
 	PlaceObj('ModItemCode', {
 		'name', "MilitiaFinances",
@@ -346,10 +346,6 @@ return {
 	PlaceObj('ModItemCode', {
 		'name', "POPUPMilitiaPOWInterrogation",
 		'CodeFileName', "Code/POPUPMilitiaPOWInterrogation.lua",
-	}),
-	PlaceObj('ModItemCode', {
-		'name', "PeopleController",
-		'CodeFileName', "Code/PeopleController.lua",
 	}),
 	PlaceObj('ModItemConstDef', {
 		group = "Loyalty",
@@ -681,7 +677,8 @@ return {
 	}),
 	PlaceObj('ModItemOptionToggle', {
 		'name', "huda_militiaNoWeapons",
-		'DisplayName', "Militia spawns without weapons",
+		'DisplayName', "Militia spawns with random items",
+		'Help', "Militia spawns with random weapons and armor instead of the default Famas",
 		'DefaultValue', true,
 	}),
 	PlaceObj('ModItemSectorOperation', {

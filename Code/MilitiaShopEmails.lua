@@ -1,5 +1,5 @@
-if FirstLoad then
-    local HUDA_hyperlink_function = CustomSettingsMod.Utils.XTemplate_FindElementsByProp(XTemplates["PDAQuests_Email"],
+function OnMsg.DataLoaded()
+    local HUDA_hyperlink_function = HUDA_CustomSettingsUtils.XTemplate_FindElementsByProp(XTemplates["PDAQuests_Email"],
         "name", "OnHyperLink(self, hyperlink, argument, hyperlink_box, pos, button)")
 
     if HUDA_hyperlink_function then

@@ -1,7 +1,7 @@
 GameVar("gv_HUDA_Website_Status", {})
 
-if FirstLoad then
-    local pda_mode_container = CustomSettingsMod.Utils.XTemplate_FindElementsByProp(XTemplates["PDABrowser"],
+function OnMsg.DataLoaded()
+    local pda_mode_container = HUDA_CustomSettingsUtils.XTemplate_FindElementsByProp(XTemplates["PDABrowser"],
         "__template",
         "PDAAIMBrowser")
 
@@ -16,7 +16,6 @@ if FirstLoad then
         }))
     end
 end
-
 
 function OnMsg.ZuluGameLoaded(game)
     if gv_HUDA_Website_Status.launched then
@@ -59,7 +58,6 @@ end
 -- end
 
 function OnMsg.OperationCompleted(operation, mercs, sector)
-
     if gv_HUDA_Website_Status.launched then
         return
     end
@@ -110,22 +108,23 @@ end
 local HUDA_OriginalPDAUrl = TFormat.PDAUrl
 
 function TFormat.PDAUrl(context_obj)
-    local pda = GetDialog("PDADialog")
-    if not pda then
-        return false
-    end
-    local content = pda:ResolveId("idContent")
-    local mercBrowser = IsKindOf(content, "PDABrowser") and content
-    local browserContent = mercBrowser.idBrowserContent
+    -- local pda = GetDialog("PDADialog")
+    -- if not pda then
+    --     return false
+    -- end
+    -- local content = pda:ResolveId("idContent")
+    -- local mercBrowser = IsKindOf(content, "PDABrowser") and content
 
-    if mercBrowser and mercBrowser:GetMode() == "militia" then
-        local mode = browserContent:GetMode()
-        local mode_param = browserContent.mode_param
+    -- local browserContent = mercBrowser.idBrowserContent
 
-        local url = browserContent:GetURL(mode, mode_param)
+    -- if mercBrowser and mercBrowser:GetMode() == "militia" then
+    --     local mode = browserContent:GetMode()
+    --     local mode_param = browserContent.mode_param
 
-        return url or "http://www.gc-militia.org/"
-    end
+    --     local url = browserContent:GetURL(mode, mode_param)
+
+    --     return url or "http://www.gc-militia.org/"
+    -- end
 
     return HUDA_OriginalPDAUrl(context_obj)
 end

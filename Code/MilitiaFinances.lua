@@ -1,5 +1,5 @@
-if FirstLoad then
-    for _, v in ipairs(CustomSettingsMod.Utils.XTemplate_FindElementsByProp(XTemplates["PDAFinances"], "comment", "burn rate", "first_on_branch")) do
+function OnMsg.DataLoaded()
+    for _, v in ipairs(HUDA_CustomSettingsUtils.XTemplate_FindElementsByProp(XTemplates["PDAFinances"], "comment", "burn rate", "first_on_branch")) do
         table.insert(v.ancestors[1], v.indices[1] + 1, PlaceObj("XTemplateWindow", {
             "comment",
             "militia upkeep",
@@ -44,7 +44,7 @@ if FirstLoad then
         )
     end
 
-    for _, v in ipairs(CustomSettingsMod.Utils.XTemplate_FindElementsByProp(XTemplates["PDAMoneyRollover"], "comment", "burn", "first_on_branch")) do
+    for _, v in ipairs(HUDA_CustomSettingsUtils.XTemplate_FindElementsByProp(XTemplates["PDAMoneyRollover"], "comment", "burn", "first_on_branch")) do
         v.ancestors[1][5].GridY = 4
         v.ancestors[1][6].GridY = 4
 
@@ -104,7 +104,7 @@ if FirstLoad then
         })
         )
     end
-end -- FirstLoad
+end
 
 HUDA_OriginalGetMercCurrentDailySalary = GetMercCurrentDailySalary
 

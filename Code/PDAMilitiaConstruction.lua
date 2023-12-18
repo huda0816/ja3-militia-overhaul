@@ -1,59 +1,32 @@
-PlaceObj("XTemplate", {
-    group = "Zulu PDA",
-    id = "PDAMilitiaConstruction",
-    PlaceObj("XTemplateProperty", {
-        "id",
-        "HeaderButtonId",
-        "editor",
-        "text",
-        "translate",
-        false,
-        "Set",
-        function(self, value)
-            self.HeaderButtonId = value
-        end,
-        "Get",
-        function(self)
-            return self.HeaderButtonId
-        end,
-        "name",
-        T(536912996016, "HeaderButtonId")
-    }),
-    PlaceObj("XTemplateWindow", {
-        "__class",
-        "XContentTemplate",
-        "__context",
-        function(parent, context)
-            return "shop front"
-        end
-    }, {
-        PlaceObj("XTemplateFunc", {
+function OnMsg.DataLoaded()
+    PlaceObj("XTemplate", {
+        group = "Zulu PDA",
+        id = "PDAMilitiaConstruction",
+        PlaceObj("XTemplateProperty", {
+            "id",
+            "HeaderButtonId",
+            "editor",
+            "text",
+            "translate",
+            false,
+            "Set",
+            function(self, value)
+                self.HeaderButtonId = value
+            end,
+            "Get",
+            function(self)
+                return self.HeaderButtonId
+            end,
             "name",
-            "Open",
-            "func",
-            function(self, ...)
-                XWindow.Open(self, ...)
-                PDAImpHeaderEnable(self)
-            end
-        }),
-        PlaceObj("XTemplateFunc", {
-            "name",
-            "OnDelete",
-            "func",
-            function(self, ...)
-                XWindow.OnDelete(self, ...)
-                PDAImpHeaderDisable(self)
-            end
+            T(536912996016, "HeaderButtonId")
         }),
         PlaceObj("XTemplateWindow", {
+            "__class",
+            "XContentTemplate",
             "__context",
             function(parent, context)
-                return gv_HUDA_ShopCart.products or {}
-            end,
-            "LayoutMethod",
-            "VList",
-            "LayoutVSpacing",
-            8
+                return "shop front"
+            end
         }, {
             PlaceObj("XTemplateFunc", {
                 "name",
@@ -61,7 +34,7 @@ PlaceObj("XTemplate", {
                 "func",
                 function(self, ...)
                     XWindow.Open(self, ...)
-                    --   PDAImpHeaderEnable(self)
+                    PDAImpHeaderEnable(self)
                 end
             }),
             PlaceObj("XTemplateFunc", {
@@ -70,67 +43,96 @@ PlaceObj("XTemplate", {
                 "func",
                 function(self, ...)
                     XWindow.OnDelete(self, ...)
-                    --   PDAImpHeaderDisable(self)
+                    PDAImpHeaderDisable(self)
                 end
             }),
             PlaceObj("XTemplateWindow", {
-                "__class",
-                "XContextFrame",
-                "Dock",
-                "top",
-                "Image",
-                "UI/PDA/imp_panel",
-                "FrameBox",
-                box(8, 8, 8, 8),
-                "ContextUpdateOnOpen",
-                true
+                "__context",
+                function(parent, context)
+                    return gv_HUDA_ShopCart.products or {}
+                end,
+                "LayoutMethod",
+                "VList",
+                "LayoutVSpacing",
+                8
             }, {
+                PlaceObj("XTemplateFunc", {
+                    "name",
+                    "Open",
+                    "func",
+                    function(self, ...)
+                        XWindow.Open(self, ...)
+                        --   PDAImpHeaderEnable(self)
+                    end
+                }),
+                PlaceObj("XTemplateFunc", {
+                    "name",
+                    "OnDelete",
+                    "func",
+                    function(self, ...)
+                        XWindow.OnDelete(self, ...)
+                        --   PDAImpHeaderDisable(self)
+                    end
+                }),
                 PlaceObj("XTemplateWindow", {
-                    "Margins",
-                    box(20, 20, 20, 20),
-                    "LayoutMethod",
-                    "VList",
-                    "LayoutVSpacing",
-                    10,
+                    "__class",
+                    "XContextFrame",
+                    "Dock",
+                    "top",
+                    "Image",
+                    "UI/PDA/imp_panel",
+                    "FrameBox",
+                    box(8, 8, 8, 8),
+                    "ContextUpdateOnOpen",
+                    true
                 }, {
                     PlaceObj("XTemplateWindow", {
-                        "__class",
-                        "XText",
-                        "Id",
-                        "idTitle",
-                        "FoldWhenHidden",
-                        true,
-                        "Padding",
-                        box(0, 0, 0, 0),
-                        "HAlign",
-                        "left",
-                        "VAlign",
-                        "top",
-                        "TextStyle",
-                        "PDAIMPContentTitle",
-                        "Translate",
-                        true,
-                        "Text",
-                        "Under Construction"
-                    }),
-                    PlaceObj("XTemplateWindow", {
-                        "__class",
-                        "XText",
-                        "Padding",
-                        box(0, 0, 0, 0),
-                        "HAlign",
-                        "left",
-                        "VAlign",
-                        "top",
-                        "TextStyle",
-                        "PDAIMPContentText",
-                        "Translate",
-                        true,
-                        "Text",
-                        "This area is under construction. Please check back later."
+                        "Margins",
+                        box(20, 20, 20, 20),
+                        "LayoutMethod",
+                        "VList",
+                        "LayoutVSpacing",
+                        10,
+                    }, {
+                        PlaceObj("XTemplateWindow", {
+                            "__class",
+                            "XText",
+                            "Id",
+                            "idTitle",
+                            "FoldWhenHidden",
+                            true,
+                            "Padding",
+                            box(0, 0, 0, 0),
+                            "HAlign",
+                            "left",
+                            "VAlign",
+                            "top",
+                            "TextStyle",
+                            "PDAIMPContentTitle",
+                            "Translate",
+                            true,
+                            "Text",
+                            "Under Construction"
+                        }),
+                        PlaceObj("XTemplateWindow", {
+                            "__class",
+                            "XText",
+                            "Padding",
+                            box(0, 0, 0, 0),
+                            "HAlign",
+                            "left",
+                            "VAlign",
+                            "top",
+                            "TextStyle",
+                            "PDAIMPContentText",
+                            "Translate",
+                            true,
+                            "Text",
+                            "This area is under construction. Please check back later."
+                        })
                     })
                 })
             })
         })
     })
-})
+end
