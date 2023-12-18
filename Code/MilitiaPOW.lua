@@ -1216,8 +1216,3 @@ function Unit:ExitCombat()
 
     HUDA_OriginalExitCombat(self)
 end
-
--- patch for core bug
-function lCheckMapConflictResolved()
-    CheckMapConflictResolved()
-end

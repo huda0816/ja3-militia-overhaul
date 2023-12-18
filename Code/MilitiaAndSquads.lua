@@ -42,8 +42,8 @@ function TFormat.HUDA_MilitiaBio(context_obj)
 	return unit.Bio or "This man's bio is a mystery."
 end
 
-if FirstLoad then
-	local huda_pda_merc_rollover_attributes = CustomSettingsMod.Utils.XTemplate_FindElementsByProp(
+function OnMsg.DataLoaded()
+	local huda_pda_merc_rollover_attributes = HUDA_CustomSettingsUtils.XTemplate_FindElementsByProp(
 		XTemplates["PDAMercRollover"], "comment",
 		"attributes label")
 
@@ -208,7 +208,7 @@ if FirstLoad then
 		)
 	end
 
-	local inventory_dialog = CustomSettingsMod.Utils.XTemplate_FindElementsByProp(XTemplates["Inventory"], "Id",
+	local inventory_dialog = HUDA_CustomSettingsUtils.XTemplate_FindElementsByProp(XTemplates["Inventory"], "Id",
 		"idDlgContent")
 
 	if inventory_dialog then
@@ -225,7 +225,7 @@ if FirstLoad then
 		element[4].Margins = box(-860, 18, 32, 32)
 	end
 
-	local x_fit = CustomSettingsMod.Utils.XTemplate_FindElementsByProp(XTemplates["SquadsAndMercs"], "__class",
+	local x_fit = HUDA_CustomSettingsUtils.XTemplate_FindElementsByProp(XTemplates["SquadsAndMercs"], "__class",
 		"XFitContent")
 
 	if x_fit then
@@ -235,58 +235,60 @@ if FirstLoad then
 
 	GameVar("gv_HUDA_SamStatus", "mercs")
 
-	local x_button = CustomSettingsMod.Utils.XTemplate_FindElementsByProp(XTemplates["SquadsAndMercs"], "__class",
-		"XButton")
+	local x_buttons = HUDA_CustomSettingsUtils.XTemplate_FindElementsByProp(XTemplates["SquadsAndMercs"], "Id",
+		"idSquadButtons")
 
-	if x_button then
-		x_button.element[1].Id = "idBgSquadIcon"
+	if x_buttons then
+		for index, x_button in ipairs(x_buttons.element[2]) do
+			x_button[1].Id = "idBgSquadIcon"
 
-		x_button.element.OnContextUpdate = function(self, context)
-			self:SetFoldWhenHidden(true)
-			if HUDA_IsContextMilitia(context) then
-				self.idBgSquadIcon:SetImage("Mod/LXPER6t/Icons/merc_squad_militia_2.png")
+			x_button.OnContextUpdate = function(self, context)
+				self:SetFoldWhenHidden(true)
+				if HUDA_IsContextMilitia(context) then
+					self.idBgSquadIcon:SetImage("Mod/LXPER6t/Icons/merc_squad_militia_2.png")
 
-				if gv_HUDA_SamStatus == "militia" then
-					self:SetVisible(true)
+					if gv_HUDA_SamStatus == "militia" then
+						self:SetVisible(true)
+					else
+						self:SetVisible(false)
+					end
 				else
-					self:SetVisible(false)
+					if gv_HUDA_SamStatus == "mercs" then
+						self:SetVisible(true)
+					else
+						self:SetVisible(false)
+					end
 				end
-			else
-				if gv_HUDA_SamStatus == "mercs" then
+				if gv_HUDA_SamStatus == "mercsandmilitia" then
 					self:SetVisible(true)
-				else
-					self:SetVisible(false)
 				end
 			end
-			if gv_HUDA_SamStatus == "mercsandmilitia" then
-				self:SetVisible(true)
-			end
-		end
-		x_button.element.Margins = box(0, 0, -10, 0)
-		x_button.element.AltPress = true
-		x_button.element.OnAltPress = function(self, gamepad)
-			if g_SatelliteUI then
-				if g_SatelliteUI.context_menu then
-					local prev_context = g_SatelliteUI.context_menu[1].context
-					prev = prev_context and prev_context.unit_id
-					g_SatelliteUI:RemoveContextMenu()
+			x_button.Margins = box(0, 0, -10, 0)
+			x_button.AltPress = true
+			x_button.OnAltPress = function(self, gamepad)
+				if g_SatelliteUI then
+					if g_SatelliteUI.context_menu then
+						local prev_context = g_SatelliteUI.context_menu[1].context
+						prev = prev_context and prev_context.unit_id
+						g_SatelliteUI:RemoveContextMenu()
+					end
+					local squad = self.context
+					local sector_id = squad and squad.CurrentSector
+					if not sector_id then
+						return
+					end
+					self:SetRollover(false)
+					g_SatelliteUI:SelectSquad(squad)
+					g_SatelliteUI:OpenContextMenu(self, sector_id, squad.UniqueId)
 				end
-				local squad = self.context
-				local sector_id = squad and squad.CurrentSector
-				if not sector_id then
-					return
-				end
-				self:SetRollover(false)
-				g_SatelliteUI:SelectSquad(squad)
-				g_SatelliteUI:OpenContextMenu(self, sector_id, squad.UniqueId)
 			end
 		end
 	end
 
-	local squad_buttons = CustomSettingsMod.Utils.XTemplate_FindElementsByProp(XTemplates["SquadsAndMercs"], "Id",
+	local squad_buttons = HUDA_CustomSettingsUtils.XTemplate_FindElementsByProp(XTemplates["SquadsAndMercs"], "Id",
 		"idSquadButtons")
 
-	if squad_buttons and x_button then
+	if squad_buttons then
 		local element = squad_buttons.element
 
 		element.LayoutHSpacing = 0
@@ -448,7 +450,7 @@ if FirstLoad then
 	})
 	)
 
-	local huda_context_actions = CustomSettingsMod.Utils.XTemplate_FindElementsByProp(
+	local huda_context_actions = HUDA_CustomSettingsUtils.XTemplate_FindElementsByProp(
 		XTemplates["SatelliteViewMapContextMenu"],
 		"comment", "actions")
 
@@ -477,7 +479,7 @@ if FirstLoad then
 		end
 	end
 
-	local tm_template = CustomSettingsMod.Utils.XTemplate_FindElementsByProp(XTemplates["TeamMembers"], "__template",
+	local tm_template = HUDA_CustomSettingsUtils.XTemplate_FindElementsByProp(XTemplates["TeamMembers"], "__template",
 		"SquadsAndMercs")
 
 	if tm_template then
@@ -501,25 +503,14 @@ if FirstLoad then
 		end
 	end
 
-	local inv_template = CustomSettingsMod.Utils.XTemplate_FindElementsByProp(XTemplates["Inventory"], "__template",
+	local inv_template = HUDA_CustomSettingsUtils.XTemplate_FindElementsByProp(XTemplates["Inventory"], "__template",
 		"SquadsAndMercs")
 
 	if inv_template then
 		inv_template.element.__context = function(parent, context) return InventorySquads() end
-	end
+	end	
 
-	function InventorySquads()
-		local squads = SortSquads(gv_SatelliteView and GetSquadsInSector(false, false, true) or
-			GetSquadsOnMap("reference"))
-
-		table.sort(squads, function(a, b)
-			return a.CurrentSector < b.CurrentSector
-		end)
-
-		return squads
-	end
-
-	local template = CustomSettingsMod.Utils.XTemplate_FindElementsByProp(XTemplates["PDASatellite"], "__template",
+	local template = HUDA_CustomSettingsUtils.XTemplate_FindElementsByProp(XTemplates["PDASatellite"], "__template",
 		"SquadsAndMercs")
 
 	if template then
@@ -559,6 +550,18 @@ if FirstLoad then
 			self.idUpperIcon:SetVAlign("top")
 		end
 	end
+end
+
+function InventorySquads()
+	
+	local squads = SortSquads(gv_SatelliteView and GetSquadsInSector(false, false, true) or
+		GetSquadsOnMap("reference"))
+
+	table.sort(squads, function(a, b)
+		return a.CurrentSector < b.CurrentSector
+	end)
+
+	return squads
 end
 
 function SquadWindow:Open()
@@ -623,7 +626,6 @@ function GetSatelliteSquadsForContextMenu(sectorId)
 	return squads
 end
 
-
 function RemoveUnitFromSquad(unit_data, reason)
 	local squad_id = unit_data.Squad
 	local squad = gv_Squads[squad_id]
@@ -644,13 +646,13 @@ function RemoveUnitFromSquad(unit_data, reason)
 	if not squad then
 		return
 	end
-	table.remove_value(squad.units, unit_data.session_id)		
-	-- There is some bug with millitia units being present twice in 
+	table.remove_value(squad.units, unit_data.session_id)
+	-- There is some bug with millitia units being present twice in
 	-- their squad for some reason 0.0
 	while table.find(squad.units, unit_data.session_id) do
 		assert(false) -- Unit was in the squad twice+ 0.0
 		table.remove_value(squad.units, unit_data.session_id)
-	end	
+	end
 	if not squad.units or #squad.units == 0 then
 		Msg("PreSquadDespawned", squad_id, squad.CurrentSector, reason)
 		if squad.militia then

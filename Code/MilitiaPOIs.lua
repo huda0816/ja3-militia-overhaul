@@ -33,7 +33,7 @@ local HUDA_MilitiaPOIs = {
         id = "MilitiaBase",
         display_name = T(1000999105101286891, "Militia Base"),
         descr = T(1000999105101286891,
-            "The Militia Base enables a variety of sector operations, reduces the costs for militia training and is used as supply hub for your militia soldiers."),
+            "The Militia Base enables a variety of sector operations, reduces the costs for militia training and is used as supply hub for your militia soldiers. It also includes a small holding cell for POWs."),
         icon = "militia_base"
     },
     {

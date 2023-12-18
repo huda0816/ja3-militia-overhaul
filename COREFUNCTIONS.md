@@ -6,6 +6,7 @@ AddToSectorInventory - ItemContainer
 
 UnitInventory:GetEquipedArmour - Mercenary
 UnitInventory:GetHandheldItems - Mercenary
+HasPerk - Mercenary
 
 CreateMessageBox - ZuluMessageQuestionBox
 
@@ -21,6 +22,7 @@ SquadWindow:SpawnSquadIcon - XSatelliteObjects - full
 GetSatelliteIconImages - XSatelliteObjects
 SectorWindow:GetSectorCenter - XSatelliteObjects
 GetSatelliteIconImagesSquad - XSatelliteObjects
+PointOfInterestRolloverClass:GetPOITextForRollover - XSatelliteObjects
 
 GetSatelliteSquadsForContextMenu - XSatelliteMap - full
 XSatelliteViewMap:OpenContextMenu - XSatelliteMap - full
@@ -34,6 +36,9 @@ CreateNewSatelliteSquad - SatelliteSquad - patch
 IsPlayer1Squad -SatelliteSquad - full
 GetSectorTravelTime - SatelliteSquad
 GetSectorDistance - SatelliteSquad
+SetSatelliteSquadSide - SatelliteSquad
+SplitSquad - SatelliteSquad
+DiscoverIntelForSector - SatelliteSquad
 
 GetMercCurrentDailySalary - Money - patch
 GetMoneyProjection - Money -patch
@@ -60,6 +65,8 @@ GetTimeAsTable - Utility
 GiveCombatTask - CombatTasks - patch
 
 GetSectorOperationResource - SatelliteSectorOperations - full
+RecalcOperationETAs - SatelliteSectorOperations
+XDragContextWindow - SatelliteSctorOperations - parent
 
 UnitBase:GetPersonalMorale - Unit.lua - patch
 
@@ -77,12 +84,39 @@ RollForMilitiaPromotion - SatelliteConflict - full
 
 SpawnMilitia - SatelliteView - full
 GetCitySectors - SatelliteView
+CityModifyLoyalty - SatelliteView
+CreateMilitiaUnitData - SatelliteView
+GetLeastExpMilitia - SatelliteView
 
 Unit:DropLoot - Unit - patch
+RollSkillCheck - Unit
+Unit:ExitCombat
+
+GetSquadBag - SquadBag
+
+GetGuardpostRollover - Guardpost
+
+GetAmmosWithCaliber - Inventory
+PlaceInventoryItem - Inventory
+GetDropContainer - Inventory
+
+SetCombatActionState - CombatActions
+
+Targeting_UnitInMelee - IModeCombatMelee
+IModeCommonUnitControl:UpdateCursorImage - IModeCombatMelee
+
+IsMeleeRangeTarget - CombatAi
+
+GetCombatPath - Combat
+
+Unit:RecalcUIActions - UnitCaching
+
+AddTimelineEvent - SatelliteTimeline
+
 
 ## TFormats
 
-TFormat.GetDailyMoneyChange
+TFormat.GetDailyMoneyChange - Money
 
 ## XTemplates
 
@@ -98,6 +132,8 @@ SatelliteConflict
 PDASquadManagement
 PDABrowser
 PDAQuests_Email
+SectorOperationMainUI
+SectorOperationsUI
 
 ## MSGHooks
 
@@ -107,12 +143,11 @@ OpenPDA
 ConflictStart
 ConflictEnd
 StatusEffectAdded
-ReachSectorCentor
+ReachSectorCenter
 OnAttack
 UnitDiedOnSector
 NewHour
 NewDay
-ReloadLua
 ZuluGameLoaded
 Autorun
 UnitJoinedPlayerSquad
@@ -127,5 +162,6 @@ QuestParamChanged
 ConflictStart
 EnterSector
 SectorSideChanged
+OperationCompleted
 
 
