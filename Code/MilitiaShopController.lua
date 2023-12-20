@@ -537,7 +537,7 @@ function HUDA_ShopController:PrepareProducts(products)
         table.insert(preparedProducts, product)
     end
 
-    self:CheckNewArrivals(preparedProducts)
+    self:CheckNewArrivals(preparedProducts.product)
 
     return preparedProducts
 end
@@ -687,7 +687,7 @@ end
 function HUDA_ShopController:GetProductPrice()
     local cart = gv_HUDA_ShopCart
 
-    local multiplier = HUDA_GetShopOptions("PriceMultiplier", 1)
+    local multiplier = HUDA_GetShopOptions("PriceMultiplierNew", 100)
 
     local price = 0
 
@@ -703,8 +703,8 @@ function HUDA_ShopController:GetProductPrice()
         price = price - MulDivRound(price, cart.coupon.discount, 100)
     end
 
-    if multiplier ~= 1 then
-        price = round(price * multiplier, 1)
+    if multiplier ~= 100 then
+        price = MulDivRound(price, multiplier, 100)
     end
 
     return price
