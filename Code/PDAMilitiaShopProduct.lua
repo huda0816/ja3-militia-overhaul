@@ -139,8 +139,8 @@ function OnMsg.DataLoaded()
                         "center",
                         "OnLayoutComplete",
                         function(self)
-                            local multiplier = HUDA_GetShopOptions("PriceMultiplier", 1)
-                            self:SetText(round(self.context.basePrice * multiplier, 1) .. "$")
+                            local multiplier = HUDA_GetShopOptions("PriceMultiplierNew", 100)
+                            self:SetText(MulDivRound(self.context.basePrice, multiplier, 100) .. "$")
                         end,
                     })
                 }),

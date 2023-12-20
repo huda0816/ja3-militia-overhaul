@@ -280,31 +280,31 @@ end
 DefineClass.HUDA_MilitiaPersonalization = {
     archetypes = {
         prominent = {
-            weight = -10,
-            max = 1,
+            weight = -20,
+            max = 2,
             equipment = {
-                { category = "Weapons", tier = 3,               subCategories = { "SubmachineGuns", "AssaultRifles", "Handguns" }, condition = "almostNew", chance = 100, ammo = "high" },
-                { category = "Armor",   subCategory = "Helmet", tierRange = { 2, 3 },                                              condition = "almostNew", chance = 100 },
-                { category = "Armor",   subCategory = "Armor",  tierRange = { 2, 3 },                                              condition = "almostNew", chance = 100 },
+                { category = "Weapons", tier = 2,               subCategories = { "SubmachineGuns", "AssaultRifles", "Handguns" }, condition = "almostNew", chance = 100, ammo = "high" },
+                { category = "Armor",   subCategory = "Helmet", tier = 2,                                              condition = "almostNew", chance = 100 },
+                { category = "Armor",   subCategory = "Armor",  tier = 2,                                              condition = "almostNew", chance = 100 },
             }
         },
         athlete = {
-            weight = 5,
+            weight = 0,
             equipment = {
-                { category = "Weapons", tier = 2,               condition = "almostNew", chance = 100,            ammo = "medium" },
-                { category = "Armor",   subCategory = "Helmet", tierRange = { 1, 2 },    condition = "almostNew", chance = 100 },
-                { category = "Armor",   subCategory = "Armor",  tierRange = { 1, 2 },    condition = "almostNew", chance = 100 },
+                { category = "Weapons", tier = 2, subCategories = { "SubmachineGuns", "AssaultRifles", "Handguns" }, condition = "almostNew", chance = 100,            ammo = "medium" },
+                { category = "Armor",   subCategory = "Helmet", tier = 1,    condition = "almostNew", chance = 100 },
+                { category = "Armor",   subCategory = "Armor",  tier = 1,    condition = "almostNew", chance = 100 },
             }
         },
         student = {
-            weight = 100,
+            weight = 60,
             equipment = {
                 { category = "Weapons", subCategories = { "Handguns" },        tier = 1, ammo = "low" },
                 { category = "Armor",   subCategories = { "Armor", "Helmet" }, tier = 1 },
             }
         },
         refugee = {
-            weight = 100,
+            weight = 60,
             citiesExclusive = { "Refugee Camp" },
             equipment = {
                 { category = "Weapons", subCategories = { "MeleeWeapons", "Handguns" }, tier = 1, ammo = "low" },
@@ -312,29 +312,29 @@ DefineClass.HUDA_MilitiaPersonalization = {
             }
         },
         journalist = {
-            weight = 5,
+            weight = 0,
             equipment = {
                 { category = "Weapons", subCategories = { "Handguns" },        tier = 1, condition = "good", ammo = "low" },
                 { category = "Armor",   subCategories = { "Armor", "Helmet" }, tier = 1, condition = "good", },
             }
         },
         teacher = {
-            weight = 5,
+            weight = 0,
             equipment = {
                 { category = "Weapons", subCategories = { "Handguns" },        tier = 1, condition = "good", ammo = "medium" },
                 { category = "Armor",   subCategories = { "Armor", "Helmet" }, tier = 1, condition = "good", },
             }
         },
         farmer = {
-            weight = 100,
+            weight = 60,
             equipment = {
-                { category = "Weapons", subCategories = { "MeleeWeapons" },       tierRange = { 1, 2 } },
+                { category = "Weapons", subCategories = { "MeleeWeapons" },       tier = 1 },
                 { category = "Weapons", subCategories = { "Shotguns", "Rifles" }, tier = 1,            chance = 50, ammo = "low" },
                 { category = "Armor",   subCategories = { "Armor", "Helmet" },    tier = 1, },
             }
         },
         miner = {
-            weight = 100,
+            weight = 60,
             equipment = {
                 { category = "Weapons", subCategories = { "Shotguns", "SubmachineGuns", "AssaultRifles", "Handguns" }, tier = 1, ammo = "low" },
                 { category = "Weapons", subCategories = { "Grenade" },                                                 tier = 1, },
@@ -342,36 +342,36 @@ DefineClass.HUDA_MilitiaPersonalization = {
             }
         },
         worker = {
-            weight = 100,
+            weight = 60,
             equipment = {
                 { category = "Weapons", subCategories = { "Shotguns", "SubmachineGuns", "AssaultRifles", "Handguns" }, tier = 1, ammo = "low" },
                 { category = "Armor",   subCategories = { "Armor", "Helmet" },                                         tier = 1, },
             }
         },
         doctor = {
-            weight = 5,
+            weight = 0,
             equipment = {
                 { category = "Weapons",  subCategories = { "Handguns", "SubmachineGuns" }, tier = 2,             condition = "good", ammo = "medium" },
-                { category = "Armor",    subCategories = { "Armor", "Helmet" },            tierRange = { 1, 2 }, condition = "good", },
+                { category = "Armor",    subCategories = { "Armor", "Helmet" },            tier = 1, condition = "good", },
                 { category = "Medicine", tier = 1,                                         condition = "good", },
             }
         },
         exCop = {
-            weight = 5,
+            weight = 0,
             equipment = {
-                { category = "Weapons", subCategories = { "Handguns", "Shotguns" }, tier = 2,             condition = "good", ammo = "medium" },
-                { category = "Armor",   subCategories = { "Armor", "Helmet" },      tierRange = { 1, 2 }, condition = "good", },
+                { category = "Weapons", subCategories = { "Handguns", "Shotguns" }, tierRange = {1, 2},             condition = "good", ammo = "medium" },
+                { category = "Armor",   subCategories = { "Armor", "Helmet" },      tier = 1, condition = "good", },
             }
         },
         exCriminal = {
-            weight = 5,
+            weight = 0,
             equipment = {
                 { category = "Weapons", subCategories = { "Handguns" },     tierRange = { 1, 2 }, condition = "good", ammo = "medium" },
                 { category = "Weapons", subCategories = { "MeleeWeapons" }, tier = { 1 },         condition = "good" },
             }
         },
         richKid = {
-            weight = -5,
+            weight = -10,
             cities = { "Port Cacao", "Pantagruel" },
             equipment = {
                 { category = "Weapons", tier = 2,               subCategories = { "AssaultRifles" }, condition = "almostNew", chance = 100, ammo = "high" },
@@ -381,7 +381,7 @@ DefineClass.HUDA_MilitiaPersonalization = {
             }
         },
         revolutionary = {
-            weight = 100,
+            weight = 60,
             cities = { "Pantagruel" },
             equipment = {
                 { category = "Weapons", tier = 1,               subCategories = { "SubmachineGuns", "AssaultRifles" }, condition = "almostNew", chance = 100, ammo = "high" },
@@ -390,7 +390,7 @@ DefineClass.HUDA_MilitiaPersonalization = {
             }
         },
         exLegion = {
-            weight = 5,
+            weight = 0,
             equipment = {
                 { category = "Weapons", tier = 1,                           subCategories = { "Shotguns", "SubmachineGuns", "AssaultRifles", "Handguns" }, condition = "almostNew", chance = 100, ammo = "medium" },
                 { category = "Weapons", subCategories = { "MeleeWeapons" }, tierRange = { 1, 2 }, },
@@ -399,25 +399,24 @@ DefineClass.HUDA_MilitiaPersonalization = {
             }
         },
         exGangMember = {
-            weight = 5,
+            weight = 0,
             equipment = {
                 { category = "Weapons", subCategories = { "MeleeWeapons" }, tierRange = { 1, 2 }, chance = 100 },
                 { category = "Weapons", subCategories = { "Handguns" },     tier = 1,             chance = 100, ammo = "high" },
             }
         },
         exArmy = {
-            weight = 5,
+            weight = -10,
             equipment = {
                 { category = "Weapons", tier = 2,               subCategories = { "AssaultRifles" }, condition = "almostNew", chance = 100, ammo = "high" },
                 { category = "Armor",   subCategory = "Helmet", tierRange = { 1, 2 },                condition = "almostNew", chance = 100 },
-                { category = "Armor",   subCategory = "Armor",  tierRange = { 1, 2 },                condition = "almostNew", chance = 100 },
+                { category = "Armor",   subCategory = "Armor",  tier = 1,                condition = "almostNew", chance = 100 },
             }
         },
         slumKid = {
-            weight = 100,
+            weight = 60,
             equipment = {
-                { category = "Weapons", subCategories = { "MeleeWeapons" },    tier = 1, condition = "bad" },
-                { category = "Weapons", subCategories = { "Handguns" },        tier = 1, condition = "bad", ammo = "none" },
+                { category = "Weapons", subCategories = { "Handguns", "MeleeWeapons" }, tier = 1, condition = "bad", ammo = "none" },
                 { category = "Armor",   subCategories = { "Armor", "Helmet" }, tier = 1, condition = "bad", },
             }
         },
@@ -482,7 +481,7 @@ function HUDA_MilitiaPersonalization:DrawArchetype(archetypes, popularitySurplus
     local total = 0
 
     for name, v in pairs(archetypes) do
-        total = total + Min(100, v.weight + popularitySurplus)
+        total = total + Min(100, Max(0, v.weight + popularitySurplus))
     end
 
     local rand = InteractionRandRange(1, total)
@@ -490,7 +489,7 @@ function HUDA_MilitiaPersonalization:DrawArchetype(archetypes, popularitySurplus
     local currentWeight = 0
 
     for name, v in pairs(archetypes) do
-        currentWeight = currentWeight + Min(100, v.weight + popularitySurplus)
+        currentWeight = currentWeight + Min(100, Max(0, v.weight + popularitySurplus))
 
         if rand <= currentWeight then
             return name
@@ -505,7 +504,7 @@ function HUDA_MilitiaPersonalization:GetRandomItems(unit)
     for _, v in ipairs(equipment) do
         local roll = InteractionRand(100)
 
-        local chance = v.chance or 90
+        local chance = v.chance or 80
 
         local preparedEquipment = {}
 
@@ -617,11 +616,13 @@ function HUDA_MilitiaPersonalization:Personalize(unit_ids, first)
             end
 
             if not unit.HandledEquipment then
-                if HUDA_GetModOptions("militiaNoWeapons") == true and not first then
+                if HUDA_GetModOptions("MilitiaEquipmentSetting") == "Randomized" or HUDA_GetModOptions("MilitiaEquipmentSetting") == "None" and not first then
                     unit:ForEachItem(function(item, slot)
                         unit:RemoveItem(slot, item)
-                    end)
+                    end)                    
+                end
 
+                if HUDA_GetModOptions("MilitiaEquipmentSetting") == "Randomized" then
                     self:GetRandomItems(unit)
                 end
 
