@@ -89,7 +89,7 @@ function OnMsg.DataLoaded()
                             true,
                             "OnContextUpdate",
                             function(self, context, ...)
-                                self:SetText(context.Name)
+                                self:SetText(Untranslated(context.Name))
                             end,
                             "Text",
                             Untranslated("<Name>")
@@ -159,7 +159,7 @@ function OnMsg.DataLoaded()
                                 "name",
                                 "OnLayoutComplete",
                                 function(self)
-                                    self:SetText(self.context.Name or "")
+                                    self:SetText(Untranslated(self.context.Name or ""))
                                 end,
                                 "OnTextChanged",
                                 function(self)
@@ -170,7 +170,7 @@ function OnMsg.DataLoaded()
                                     if len > 0 and len < 30 then
                                         squad.Name = text
                                     else
-                                        self:SetText(squad.Name)
+                                        self:SetText(Untranslated(squad.Name))
                                     end
                                     PlayFX("Typing", "start")
                                     ObjModified(self.context)
@@ -260,7 +260,7 @@ function OnMsg.DataLoaded()
                             "Translate",
                             true,
                             "Text",
-                            "<underline>Edit</underline>"
+                            Untranslated("<underline>Edit</underline>")
                         }, {
                             PlaceObj("XTemplateFunc", {
                                 "name",
@@ -297,7 +297,7 @@ function OnMsg.DataLoaded()
                             "Translate",
                             true,
                             "Text",
-                            "<underline>Exit</underline>"
+                            Untranslated("<underline>Exit</underline>")
                         }, {
                             PlaceObj("XTemplateFunc", {
                                 "name",
@@ -328,10 +328,10 @@ function OnMsg.DataLoaded()
                         true,
                         "OnLayoutComplete",
                         function(self)
-                            self:SetText("Founded in: " .. HUDA_GetClosestCity(self.context.BornInSector))
+                            self:SetText(Untranslated("Founded in: " .. HUDA_GetClosestCity(self.context.BornInSector)))
                         end,
                         "Text",
-                        "Homebase"
+                        Untranslated("Homebase")
                     })
                 })
             }),
@@ -379,7 +379,7 @@ function OnMsg.DataLoaded()
                         "Translate",
                         true,
                         "Text",
-                        "MEMBERS"
+                        Untranslated("MEMBERS")
                     }),
                     PlaceObj("XTemplateWindow", {
                         "Margins",
@@ -409,14 +409,14 @@ function OnMsg.DataLoaded()
                             end,
                             "run_after",
                             function(child, context, item, i, n, last)
-                                child.idSoldierName:SetText(item.Nick)
-                                child.idSoldierHome:SetText("Origin: " ..
-                                    GetSectorName(HUDA_GetSectorById(item.JoinLocation)))
-                                child.idSoldierJoined:SetText("Joined: " ..
-                                    HUDA_GetDaysSinceTime(item.JoinDate) .. " days ago")
-                                child.idSoldierSpecialty:SetText("Role: " ..
+                                child.idSoldierName:SetText(Untranslated(item.Nick))
+                                child.idSoldierHome:SetText(Untranslated("Origin: " ..
+                                    GetSectorName(HUDA_GetSectorById(item.JoinLocation))))
+                                child.idSoldierJoined:SetText(Untranslated("Joined: " ..
+                                    HUDA_GetDaysSinceTime(item.JoinDate) .. " days ago"))
+                                child.idSoldierSpecialty:SetText(Untranslated("Role: " ..
                                     HUDA_GetSpecializationName(item.Specialization) ..
-                                    (i == 1 and " / Squad Leader" or ""))
+                                    (i == 1 and " / Squad Leader" or "")))
                                 child.idPortrait:SetImage(item.Portrait)
                             end
                         }, {
@@ -561,7 +561,7 @@ function OnMsg.DataLoaded()
                                         "Translate",
                                         true,
                                         "Text",
-                                        "<underline>Details</underline>"
+                                        Untranslated("<underline>Details</underline>")
                                     }, {
                                         PlaceObj("XTemplateFunc", {
                                             "name",

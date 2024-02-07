@@ -50,7 +50,7 @@ function OnMsg.DataLoaded()
                                 else
                                     self:SetImage("UI/PDA/sector_enemy")
                                 end
-                                self.idSectorId:SetText(sector.Id)
+                                self.idSectorId:SetText(Untranslated(sector.Id))
                                 XWindow.Open(self)
                             end,
                             }),

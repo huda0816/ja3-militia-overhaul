@@ -110,7 +110,7 @@ function OnMsg.DataLoaded()
                         "Translate",
                         true,
                         "Text",
-                        "Your orders"
+                        Untranslated("Your orders")
                     }),
                     PlaceObj("XTemplateWindow", {
                         "__class",
@@ -126,7 +126,7 @@ function OnMsg.DataLoaded()
                         "Translate",
                         true,
                         "Text",
-                        "Here you can see the orders you have placed. Pending Orders can still be refunded."
+                        Untranslated("Here you can see the orders you have placed. Pending Orders can still be refunded.")
                     })
                 })
             }),
@@ -176,7 +176,7 @@ function OnMsg.DataLoaded()
                         "Translate",
                         true,
                         "Text",
-                        "Pending Orders"
+                        Untranslated("Pending Orders")
                     }),
                     PlaceObj("XTemplateWindow", {
                         "Margins",
@@ -244,7 +244,7 @@ function OnMsg.DataLoaded()
                         "Translate",
                         true,
                         "Text",
-                        "Order Archive"
+                        Untranslated("Order Archive")
                     }),
                     PlaceObj("XTemplateWindow", {
                         "Margins",

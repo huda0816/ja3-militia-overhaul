@@ -26,7 +26,7 @@ function OnMsg.DataLoaded()
                 "Translate",
                 true,
                 "Text",
-                "Products"
+                Untranslated("Products")
             }),
             PlaceObj("XTemplateWindow", {
                 "LayoutMethod",
@@ -49,7 +49,7 @@ function OnMsg.DataLoaded()
 
                         local productCount = item.hideProductCount and "" or "(" .. item.productCount .. ")"
 
-                        child.idNavItem:SetText("<underline>" .. text .. productCount .. "</underline>")
+                        child.idNavItem:SetText(Untranslated("<underline>" .. text .. productCount .. "</underline>"))
                         if (gv_HUDA_ShopQuery.category == item.id) then
                             child.idNavItem:SetTextStyle("PDABrowserThievesBoxLinksVisited")
                         end
@@ -85,7 +85,7 @@ function OnMsg.DataLoaded()
                             "Translate",
                             true,
                             "Text",
-                            "Placeholder"
+                            Untranslated("Placeholder")
                         }, {
                             PlaceObj("XTemplateFunc", {
                                 "name",
@@ -144,9 +144,9 @@ function OnMsg.DataLoaded()
                     function(self)
                         local dlg = GetDialog(self)
                         if dlg.Mode == "orders" then
-                            self:SetText("shop")
+                            self:SetText(Untranslated("shop"))
                         else
-                            self:SetText("orders")
+                            self:SetText(Untranslated("orders"))
                         end
                     end
                 }, {

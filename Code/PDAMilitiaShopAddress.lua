@@ -26,7 +26,7 @@ function OnMsg.DataLoaded()
                 "Translate",
                 true,
                 "Text",
-                "Delivery Address"
+                Untranslated("Delivery Address")
             }),
             PlaceObj("XTemplateWindow", {
                 "LayoutMethod",
@@ -62,7 +62,7 @@ function OnMsg.DataLoaded()
                     "Translate",
                     true,
                     "Text",
-                    "<underline>Edit</underline>"
+                    Untranslated("<underline>Edit</underline>")
                 }, {
                     PlaceObj("XTemplateFunc", {
                         "name",

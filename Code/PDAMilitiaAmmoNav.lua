@@ -28,7 +28,7 @@ function OnMsg.DataLoaded()
                 end,
                 "run_after",
                 function(child, context, item, i, n, last)
-                    child.idAmmoNavItem:SetText("<underline>" .. item.Name .. "</underline>")
+                    child.idAmmoNavItem:SetText(Untranslated("<underline>" .. item.Name .. "</underline>"))
                     child.idAmmoNavItem:SetContext(item)
                     if (gv_HUDA_ShopQuery.caliber == item.id) then
                         child.idAmmoNavItem:SetTextStyle("PDABrowserThievesBoxLinksVisited")
@@ -59,7 +59,7 @@ function OnMsg.DataLoaded()
                         "Translate",
                         true,
                         "Text",
-                        "Placeholder"
+                        Untranslated("Placeholder")
                     }, {
                         PlaceObj("XTemplateFunc", {
                             "name",

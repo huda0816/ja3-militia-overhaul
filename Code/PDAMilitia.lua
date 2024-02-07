@@ -231,7 +231,7 @@ function OnMsg.DataLoaded()
                                     "Translate",
                                     true,
                                     "Text",
-                                    "Grand Chien Militia Headquarters",
+                                    Untranslated("Grand Chien Militia Headquarters"),
                                     "TextHAlign",
                                     "center",
                                     "TextVAlign",
@@ -251,7 +251,7 @@ function OnMsg.DataLoaded()
                                     "Translate",
                                     true,
                                     "Text",
-                                    "powered by I.M.P."
+                                    Untranslated("powered by I.M.P.")
                                 }),
                             }),
                             PlaceObj("XTemplateWindow", {
@@ -308,7 +308,7 @@ function OnMsg.DataLoaded()
                                     "dlg_mode",
                                     "home",
                                     "Text",
-                                    "Home"
+                                    Untranslated("Home")
                                 }),
                                 PlaceObj("XTemplateWindow", {
                                     "comment",
@@ -340,7 +340,7 @@ function OnMsg.DataLoaded()
                                     "dlg_mode",
                                     "finances",
                                     "Text",
-                                    "FINANCES"
+                                    Untranslated("FINANCES")
                                 }),
                                 PlaceObj("XTemplateWindow", {
                                     "comment",
@@ -372,7 +372,7 @@ function OnMsg.DataLoaded()
                                     "dlg_mode",
                                     "squads",
                                     "Text",
-                                    "SQUADS"
+                                    Untranslated("SQUADS")
                                 }),
                                 PlaceObj("XTemplateWindow", {
                                     "comment",
@@ -404,7 +404,7 @@ function OnMsg.DataLoaded()
                                     "dlg_mode",
                                     "shop",
                                     "Text",
-                                    "SHOP"
+                                    Untranslated("SHOP")
                                 })
                             }),
                             PlaceObj("XTemplateWindow", {
@@ -446,7 +446,7 @@ function OnMsg.DataLoaded()
                                     "dlg_mode",
                                     "logout",
                                     "Text",
-                                    "Log out"
+                                    Untranslated("Log out")
                                 }, {
                                     PlaceObj("XTemplateFunc", {
                                         "name",
@@ -534,7 +534,7 @@ function OnMsg.DataLoaded()
                                     "LinkId",
                                     "browse",
                                     "Text",
-                                    T(212384058717, "RSS Feed"),
+                                    T(2123840587170816, "RSS Feed"),
                                     "TextHAlign",
                                     "center",
                                     "TextVAlign",
@@ -572,7 +572,7 @@ function OnMsg.DataLoaded()
                                     "LinkId",
                                     "service",
                                     "Text",
-                                    T(821269390672, "Services"),
+                                    T(8212693906720816, "Services"),
                                     "TextHAlign",
                                     "center",
                                     "TextVAlign",

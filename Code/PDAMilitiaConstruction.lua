@@ -112,7 +112,7 @@ function OnMsg.DataLoaded()
                             "Translate",
                             true,
                             "Text",
-                            "Under Construction"
+                            Untranslated("Under Construction")
                         }),
                         PlaceObj("XTemplateWindow", {
                             "__class",
@@ -128,7 +128,7 @@ function OnMsg.DataLoaded()
                             "Translate",
                             true,
                             "Text",
-                            "This area is under construction. Please check back later."
+                            Untranslated("This area is under construction. Please check back later.")
                         })
                     })
                 })

@@ -456,7 +456,7 @@ function GetOperationMercsListContext(sector, mode_param)
 
 	context[2] = {
 		mercs = mercs,
-		title = T(977391598484, "Militia"),
+		title = T(9773915984840816, "Militia"),
 		click = false,
 		operation = mode_param.operation
 	}

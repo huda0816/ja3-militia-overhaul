@@ -46,6 +46,11 @@ end
 local HUDA_OriginalIsMerc = IsMerc
 
 function IsMerc(o)
+
+	if not o then
+		return false
+	end
+
 	if gv_Deployment and o.militia then
 		return true
 	end

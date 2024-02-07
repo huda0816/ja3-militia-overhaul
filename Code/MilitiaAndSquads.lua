@@ -1,3 +1,5 @@
+GameVar("gv_HUDA_SamStatus", "mercs")
+
 function TFormat.HUDA_MilitiaSince(context_obj)
 	if not context_obj then
 		return
@@ -9,7 +11,7 @@ function TFormat.HUDA_MilitiaSince(context_obj)
 		return
 	end
 
-	return Untranslated(HUDA_GetDaysSinceTime(unit.JoinDate or 0) .. " days")
+	return Untranslated(HUDA_GetDaysSinceTime(unit.JoinDate or 0) .. " days ago")
 end
 
 function TFormat.HUDA_MilitiaOrigin(context_obj)
@@ -25,7 +27,23 @@ function TFormat.HUDA_MilitiaOrigin(context_obj)
 
 	local sector = type(unit.JoinLocation) == "table" and unit.JoinLocation or gv_Sectors[unit.JoinLocation or "H2"]
 
-	return GetSectorName(sector)
+	return Untranslated(GetSectorName(sector))
+end
+
+function TFormat.HUDA_MilitiaBackground(context_obj)
+	if not context_obj then
+		return
+	end
+
+	local unit = gv_UnitData[context_obj.session_id]
+
+	if not unit then
+		return
+	end
+
+	local archeType = unit.ArcheType or "Worker"
+
+	return Untranslated(HUDA_MilitiaPersonalization.archetypes[archeType] and HUDA_MilitiaPersonalization.archetypes[archeType].label or "Worker")
 end
 
 function TFormat.HUDA_MilitiaBio(context_obj)
@@ -39,7 +57,7 @@ function TFormat.HUDA_MilitiaBio(context_obj)
 		return
 	end
 
-	return unit.Bio or "This man's bio is a mystery."
+	return Untranslated(unit.Bio) or Untranslated("This man's bio is a mystery.")
 end
 
 function OnMsg.DataLoaded()
@@ -173,6 +191,22 @@ function OnMsg.DataLoaded()
 					true,
 					"Text",
 					Untranslated("Origin<right><style PDABrowserTextLightMedium><HUDA_MilitiaOrigin()></style>")
+				}),
+				PlaceObj("XTemplateWindow", {
+					"__class",
+					"XText",
+					"VAlign",
+					"center",
+					"Clip",
+					false,
+					"UseClipBox",
+					false,
+					"TextStyle",
+					"SatelliteContextMenuKeybind",
+					"Translate",
+					true,
+					"Text",
+					Untranslated("Background<right><style PDABrowserTextLightMedium><HUDA_MilitiaBackground()></style>")
 				})
 			})
 		)
@@ -231,9 +265,6 @@ function OnMsg.DataLoaded()
 	if x_fit then
 		x_fit.element.HandleMouse = false
 	end
-
-
-	GameVar("gv_HUDA_SamStatus", "mercs")
 
 	local x_buttons = HUDA_CustomSettingsUtils.XTemplate_FindElementsByProp(XTemplates["SquadsAndMercs"], "Id",
 		"idSquadButtons")

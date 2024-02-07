@@ -58,7 +58,7 @@ function OnMsg.DataLoaded()
                     "Translate",
                     true,
                     "Text",
-                    "Promotions"
+                    Untranslated("Promotions")
                 }),
                 PlaceObj("XTemplateWindow", {
                     "LayoutMethod",
@@ -73,7 +73,7 @@ function OnMsg.DataLoaded()
                         end,
                         "run_after",
                         function(child, context, item, i, n, last)
-                            child.idSoldierName:SetText(item.Nick)
+                            child.idSoldierName:SetText(Untranslated(item.Nick))
                             child.idSoldierRank:SetText(Untranslated('<em>to: ' .. HUDA_GetRank(item) .. '</em>'))
                         end
                     }, {
@@ -130,7 +130,7 @@ function OnMsg.DataLoaded()
                     "Translate",
                     true,
                     "Text",
-                    "We congratulate our soldiers on their promotions and wish them good luck."
+                    Untranslated("We congratulate our soldiers on their promotions and wish them good luck.")
                 })
             })
         })

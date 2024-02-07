@@ -742,8 +742,8 @@ function OnMsg.DataLoaded()
                     if context.operation then
                         local c_title = self:ResolveId("idTitle")
                         local c_subtitle = self:ResolveId("idSubtitle")
-                        c_title:SetText(operation.display_name)
-                        c_subtitle:SetText(operation.sub_title or "")
+                        c_title:SetText(Untranslated(operation.display_name))
+                        c_subtitle:SetText(Untranslated(operation.sub_title or ""))
                     end
                 end,
                 }, {
@@ -774,7 +774,7 @@ function OnMsg.DataLoaded()
                         PlaceObj('XTemplateCode', {
                             'run', function(self, parent, context)
                             if IsKindOf(context, "SectorOperation") then
-                                parent:SetText(context.sub_title)
+                                parent:SetText(Untranslated(context.sub_title))
                             else
                                 local sector = context.sector
                                 local operations = GetOperationsInSector(sector.Id)
@@ -881,9 +881,9 @@ function OnMsg.DataLoaded()
 
                                 local color, c2, c3, c4 = GetSectorControlColor(colorSide)
 
-                                child.idSectorId:SetText(c4 .. iconText .. "</color>")
+                                child.idSectorId:SetText(Untranslated(c4 .. iconText .. "</color>"))
                                 child.idSectorSquare:SetBackground(color)
-                                child:SetText(text)
+                                child:SetText(Untranslated(text))
                             end
                         }, {
                             PlaceObj("XTemplateTemplate", {

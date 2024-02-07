@@ -53,7 +53,7 @@ function OnMsg.DataLoaded()
                     "Translate",
                     true,
                     "Text",
-                    "Rest in Peace"
+                    Untranslated("Rest in Peace")
                 }),
                 PlaceObj("XTemplateWindow", {
                     "LayoutMethod",
@@ -69,7 +69,7 @@ function OnMsg.DataLoaded()
                         "run_after",
                         function(child, context, item, i, n, last)
                             child.idSoldierName:SetText(item.Nick)
-                            child.idSoldierHome:SetText(HUDA_GetSectorNamePure(HUDA_GetSectorById(item.JoinLocation)))
+                            child.idSoldierHome:SetText(Untranslated(HUDA_GetSectorNamePure(HUDA_GetSectorById(item.JoinLocation))))
                             child.idPortrait:SetImage(item.Portrait)
                         end
                     }, {

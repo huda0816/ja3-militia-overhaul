@@ -90,7 +90,7 @@ function OnMsg.DataLoaded()
                         "Translate",
                         true,
                         "Text",
-                        "<Nick>"
+                        Untranslated("<Nick>")
                     }),
                     PlaceObj("XTemplateWindow", {
                         "__class",
@@ -106,7 +106,7 @@ function OnMsg.DataLoaded()
                         "Translate",
                         true,
                         "Text",
-                        "We are currently working on this section. Please check back later."
+                        Untranslated("We are currently working on this section. Please check back later.")
                     })
                 })
             }),
@@ -160,7 +160,7 @@ function OnMsg.DataLoaded()
                             "Translate",
                             true,
                             "Text",
-                            "We will be adding more content to this section soon."
+                            Untranslated("We will be adding more content to this section soon.")
                         })
                     })
                 })

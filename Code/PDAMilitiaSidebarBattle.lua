@@ -54,7 +54,7 @@ function OnMsg.DataLoaded()
                     "Translate",
                     true,
                     "Text",
-                    "Latest Battle Report"
+                    Untranslated("Latest Battle Report")
                 }),
                 PlaceObj("XTemplateWindow", {
                     "__class",
@@ -115,7 +115,7 @@ function OnMsg.DataLoaded()
                     "Translate",
                     true,
                     "Text",
-                    "..."
+                    Untranslated("...")
                 }, {
                     PlaceObj("XTemplateFunc", {
                         "name",

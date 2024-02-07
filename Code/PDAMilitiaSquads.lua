@@ -88,7 +88,7 @@ function OnMsg.DataLoaded()
             "Translate",
             true,
             "Text",
-            "MILITIA SQUADS"
+            Untranslated("MILITIA SQUADS")
           }),
           PlaceObj("XTemplateWindow", {
             "Margins",
@@ -116,7 +116,7 @@ function OnMsg.DataLoaded()
                 "MaxWidth",
                 300,
                 "Text",
-                "Squad Name"
+                Untranslated("Squad Name")
               }),
               PlaceObj("XTemplateWindow", {
                 "__class",
@@ -132,7 +132,7 @@ function OnMsg.DataLoaded()
                 "TextHAlign",
                 "left",
                 "Text",
-                "Units"
+                Untranslated("Units")
               }),
               PlaceObj("XTemplateWindow", {
                 "__class",
@@ -148,7 +148,7 @@ function OnMsg.DataLoaded()
                 "TextHAlign",
                 "left",
                 "Text",
-                "Location"
+                Untranslated("Location")
               }),
               PlaceObj("XTemplateWindow", {
                 "__class",
@@ -164,7 +164,7 @@ function OnMsg.DataLoaded()
                 "TextHAlign",
                 "left",
                 "Text",
-                "Status"
+                Untranslated("Status")
               }),
               PlaceObj("XTemplateWindow", {
                 "__class",
@@ -180,7 +180,7 @@ function OnMsg.DataLoaded()
                 "TextHAlign",
                 "left",
                 "Text",
-                "Costs"
+                Untranslated("Costs")
               })
             }),
             PlaceObj("XTemplateWindow", {
@@ -218,16 +218,16 @@ function OnMsg.DataLoaded()
               end,
               "run_after",
               function(child, context, item, i, n, last)
-                child.idSquadName:SetText(item.Name)
-                child.idSquadLocation:SetText(item.CurrentSector)
+                child.idSquadName:SetText(Untranslated(item.Name))
+                child.idSquadLocation:SetText(Untranslated(item.CurrentSector))
                 if gv_Sectors[item.CurrentSector].conflict then
-                  child.idSquadStatus:SetText("In Conflict")
+                  child.idSquadStatus:SetText(Untranslated("In Conflict"))
                 elseif item.route and item.route.displayedSectionEnd then
-                  child.idSquadStatus:SetText("Moves towards: " .. item.route.displayedSectionEnd)
+                  child.idSquadStatus:SetText(Untranslated("Moves towards: " .. item.route.displayedSectionEnd))
                 else
-                  child.idSquadStatus:SetText("Defending")
+                  child.idSquadStatus:SetText(Untranslated("Defending"))
                 end
-                child.idSquadUnits:SetText(#item.units)
+                child.idSquadUnits:SetText(Untranslated(#item.units))
               end
             }, {
               PlaceObj("XTemplateWindow", {

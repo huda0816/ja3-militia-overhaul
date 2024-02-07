@@ -158,15 +158,15 @@ end
 GameVar("gv_HUDA_MilitiaFinances", {})
 
 DefineClass.HUDA_MilitiaFinances = {
-    MilitiaRookieIncome = HUDA_GetModOptions("MilitiaRookieIncome", 20),
-    MilitiaVeteranIncome = HUDA_GetModOptions("MilitiaVeteranIncome", 40),
-    MilitiaEliteIncome = HUDA_GetModOptions("MilitiaEliteIncome", 100),
-    MilitiaCampaignCosts = HUDA_GetModOptions("MilitiaCampaignCosts", 40),
+    MilitiaRookieIncome = HUDA_GetModOptions("MilitiaRookieIncome", 20, "number"),
+    MilitiaVeteranIncome = HUDA_GetModOptions("MilitiaVeteranIncome", 40, "number"),
+    MilitiaEliteIncome = HUDA_GetModOptions("MilitiaEliteIncome", 100, "number"),
+    MilitiaCampaignCosts = HUDA_GetModOptions("MilitiaCampaignCosts", 40, "number"),
 }
 
 function HUDA_MilitiaFinances:UpdateProps(prop_name, value)
     local property_name = prop_name:gsub("huda_", "")
-    self[property_name] = tonumber(value)
+    self[property_name] = tonumber(string.match(value, "%d+"))
 end
 
 function HUDA_MilitiaFinances:GetSalary(unit, days, campaignBonus)

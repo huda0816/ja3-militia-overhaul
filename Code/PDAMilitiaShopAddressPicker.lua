@@ -63,7 +63,7 @@ function OnMsg.DataLoaded()
                         "Translate",
                         true,
                         "Text",
-                        "Choose a Sector",
+                        Untranslated("Choose a Sector"),
                         "TextVAlign",
                         "center"
                     })
@@ -147,7 +147,7 @@ function OnMsg.DataLoaded()
                                     "Translate",
                                     true,
                                     "Text",
-                                    "The orders will be delivered to the chosen location"
+                                    Untranslated("The orders will be delivered to the chosen location")
                                 })
                             }),
                             PlaceObj("XTemplateWindow", {
@@ -195,7 +195,7 @@ function OnMsg.DataLoaded()
                                             id = sectorId
                                         }))
                                         child.idSectorSquare:SetBackground(color)
-                                        child:SetText(sector.display_name or "")
+                                        child:SetText(Untranslated(sector.display_name or ""))
                                         child.idIcon:SetVisible(false)
                                         child.idIcon:SetFoldWhenHidden(true)
                                         if i == 1 then

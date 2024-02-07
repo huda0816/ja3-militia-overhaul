@@ -102,7 +102,7 @@ function OnMsg.DataLoaded()
                         "left",
                         "OnLayoutComplete",
                         function(self)
-                            self:SetText(self.context.name)
+                            self:SetText(Untranslated(self.context.name))
                         end
                     }),
                     PlaceObj("XTemplateWindow", {
@@ -119,7 +119,7 @@ function OnMsg.DataLoaded()
                         "OnLayoutComplete",
                         function(self)
                             self:SetTextStyle(self.context.stock > 0 and "PDAIMPMercName" or "HUDAProductOutOfStock")
-                            self:SetText("(" .. (self.context.stock > 0 and self.context.stock or "out of stock") .. ")")
+                            self:SetText(Untranslated("(" .. (self.context.stock > 0 and self.context.stock or "out of stock") .. ")"))
                         end
                     }),
                     PlaceObj("XTemplateWindow", {
@@ -140,7 +140,7 @@ function OnMsg.DataLoaded()
                         "OnLayoutComplete",
                         function(self)
                             local multiplier = HUDA_GetShopOptions("PriceMultiplierNew", 100)
-                            self:SetText(MulDivRound(self.context.basePrice, multiplier, 100) .. "$")
+                            self:SetText(Untranslated(MulDivRound(self.context.basePrice, multiplier, 100) .. "$"))
                         end,
                     })
                 }),
@@ -163,7 +163,7 @@ function OnMsg.DataLoaded()
                     "left",
                     "OnLayoutComplete",
                     function(self)
-                        self:SetText(self.context.description)
+                        self:SetText(Untranslated(self.context.description))
                     end,
                 }),
                 PlaceObj("XTemplateWindow", {
@@ -195,7 +195,7 @@ function OnMsg.DataLoaded()
                         function(self)
                             local amount = self.context.minAmount or 1
 
-                            self:SetText("<underline>Add " .. amount .. "x to cart</underline>")
+                            self:SetText(Untranslated("<underline>Add " .. amount .. "x to cart</underline>"))
 
                             if (self.context.stock == 0) then
                                 self:SetTransparency(150)
@@ -204,7 +204,7 @@ function OnMsg.DataLoaded()
                             end
                         end,
                         "Text",
-                        "<underline>Add to cart</underline>"
+                        Untranslated("<underline>Add to cart</underline>")
                     }, {
                         PlaceObj("XTemplateFunc", {
                             "name",
@@ -243,10 +243,10 @@ function OnMsg.DataLoaded()
                         function(self)
                             local amount = (self.context.minAmount or 1) * 10
 
-                            self:SetText("<underline>Add " .. amount .. "x to cart</underline>")
+                            self:SetText(Untranslated("<underline>Add " .. amount .. "x to cart</underline>"))
                         end,
                         "Text",
-                        "<underline>Add 5x to cart</underline>"
+                        Untranslated("<underline>Add 5x to cart</underline>")
                     }, {
                         PlaceObj("XTemplateFunc", {
                             "name",
@@ -281,10 +281,10 @@ function OnMsg.DataLoaded()
                         true,
                         "OnLayoutComplete",
                         function(self)
-                            self:SetText("<underline>Add all to cart</underline>")
+                            self:SetText(Untranslated("<underline>Add all to cart</underline>"))
                         end,
                         "Text",
-                        "<underline>Add 5x to cart</underline>"
+                        Untranslated("<underline>Add 5x to cart</underline>")
                     }, {
                         PlaceObj("XTemplateFunc", {
                             "name",
@@ -317,7 +317,7 @@ function OnMsg.DataLoaded()
                         "Translate",
                         true,
                         "Text",
-                        "<underline>Buy ammo</underline>"
+                        Untranslated("<underline>Buy ammo</underline>")
                     }, {
                         PlaceObj("XTemplateFunc", {
                             "name",

@@ -144,7 +144,7 @@ function OnMsg.DataLoaded()
       "text",
       "Set",
       function(self, value)
-        self.idLink:SetText(value)
+        self.idLink:SetText(Untranslated(value))
       end,
       "Get",
       function(self)

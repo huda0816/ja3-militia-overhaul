@@ -33,7 +33,7 @@ function OnMsg.DataLoaded()
                     "PDAIMPMercBio",
                     "OnLayoutComplete",
                     function(self)
-                        self:SetText("Order date: " .. HUDA_ShopController:DateFromTime(self.context.orderTime))
+                        self:SetText(Untranslated("Order date: " .. HUDA_ShopController:DateFromTime(self.context.orderTime)))
                     end,
                 }),
                 PlaceObj('XTemplateWindow', {
@@ -49,7 +49,7 @@ function OnMsg.DataLoaded()
                     "PDAIMPMercBio",
                     "OnLayoutComplete",
                     function(self)
-                        self:SetText("Nr. " .. self.context.id)
+                        self:SetText(Untranslated("Nr. " .. self.context.id))
                     end,
                 }),
             }),
@@ -96,7 +96,7 @@ function OnMsg.DataLoaded()
                         end,
                         "run_after",
                         function(child, context, item, i, n, last)
-                            child.idProductName:SetText(item.name .. " x " .. item.count)
+                            child.idProductName:SetText(Untranslated(item.name .. " x " .. item.count))
                         end
                     }, {
                         PlaceObj('XTemplateWindow', {
@@ -141,7 +141,7 @@ function OnMsg.DataLoaded()
                         "PDAIMPMercBio",
                         "OnLayoutComplete",
                         function(self)
-                            self:SetText("Location: " .. self.context.sector)
+                            self:SetText(Untranslated("Location: " .. self.context.sector))
                         end,
                     }),
                     PlaceObj('XTemplateWindow', {
@@ -158,9 +158,9 @@ function OnMsg.DataLoaded()
                         "OnLayoutComplete",
                         function(self)
                             if self.context.status == "pending" then
-                                self:SetText("ETA: " .. HUDA_ShopController:GetETA(self.context) .. "d")
+                                self:SetText(Untranslated("ETA: " .. HUDA_ShopController:GetETA(self.context) .. "d"))
                             else
-                                self:SetText("Deliverd: " .. HUDA_ShopController:GetETA(self.context) * -1 .. "d")
+                                self:SetText(Untranslated("Deliverd: " .. HUDA_ShopController:GetETA(self.context) * -1 .. "d"))
                             end
                         end,
                     }),
@@ -181,7 +181,7 @@ function OnMsg.DataLoaded()
                         "PDAIMPMercBio",
                         "OnLayoutComplete",
                         function(self)
-                            self:SetText((string.upper(self.context.coupon.id)))
+                            self:SetText((Untranslated(string.upper(self.context.coupon.id))))
                         end,
                     }),
                     PlaceObj('XTemplateWindow', {
@@ -197,7 +197,7 @@ function OnMsg.DataLoaded()
                         "PDAIMPMercBio",
                         "OnLayoutComplete",
                         function(self)
-                            self:SetText((self.context.total or 0) .. "$")
+                            self:SetText(Untranslated((self.context.total or 0) .. "$"))
                         end,
                     }),
                     PlaceObj('XTemplateWindow', {
