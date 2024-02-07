@@ -177,12 +177,12 @@ function OnMsg.DataLoaded()
                             "PDAIMPContentTitle",
                             "OnLayoutComplete",
                             function(self)
-                                self:SetText(self.context.item.title)
+                                self:SetText(Untranslated(self.context.item.title))
                             end,
                             "Translate",
                             true,
                             "Text",
-                            "<name>"
+                            Untranslated("<name>")
                         }),
                         PlaceObj("XTemplateWindow", {
                             "__class",
@@ -201,12 +201,12 @@ function OnMsg.DataLoaded()
                             "PDAIMPContentText",
                             "OnLayoutComplete",
                             function(self)
-                                self:SetText(self.context.item.description)
+                                self:SetText(Untranslated(self.context.item.description))
                             end,
                             "Translate",
                             true,
                             "Text",
-                            "<item<description>>"
+                            Untranslated("<item<description>>")
                         })
                     })
                 }),
@@ -270,7 +270,7 @@ function OnMsg.DataLoaded()
                                 "Translate",
                                 true,
                                 "Text",
-                                "New Arrivals"
+                                Untranslated("New Arrivals")
                             }),
                             PlaceObj("XTemplateWindow", {
                                 "Margins",
@@ -333,7 +333,7 @@ function OnMsg.DataLoaded()
                                 "Translate",
                                 true,
                                 "Text",
-                                "Products"
+                                Untranslated("Products")
                             }),
                             PlaceObj("XTemplateWindow", {
                                 "Margins",

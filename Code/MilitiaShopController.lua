@@ -8,7 +8,7 @@ GameVar("gv_HUDA_ShopStatus", {})
 -- TFormat
 
 function TFormat.CurrentDeliveryAddress()
-    return HUDA_ShopController:GetCurrentDeliveryAddress()
+    return Untranslated(HUDA_ShopController:GetCurrentDeliveryAddress())
 end
 
 -- Hooks
@@ -493,7 +493,7 @@ function HUDA_ShopController:Restock()
         if productData.MaxStock > 0 and productData.RestockWeight > 0 and roll < (productData.RestockWeight or 100) + ((tier - productData.Tier) * 10) then
             local tierBonus = 1 + ((tier - productData.Tier) * 0.5)
 
-            local stock = round(productData.MaxStock * tierBonus, 1)
+            local stock = round(productData.MaxStock * tierBonus * 2, 1)
 
             if self.StockMultiplier then
                 stock = round(stock * self.StockMultiplier, 1)

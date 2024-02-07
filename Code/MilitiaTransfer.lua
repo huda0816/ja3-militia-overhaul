@@ -147,7 +147,7 @@ function HUDA_MilitiaTransfer:GetFilterState(button)
     return table.find(filter, buttonCat) and true or false
 end
 
-function HUDA_MilitiaTransfer:GetTotalPrice(sectorId)
+function HUDA_MilitiaTransfer:GetTotalPrice(sectorId, mercs)
     local sector = gv_Sectors[sectorId]
 
     local queue = self:GetTables(sectorId, self.opId) or {}
@@ -158,7 +158,7 @@ function HUDA_MilitiaTransfer:GetTotalPrice(sectorId)
         total = total + self:GetItemPrice(itm)
     end
 
-    local mercs = GetOperationProfessionals(sector.Id, self.opId)
+    mercs = mercs or GetOperationProfessionals(sector.Id, self.opId)
 
     if next(mercs) and HasPerk(mercs[1], "Negotiator") then
         local discount = CharacterEffectDefs.Negotiator:ResolveValue("discountPercent")
@@ -228,7 +228,7 @@ function HUDA_MilitiaTransfer:TransferItems(sectorId)
         T { 2580831680090819, "<em><itemnum> items</em> from <em><sector></em> will be transfered to <em><destination></em> and arrive in about <em><due> hours</em>", itemnum = #transferItems, sector = sectorId, destination = destinationId, due = DivRound(due_time - Game.CampaignTime, 3600) })
 end
 
-function HUDA_MilitiaTransfer:SellItems(sectorId)
+function HUDA_MilitiaTransfer:SellItems(sectorId, mercs)
     local sector = gv_Sectors[sectorId]
 
     local queue = self:GetTables(sectorId, self.opId) or {}
@@ -256,7 +256,7 @@ function HUDA_MilitiaTransfer:SellItems(sectorId)
 
     AddToSectorInventory(sectorId, newStash)
 
-    local price = HUDA_MilitiaTransfer:GetTotalPrice(sectorId)
+    local price = HUDA_MilitiaTransfer:GetTotalPrice(sectorId, mercs)
 
     AddMoney(price, "export", true)
 
@@ -286,7 +286,7 @@ function HUDA_MilitiaTransfer:OnComplete(op, sector, mercs)
     end
 
     if type == "export" then
-        self:SellItems(sector.Id)
+        self:SellItems(sector.Id, mercs)
     end
 
     sector.operations_temp_data[self.opId] = false

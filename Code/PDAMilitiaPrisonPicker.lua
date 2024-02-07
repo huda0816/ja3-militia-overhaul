@@ -63,7 +63,7 @@ function OnMsg.DataLoaded()
                         "Translate",
                         true,
                         "Text",
-                        "Choose a Sector",
+                        Untranslated("Choose a Sector"),
                         "TextVAlign",
                         "center"
                     })
@@ -126,7 +126,7 @@ function OnMsg.DataLoaded()
                                     "Translate",
                                     true,
                                     "Text",
-                                    "Choose a sector where the prisoners will be sent to"
+                                    Untranslated("Choose a sector where the prisoners will be sent to")
                                 })
                             }),
                             PlaceObj("XTemplateWindow", {
@@ -168,6 +168,7 @@ function OnMsg.DataLoaded()
                                     0,
                                     "OnPress",
                                     function(self, gamepad)
+
                                         local pows = GetDialog(self).context.prisoners
 
                                         HUDA_MilitiaPOW:SetPrisonersSector(pows)
@@ -196,7 +197,7 @@ function OnMsg.DataLoaded()
                                             "__class",
                                             "XText",
                                             "Text",
-                                            "x",
+                                            Untranslated("x"),
                                             "Margins",
                                             box(2, 0, 0, 0),
                                             "HAlign",
@@ -219,7 +220,7 @@ function OnMsg.DataLoaded()
                                         "__class",
                                         "XText",
                                         "Text",
-                                        "Hand over the prisoners to the local authorities",
+                                        Untranslated("Hand over the prisoners to the local authorities"),
                                         "Margins",
                                         box(2, 0, 0, 0),
                                         "HAlign",
@@ -277,12 +278,12 @@ function OnMsg.DataLoaded()
                                             id = sectorId
                                         }))
                                         child.idSectorSquare:SetBackground(color)
-                                        child:SetText((sector.display_name or "") ..
-                                            " " .. context.current .. "+" .. context.new .. "/" .. context.max)
+                                        child:SetText(Untranslated((sector.display_name or "") ..
+                                            " " .. context.current .. "+" .. context.new .. "/" .. context.max))
 
-                                        child.idSectorGuards:SetText("Risk: " ..
+                                        child.idSectorGuards:SetText(Untranslated("Risk: " ..
                                             context.risk ..
-                                            " | Guards: " .. context.guards .. "/" .. context.neededGuards)
+                                            " | Guards: " .. context.guards .. "/" .. context.neededGuards))
                                         child.idIcon:SetVisible(false)
                                         child.idIcon:SetFoldWhenHidden(true)
                                         if i == 1 then

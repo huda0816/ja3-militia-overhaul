@@ -44,8 +44,6 @@ GetMercCurrentDailySalary - Money - patch
 GetMoneyProjection - Money -patch
 AddMoney - Money
 
-GetSquadManagementMilitiaSquads - MilitiaMagement - full
-
 OpenSquadCreation - SquadManagement - patch
 
 SquadCantMove - SatelliteTravel - patch
@@ -79,7 +77,6 @@ IsAutoResolveEnabled - SatelliteConflict - patch
 SatelliteRetreat - SatelliteConflict - full
 ResolveConflict - SatelliteConflict - full
 CanGoInMap - SatelliteConflict
-
 RollForMilitiaPromotion - SatelliteConflict - full
 
 SpawnMilitia - SatelliteView - full
@@ -90,7 +87,7 @@ GetLeastExpMilitia - SatelliteView
 
 Unit:DropLoot - Unit - patch
 RollSkillCheck - Unit
-Unit:ExitCombat
+Unit:ExitCombat - Unit
 
 GetSquadBag - SquadBag
 
@@ -112,6 +109,8 @@ GetCombatPath - Combat
 Unit:RecalcUIActions - UnitCaching
 
 AddTimelineEvent - SatelliteTimeline
+
+GetInventoryMaxSlots - ClassDef-Zulu.generated
 
 
 ## TFormats

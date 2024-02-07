@@ -116,7 +116,7 @@ function OnMsg.DataLoaded()
                             "Translate",
                             true,
                             "Text",
-                            "I.M.P. MILITIA STAFF SHOP"
+                            Untranslated("I.M.P. MILITIA STAFF SHOP")
                         }),
                         PlaceObj("XTemplateWindow", {
                             "__class",
@@ -132,7 +132,7 @@ function OnMsg.DataLoaded()
                             "Translate",
                             true,
                             "Text",
-                            "Welcome to the Grand Chien Militia Staff Shop, the one-stop destination for all your militia (and mercenary) needs! Gear up and get ready to conquer."
+                            Untranslated("Welcome to the Grand Chien Militia Staff Shop, the one-stop destination for all your militia (and mercenary) needs! Gear up and get ready to conquer.")
                         })
                     })
                 }),
@@ -182,7 +182,7 @@ function OnMsg.DataLoaded()
                             "Translate",
                             true,
                             "Text",
-                            "TOP SELLERS"
+                            Untranslated("TOP SELLERS")
                         }),
                         PlaceObj("XTemplateWindow", {
                             "Margins",

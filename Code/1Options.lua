@@ -7,7 +7,7 @@ function HUDA_GetModOptions(id, default, type)
 	id = "huda_" .. id
 
 	if type == "number" then
-		return tonumber(CurrentModOptions[id]) or default
+		return tonumber(string.match(CurrentModOptions[id], "%d+")) or default
 	end
 
 	return CurrentModOptions[id] or default

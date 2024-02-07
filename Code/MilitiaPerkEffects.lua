@@ -2,7 +2,7 @@
 -- Militia Soldiers cleaning their gear daily
 function OnMsg.NewDay()
     
-    local repairThreshold = tonumber(HUDA_GetModOptions("MilitiaRepairThreshold", 80))
+    local repairThreshold = tonumber(HUDA_GetModOptions("MilitiaRepairThreshold", 80, "number"))
 
     if repairThreshold == 0 then
         return

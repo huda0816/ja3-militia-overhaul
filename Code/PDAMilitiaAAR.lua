@@ -54,7 +54,7 @@ function OnMsg.DataLoaded()
                         "Translate",
                         true,
                         "Text",
-                        Untranslated("<GetDateFromTime(aar.endTime)>")
+                        Untranslated("<GetDateFromTime()>")
                     }),
                     PlaceObj("XTemplateWindow", {
                         "__class",

@@ -38,7 +38,7 @@ function InitBrowserModes()
     if PDABrowserTabData and not table.find(PDABrowserTabData, "id", "militia") then
         table.insert(PDABrowserTabData, {
             id = "militia",
-            DisplayName = "Militia",
+            DisplayName = Untranslated("Militia"),
         })
     end
 end
@@ -126,85 +126,85 @@ function TFormat.PDAUrl(context_obj)
     --     return url or "http://www.gc-militia.org/"
     -- end
 
-    return HUDA_OriginalPDAUrl(context_obj)
+    return Untranslated(HUDA_OriginalPDAUrl(context_obj))
 end
 
 function TFormat.MilitiaName(context_obj)
-    return context_obj.Name
+    return Untranslated(context_obj.Name)
 end
 
 function TFormat.AAR(conflict)
     conflict = conflict or gv_HUDA_ConflictTracker[#gv_HUDA_ConflictTracker]
 
-    return HUDA_AARGenerator:PrintAAR(conflict)
+    return Untranslated(HUDA_AARGenerator:PrintAAR(conflict))
 end
 
 function TFormat.AARTitle(conflict)
     conflict = conflict or gv_HUDA_ConflictTracker[#gv_HUDA_ConflictTracker]
 
-    return HUDA_AARGenerator:PrintAARTitle(conflict)
+    return Untranslated(HUDA_AARGenerator:PrintAARTitle(conflict))
 end
 
 function TFormat.ConflictDaysAgo(conflict)
     conflict = conflict or gv_HUDA_ConflictTracker[#gv_HUDA_ConflictTracker]
 
-    return HUDA_GetDaysSinceTime(conflict.endTime)
+    return Untranslated(HUDA_GetDaysSinceTime(conflict.endTime))
 end
 
 function TFormat.ConflictResult(conflict)
     conflict = conflict or gv_HUDA_ConflictTracker[#gv_HUDA_ConflictTracker]
 
     if (conflict.playerWon and conflict.playerWon == true) then
-        return "Victory"
+        return Untranslated("Victory")
     else
-        return "Defeat"
+        return Untranslated("Defeat")
     end
 end
 
 function TFormat.ConflictLocation(conflict)
     conflict = conflict or gv_HUDA_ConflictTracker[#gv_HUDA_ConflictTracker]
 
-    return GetSectorName(gv_Sectors[conflict.sectorId])
+    return Untranslated(GetSectorName(gv_Sectors[conflict.sectorId]))
 end
 
 function TFormat.ConflictDirection(conflict)
     conflict = conflict or gv_HUDA_ConflictTracker[#gv_HUDA_ConflictTracker]
 
-    return conflict.playerAttacked and "Offensive" or "Defensive"
+    return Untranslated(conflict.playerAttacked and "Offensive" or "Defensive")
 end
 
 function TFormat.MilitiaSquadCosts(squad)
-    return HUDA_MilitiaFinances:GetDailyCostsPerSquad(squad)
+    return Untranslated(HUDA_MilitiaFinances:GetDailyCostsPerSquad(squad))
 end
 
 function TFormat.MilitiaSupplyBase(squad)
-    return HUDA_MilitiaFinances:GetSupplyBase(squad)
+    return Untranslated(HUDA_MilitiaFinances:GetSupplyBase(squad))
 end
 
 function TFormat.MilitiaSquadOrigin(squad)
     if squad.BornInSector == "" then
-        return "Unknown"
+        return Untranslated("Unknown")
     end
 
-    return HUDA_GetClosestCity(squad.BornInSector)
+    return Untranslated(HUDA_GetClosestCity(squad.BornInSector))
 end
 
 function TFormat.MilitiaStatus(item)
     if gv_Sectors[item.CurrentSector].conflict then
-        return "In Battle"
+        return Untranslated("In Battle")
     elseif item.route and item.route.displayedSectionEnd then
-        return "Moves towards: " .. item.route.displayedSectionEnd
+        return Untranslated("Moves towards: " .. item.route.displayedSectionEnd)
     else
-        return "Defending"
+        return Untranslated("Defending")
     end
 end
 
 function TFormat.NewsMeta(item)
     local date, city = HUDA_NewsController:GetNewsMeta(item)
 
-    return date .. (date and city and " - ") .. city
+    return Untranslated(date .. (date and city and " - ") .. city)
 end
 
-function TFormat.GetDateFromTime(time)
-    return HUDA_GetDateFromTime(time)
+function TFormat.GetDateFromTime(context)
+    return Untranslated(HUDA_GetDateFromTime(context.aar.endTime))
 end

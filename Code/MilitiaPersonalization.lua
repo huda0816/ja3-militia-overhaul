@@ -1,49 +1,13 @@
 -- backgrounds: Student, Rich Kid, Revolutionary, ExLegion, ExArmy, SlumKid, ExCriminal, ExCop, Doctor/Nurse, Worker, Miner, Farmer, Teacher, Journalist, Refugee, ExGangMember, Prominent, Athlete
 
--- Prominent
--- very rare
--- Location: Everywhere
--- Equipment: Up to tier 3
--- Equipment: 2x Armor, 1x Firearm
--- Special: Increases militia popularity in GC. Everytime someone dies in the squad the prominent has to roll to stay in the militia.
--- Loyalty: medium
--- Possible Specialization: Leader
-
--- Athlete
--- very rare
--- Location: Everywhere
--- Equipment: Up to tier 2
--- Equipment: 1x Armor, 1x Firearm
--- Special: Higher Dexterity, Higher Agility, Higher Strength
--- Loyalty: medium
--- Possible Specialization: none
-
--- Student
--- common
--- Location: Everywhere
--- Equipment: Up to tier 1
--- Equipment: 1x Weapon and 1x Armor
--- Special: Lower stats. Everytime someone dies in the squad the student has to roll to stay in the militia.
--- Loyalty: medium
--- Possible Specialization: ExplosiveExpert
-
--- Refugee
--- common
--- Location: Refugee Camp
--- Equipment: Up to tier 1
--- Equipment: 1x Melee or 1x Handgun
--- Special: Only recruitable in refugee camp
--- Loyalty: high
--- Possible Specialization: none
-
--- Journalist
+-- Doctor
 -- rare
 -- Location: Everywhere
 -- Equipment: Up to tier 1
--- Equipment: 1x Handgun
--- Special: Higher wisdom stats, Rolls everyday to increase loyalty in the town he is in.
+-- Equipment: 1x Armor, 1x medkit
+-- Special: Higher medical skill
 -- Loyalty: medium
--- Possible Specialization: Leader
+-- Possible Specialization: Doctor
 
 -- Teacher
 -- rare
@@ -51,6 +15,24 @@
 -- Equipment: Up to tier 1
 -- Equipment: 1x Armor, 1x Handgun
 -- Special: Higher wisdom and leadership stats
+-- Loyalty: medium
+-- Possible Specialization: Leader
+
+-- Worker
+-- common
+-- Location: Everywhere
+-- Equipment: Up to tier 1
+-- Equipment: 1x Melee or 1x Handgun
+-- Special: Higher mechanic skill
+-- Loyalty: medium
+-- Possible Specialization: Mechanic
+
+-- WhiteCollar
+-- uncommon
+-- Location: Everywhere
+-- Equipment: Up to tier 1
+-- Equipment: 1x Melee or 1x Handgun
+-- Special: Higher Wisdom skill
 -- Loyalty: medium
 -- Possible Specialization: Leader
 
@@ -72,50 +54,76 @@
 -- Loyalty: medium
 -- Possible Specialization: ExplosiveExpert
 
--- Worker
+-- Soldier
+-- very rare
+-- Location: Everywhere
+-- Equipment: Up to tier 2
+-- Equipment: 1x Armor, 1x Firearm
+-- Special: Higher stats and higher morale in battle
+-- Loyalty: medium
+-- Possible Specialization: Marksmen, ExplosiveExpert
+
+-- Legion
+-- rare
+-- Location: Everywhere
+-- Equipment: Up to tier 1
+-- Equipment: 1x Armor, 1x Handgun or 1x Melee
+-- Special: Is not affected by morale loss in battle, can betray you and join the enemy
+-- Loyalty: low
+-- Possible Specialization: none
+
+-- -- ExCriminal
+-- -- rare
+-- -- Location: Everywhere
+-- -- Equipment: Up to tier 2
+-- -- Equipment: 1x Firearm, 1x Melee
+-- -- Special: Can steal money from the militia. (Someone stole money in sector ..)
+-- -- Loyalty: low
+-- -- Possible Specialization: ExplosiveExpert
+
+-- -- ExGangMember
+-- -- rare
+-- -- Location: Everywhere
+-- -- Equipment: Up to tier 1E
+-- -- Equipment: 1x Melee
+-- -- Special: There is a chance that the gang member will obtain a item (xy obtained a new ... we are not sure where he got it from but loyalty decreased)
+-- -- Loyalty: low
+-- -- Possible Specialization: none
+
+-- Student
 -- common
 -- Location: Everywhere
 -- Equipment: Up to tier 1
--- Equipment: 1x Melee or 1x Handgun
--- Special: Higher mechanic skill
+-- Equipment: 1x Weapon and 1x Armor
+-- Special: Lower stats. Everytime someone dies in the squad the student has to roll to stay in the militia.
 -- Loyalty: medium
--- Possible Specialization: Mechanic
+-- Possible Specialization: ExplosiveExpert
 
--- Doctor/Nurse
+-- Athlete
+-- very rare
+-- Location: Everywhere
+-- Equipment: Up to tier 2
+-- Equipment: 1x Armor, 1x Firearm
+-- Special: Higher Dexterity, Higher Agility, Higher Strength
+-- Loyalty: medium
+-- Possible Specialization: none
+
+-- Journalist
 -- rare
 -- Location: Everywhere
 -- Equipment: Up to tier 1
--- Equipment: 1x Armor, 1x medkit
--- Special: Higher medical skill
+-- Equipment: 1x Handgun
+-- Special: Higher wisdom stats, Rolls everyday to increase loyalty in the town he is in.
 -- Loyalty: medium
--- Possible Specialization: Doctor
+-- Possible Specialization: Leader
 
--- ExCop
--- rare
+-- SlumKid
+-- common
 -- Location: Everywhere
--- Equipment: Up to tier 2
--- Equipment: 1x Handgun, 1x Armor
--- Special: Higher stats, Doesn't like to be in the same squad as criminals (ExCriminal, ExGangMember, ExLegion) roll to stay in the squad if there is a criminal in the squad.
--- Loyalty: medium
--- Possible Specialization: Leader, Marksmen
-
--- ExCriminal
--- rare
--- Location: Everywhere
--- Equipment: Up to tier 2
--- Equipment: 1x Firearm, 1x Melee
--- Special: Can steal money from the militia. (Someone stole money in sector ..)
--- Loyalty: low
--- Possible Specialization: ExplosiveExpert
-
--- RichKid
--- rare
--- Location: Pantagruel, Post Cacao
--- Special: Fully equipped
--- Equipment: Up to tier 3
--- Equipment: 2x Armor, 1x Firearm
--- Special: Lower stats. Everytime someone dies in the squad the rich kid has to roll to stay in the militia.
--- Loyalty: medium
+-- Equipment: Up to tier 1
+-- Equipment: 1x Melee
+-- Special: Will find items in the sector
+-- Loyalty: high
 -- Possible Specialization: none
 
 -- Revolutionary
@@ -127,43 +135,42 @@
 -- Loyalty: high
 -- Possible Specialization: Leader
 
--- ExLegion
+-- RichKid
 -- rare
--- Location: Everywhere
--- Equipment: Up to tier 1
--- Equipment: 1x Armor, 1x Handgun or 1x Melee
--- Special: Is not affected by morale loss in battle, can betray you and join the enemy
--- Loyalty: low
--- Possible Specialization: none
-
--- ExGangMember
--- rare
--- Location: Everywhere
--- Equipment: Up to tier 1E
--- Equipment: 1x Melee
--- Special: There is a chance that the gang member will obtain a item (xy obtained a new ... we are not sure where he got it from but loyalty decreased)
--- Loyalty: low
--- Possible Specialization: none
-
--- ExArmy
--- very rare
--- Location: Everywhere
--- Equipment: Up to tier 2
--- Equipment: 1x Armor, 1x Firearm
--- Special: Higher stats and higher morale in battle
+-- Location: Pantagruel, Post Cacao
+-- Special: Fully equipped
+-- Equipment: Up to tier 3
+-- Equipment: 2x Armor, 1x Firearm
+-- Special: Lower stats. Everytime someone dies in the squad the rich kid has to roll to stay in the militia.
 -- Loyalty: medium
--- Possible Specialization: Marksmen, ExplosiveExpert
+-- Possible Specialization: none
 
--- SlumKid
+-- Refugee
 -- common
--- Location: Everywhere
+-- Location: Refugee Camp
 -- Equipment: Up to tier 1
--- Equipment: 1x Melee
--- Special: Will find items in the sector
+-- Equipment: 1x Melee or 1x Handgun
+-- Special: Only recruitable in refugee camp
 -- Loyalty: high
 -- Possible Specialization: none
 
+-- Cop
+-- rare
+-- Location: Everywhere
+-- Equipment: Up to tier 2
+-- Equipment: 1x Handgun, 1x Armor
+-- Special: Higher stats, Doesn't like to be in the same squad as criminals (ExCriminal, ExGangMember, ExLegion) roll to stay in the squad if there is a criminal in the squad.
+-- Loyalty: medium
+-- Possible Specialization: Leader, Marksmen
 
+-- Prominent
+-- very rare
+-- Location: Everywhere
+-- Equipment: Up to tier 3
+-- Equipment: 2x Armor, 1x Firearm
+-- Special: Increases militia popularity in GC. Everytime someone dies in the squad the prominent has to roll to stay in the militia.
+-- Loyalty: medium
+-- Possible Specialization: Leader
 
 local hasJoinlocation = false
 local hasJoindate = false
@@ -228,20 +235,20 @@ if not hasHandledEquipment then
     }
 end
 
-if not hasOldSessionIds then
-    SatelliteSquad.properties[#SatelliteSquad.properties + 1] = {
-        category = "General",
-        id = "OldSessionIds",
-        editor = "string_list",
-        default = {},
-    }
-end
-
 if not hasArcheType then
-    SatelliteSquad.properties[#SatelliteSquad.properties + 1] = {
+    UnitProperties.properties[#UnitProperties.properties + 1] = {
         category = "General",
         id = "ArcheType",
         editor = "text",
+        default = "",
+    }
+end
+
+if not hasOldSessionIds then
+    UnitProperties.properties[#UnitProperties.properties + 1] = {
+        category = "General",
+        id = "OldSessionIds",
+        editor = "string_list",
         default = {},
     }
 end
@@ -279,147 +286,472 @@ end
 
 DefineClass.HUDA_MilitiaPersonalization = {
     archetypes = {
-        prominent = {
-            weight = -20,
-            max = 2,
-            equipment = {
-                { category = "Weapons", tier = 2,               subCategories = { "SubmachineGuns", "AssaultRifles", "Handguns" }, condition = "almostNew", chance = 100, ammo = "high" },
-                { category = "Armor",   subCategory = "Helmet", tier = 2,                                              condition = "almostNew", chance = 100 },
-                { category = "Armor",   subCategory = "Armor",  tier = 2,                                              condition = "almostNew", chance = 100 },
-            }
-        },
-        athlete = {
+        Doctor = {
+            label = "Doctor",
             weight = 0,
             equipment = {
-                { category = "Weapons", tier = 2, subCategories = { "SubmachineGuns", "AssaultRifles", "Handguns" }, condition = "almostNew", chance = 100,            ammo = "medium" },
-                { category = "Armor",   subCategory = "Helmet", tier = 1,    condition = "almostNew", chance = 100 },
-                { category = "Armor",   subCategory = "Armor",  tier = 1,    condition = "almostNew", chance = 100 },
+                {
+                    category = "Weapons",
+                    subCategories = { "Handguns" },
+                    tier = 2,
+                    condition = "good",
+                    ammo = "medium"
+                },
+                {
+                    category = "Armor",
+                    subCategories = { "Armor", "Helmet" },
+                    tier = 1,
+                    condition = "good",
+                },
+                {
+                    category =
+                    "Medicine",
+                    tier = 1,
+                    condition = "good",
+                },
+            },
+            stats = {
+                Medical = 70,
+                Wisdom = 70,
+            },
+            specializations = {
+                Doctor = 100,
             }
         },
-        student = {
+        Teacher = {
+            label = "Teacher",
+            weight = 0,
+            equipment = {
+                {
+                    category = "Weapons",
+                    subCategories = { "Handguns" },
+                    tier = 1,
+                    condition = "good",
+                    ammo = "medium"
+                },
+                {
+                    category = "Armor",
+                    subCategories = { "Armor", "Helmet" },
+                    tier = 1,
+                    condition = "good",
+                },
+            },
+            stats = {
+                Wisdom = 70,
+                Leadership = 70,
+            },
+            specializations = {
+                Leader = 40,
+            }
+        },
+        Worker = {
+            label = "Worker",
             weight = 60,
             equipment = {
-                { category = "Weapons", subCategories = { "Handguns" },        tier = 1, ammo = "low" },
-                { category = "Armor",   subCategories = { "Armor", "Helmet" }, tier = 1 },
+                {
+                    category = "Weapons",
+                    subCategories = { "Shotguns", "Handguns" },
+                    tier = 1,
+                    ammo = "low"
+                }
+            },
+            stats = {
+                Mechanical = 70,
+                Strength = 70,
+            },
+            specializations = {
+                Mechanic = 30,
             }
         },
-        refugee = {
-            weight = 60,
-            citiesExclusive = { "Refugee Camp" },
+        WhiteCollar = {
+            label = "White Collar Worker",
+            weight = 20,
             equipment = {
-                { category = "Weapons", subCategories = { "MeleeWeapons", "Handguns" }, tier = 1, ammo = "low" },
-                { category = "Armor",   subCategories = { "Armor", "Helmet" },          tier = 1, },
+                {
+                    category = "Weapons",
+                    subCategories = { "Handguns" },
+                    tier = 1,
+                    ammo = "low"
+                },
+            },
+            stats = {
+                Wisdom = 70,
+            },
+            specializations = {
+                Leader = 20,
             }
         },
-        journalist = {
-            weight = 0,
-            equipment = {
-                { category = "Weapons", subCategories = { "Handguns" },        tier = 1, condition = "good", ammo = "low" },
-                { category = "Armor",   subCategories = { "Armor", "Helmet" }, tier = 1, condition = "good", },
-            }
-        },
-        teacher = {
-            weight = 0,
-            equipment = {
-                { category = "Weapons", subCategories = { "Handguns" },        tier = 1, condition = "good", ammo = "medium" },
-                { category = "Armor",   subCategories = { "Armor", "Helmet" }, tier = 1, condition = "good", },
-            }
-        },
-        farmer = {
-            weight = 60,
-            equipment = {
-                { category = "Weapons", subCategories = { "MeleeWeapons" },       tier = 1 },
-                { category = "Weapons", subCategories = { "Shotguns", "Rifles" }, tier = 1,            chance = 50, ammo = "low" },
-                { category = "Armor",   subCategories = { "Armor", "Helmet" },    tier = 1, },
-            }
-        },
-        miner = {
-            weight = 60,
-            equipment = {
-                { category = "Weapons", subCategories = { "Shotguns", "SubmachineGuns", "AssaultRifles", "Handguns" }, tier = 1, ammo = "low" },
-                { category = "Weapons", subCategories = { "Grenade" },                                                 tier = 1, },
-                { category = "Armor",   subCategories = { "Armor", "Helmet" },                                         tier = 1, },
-            }
-        },
-        worker = {
+        Farmer = {
+            label = "Farmer",
             weight = 60,
             equipment = {
-                { category = "Weapons", subCategories = { "Shotguns", "SubmachineGuns", "AssaultRifles", "Handguns" }, tier = 1, ammo = "low" },
-                { category = "Armor",   subCategories = { "Armor", "Helmet" },                                         tier = 1, },
+                {
+                    category = "Weapons",
+                    subCategories = { "MeleeWeapons" },
+                    tier = 1
+                },
+                {
+                    category = "Weapons",
+                    subCategories = { "Shotguns", "Rifles" },
+                    tier = 1,
+                    chance = 50,
+                    ammo = "low"
+                }
+            },
+            stats = {
+                Strength = 70,
+                Mechanical = 50
+            },
+            specializations = {
+                Mechanic = 20,
             }
         },
-        doctor = {
-            weight = 0,
+        Miner = {
+            label = "Miner",
+            weight = 60,
             equipment = {
-                { category = "Weapons",  subCategories = { "Handguns", "SubmachineGuns" }, tier = 2,             condition = "good", ammo = "medium" },
-                { category = "Armor",    subCategories = { "Armor", "Helmet" },            tier = 1, condition = "good", },
-                { category = "Medicine", tier = 1,                                         condition = "good", },
+                {
+                    category = "Weapons",
+                    subCategories = { "Grenade" },
+                    tier = 1,
+                },
+                {
+                    category = "Armor",
+                    subCategories = { "Helmet" },
+                    tier = 1,
+                },
+            },
+            stats = {
+                Explosives = 70,
+                Strength = 70,
+            },
+            specializations = {
+                ExplosiveExpert = 40,
             }
         },
-        exCop = {
-            weight = 0,
-            equipment = {
-                { category = "Weapons", subCategories = { "Handguns", "Shotguns" }, tierRange = {1, 2},             condition = "good", ammo = "medium" },
-                { category = "Armor",   subCategories = { "Armor", "Helmet" },      tier = 1, condition = "good", },
-            }
-        },
-        exCriminal = {
-            weight = 0,
-            equipment = {
-                { category = "Weapons", subCategories = { "Handguns" },     tierRange = { 1, 2 }, condition = "good", ammo = "medium" },
-                { category = "Weapons", subCategories = { "MeleeWeapons" }, tier = { 1 },         condition = "good" },
-            }
-        },
-        richKid = {
+        Solider = {
+            label = "Soldier",
             weight = -10,
-            cities = { "Port Cacao", "Pantagruel" },
             equipment = {
-                { category = "Weapons", tier = 2,               subCategories = { "AssaultRifles" }, condition = "almostNew", chance = 100, ammo = "high" },
-                { category = "Weapons", tierRange = { 1, 2 },   subCategories = { "Handguns" },      condition = "almostNew", ammo = "high" },
-                { category = "Armor",   subCategory = "Helmet", tier = 2,                            condition = "almostNew", chance = 100 },
-                { category = "Armor",   subCategory = "Armor",  tier = 2,                            condition = "almostNew", chance = 100 },
+                {
+                    category = "Weapons",
+                    tier = 2,
+                    subCategories = { "AssaultRifles" },
+                    condition = "almostNew",
+                    chance = 100,
+                    ammo = "high"
+                },
+                {
+                    category = "Armor",
+                    subCategory = "Helmet",
+                    tierRange = { 1, 2 },
+                    condition = "almostNew",
+                    chance = 100
+                },
+                {
+                    category = "Armor",
+                    subCategory = "Armor",
+                    tier = 1,
+                    condition = "almostNew",
+                    chance = 100
+                },
+            },
+            stats = {
+                Strength = 70,
+                Marksmanship = 70,
+                Explosives = 50,
+                Medical = 40,
+                Leadership = 40,
+            },
+            specializations = {
+                Marksmen = 30,
+                ExplosiveExpert = 20,
+                Leader = 20,
+            },
+            rank = "Veteran"
+        },
+        Legion = {
+            label = "Legion",
+            weight = 0,
+            equipment = {
+                {
+                    category = "Weapons",
+                    tier = 1,
+                    subCategories = { "Shotguns", "SubmachineGuns", "AssaultRifles", "Handguns" },
+                    condition = "almostNew",
+                    chance = 100,
+                    ammo = "medium"
+                },
+                {
+                    category = "Weapons",
+                    subCategories = { "MeleeWeapons" },
+                    tierRange = { 1, 2 },
+                },
+                {
+                    category = "Armor",
+                    subCategory = "Helmet",
+                    tier = 1,
+                },
+                {
+                    category = "Armor",
+                    subCategory = "Armor",
+                    tier = 1,
+                },
+            },
+            stats = {
+                Strength = 70,
+                Marksmanship = 65,
+                Health = 60,
+            },
+            specializations = {
+                ExplosiveExpert = 20,
+                Marksmen = 20,
+            },
+            rank = "Veteran"
+        },
+        Criminal = {
+            label = "Criminal",
+            weight = 0,
+            equipment = {
+                {
+                    category = "Weapons",
+                    subCategories = { "Handguns" },
+                    tierRange = { 1, 2 },
+                    condition = "good",
+                    ammo = "medium"
+                },
+                {
+                    category = "Weapons",
+                    subCategories = { "MeleeWeapons" },
+                    tier = { 1 },
+                    condition = "good"
+                },
+            },
+            stats = {
+                Dexterity = 70,
+                Marksmanship = 65,
+                Strength = 70,
+            },
+            specializations = {
+                ExplosiveExpert = 20,
+                Marksmen = 20,
+                Leader = 20,
             }
         },
-        revolutionary = {
+        Student = {
+            label = "Student",
+            weight = 60,
+            equipment = {},
+            stats = {
+                Wisdom = 70,
+                Leadership = 50,
+                Health = 80,
+            },
+            specializations = {
+                ExplosiveExpert = 10,
+                Mechanic = 20,
+            }
+        },
+        Athlete = {
+            label = "Athlete",
+            weight = 0,
+            equipment = {},
+            stats = {
+                Dexterity = 80,
+                Agility = 80,
+                Strength = 80,
+            },
+            specializations = {}
+        },
+        Journalist = {
+            label = "Journalist",
+            weight = 0,
+            equipment = {
+                {
+                    category = "Armor",
+                    subCategories = { "Armor", "Helmet" },
+                    tier = 1,
+                    condition = "good",
+                },
+            },
+            stats = {
+                Wisdom = 70,
+                Leadership = 50,
+            },
+            specializations = {
+                Leader = 20,
+            }
+        },
+        SlumKid = {
+            label = "Slum Kid",
+            weight = 60,
+            equipment = {
+                {
+                    category = "Weapons",
+                    subCategories = { "Handguns", "MeleeWeapons" },
+                    tier = 1,
+                    condition = "bad",
+                    ammo = "none"
+                },
+                {
+                    category = "Armor",
+                    subCategories = { "Armor", "Helmet" },
+                    tier = 1,
+                    condition = "bad",
+                },
+            },
+            stats = {
+                Strength = 80,
+                Dexterity = 70,
+                Agility = 70,
+                Health = 50,
+            },
+            specializations = {
+                Mechanic = 20,
+                ExplosiveExpert = 20,
+            }
+        },
+        Revolutionary = {
+            label = "Revolutionary",
             weight = 60,
             cities = { "Pantagruel" },
             equipment = {
-                { category = "Weapons", tier = 1,               subCategories = { "SubmachineGuns", "AssaultRifles" }, condition = "almostNew", chance = 100, ammo = "high" },
-                { category = "Armor",   subCategory = "Helmet", tier = 1,                                              condition = "almostNew" },
-                { category = "Armor",   subCategory = "Armor",  tier = 1,                                              condition = "almostNew" },
+                {
+                    category = "Weapons",
+                    tier = 1,
+                    subCategories = { "SubmachineGuns", "AssaultRifles" },
+                    condition = "almostNew",
+                    chance = 100,
+                    ammo = "high"
+                },
+                {
+                    category = "Armor",
+                    subCategory = "Helmet",
+                    tier = 1,
+                    condition = "almostNew"
+                },
+                {
+                    category = "Armor",
+                    subCategory = "Armor",
+                    tier = 1,
+                    condition = "almostNew"
+                },
+            },
+            stats = {
+                Marksmanship = 70,
+                Explosives = 70,
+                Leadership = 70,
+            },
+            specializations = {
+                Leader = 20,
+                Marksmen = 20,
+                ExplosiveExpert = 20,
             }
         },
-        exLegion = {
-            weight = 0,
-            equipment = {
-                { category = "Weapons", tier = 1,                           subCategories = { "Shotguns", "SubmachineGuns", "AssaultRifles", "Handguns" }, condition = "almostNew", chance = 100, ammo = "medium" },
-                { category = "Weapons", subCategories = { "MeleeWeapons" }, tierRange = { 1, 2 }, },
-                { category = "Armor",   subCategory = "Helmet",             tier = 1, },
-                { category = "Armor",   subCategory = "Armor",              tier = 1, },
-            }
-        },
-        exGangMember = {
-            weight = 0,
-            equipment = {
-                { category = "Weapons", subCategories = { "MeleeWeapons" }, tierRange = { 1, 2 }, chance = 100 },
-                { category = "Weapons", subCategories = { "Handguns" },     tier = 1,             chance = 100, ammo = "high" },
-            }
-        },
-        exArmy = {
+        RichKid = {
+            label = "Rich Kid",
             weight = -10,
+            cities = { "Port Cacao", "Pantagruel" },
             equipment = {
-                { category = "Weapons", tier = 2,               subCategories = { "AssaultRifles" }, condition = "almostNew", chance = 100, ammo = "high" },
-                { category = "Armor",   subCategory = "Helmet", tierRange = { 1, 2 },                condition = "almostNew", chance = 100 },
-                { category = "Armor",   subCategory = "Armor",  tier = 1,                condition = "almostNew", chance = 100 },
+                {
+                    category = "Weapons",
+                    tier = 2,
+                    subCategories = { "AssaultRifles" },
+                    condition = "almostNew",
+                    chance = 100,
+                    ammo = "high"
+                },
+                {
+                    category = "Weapons",
+                    tierRange = { 1, 2 },
+                    subCategories = { "Handguns" },
+                    condition = "almostNew",
+                    ammo = "high"
+                },
+                {
+                    category = "Armor",
+                    subCategory = "Helmet",
+                    tier = 2,
+                    condition = "almostNew",
+                    chance = 100
+                },
+                {
+                    category = "Armor",
+                    subCategory = "Armor",
+                    tier = 2,
+                    condition = "almostNew",
+                    chance = 100
+                },
+            },
+            stats = {
+                Health = 80,
+                Leadership = 70,
+                Wisdom = 70,
+                Mechanical = 50
+            },
+            specializations = {}
+        },
+        Cop = {
+            label = "Cop",
+            weight = 0,
+            equipment = {
+                {
+                    category = "Weapons",
+                    subCategories = { "Handguns", "Shotguns" },
+                    tierRange = { 1, 2 },
+                    condition = "good",
+                    ammo = "medium"
+                },
+                {
+                    category = "Armor",
+                    subCategories = { "Armor", "Helmet" },
+                    tier = 1,
+                    condition = "good",
+                },
+            },
+            stats = {
+                Marksmanship = 70,
+                Leadership = 70,
+                Medical = 50,
+            },
+            specializations = {
+                Leader = 20,
+                Marksmen = 20,
             }
         },
-        slumKid = {
-            weight = 60,
+        Prominent = {
+            label = "Celebrity",
+            weight = -20,
+            max = 2,
             equipment = {
-                { category = "Weapons", subCategories = { "Handguns", "MeleeWeapons" }, tier = 1, condition = "bad", ammo = "none" },
-                { category = "Armor",   subCategories = { "Armor", "Helmet" }, tier = 1, condition = "bad", },
+                {
+                    category = "Weapons",
+                    tier = 2,
+                    subCategories = { "SubmachineGuns", "AssaultRifles", "Handguns" },
+                    condition = "almostNew",
+                    chance = 100,
+                    ammo = "high"
+                },
+                {
+                    category = "Armor",
+                    subCategory = "Helmet",
+                    tier = 2,
+                    condition = "almostNew",
+                    chance = 100
+                },
+                {
+                    category = "Armor",
+                    subCategory = "Armor",
+                    tier = 2,
+                    condition = "almostNew",
+                    chance = 100
+                },
+            },
+            stats = {},
+            specializations = {
+                Leader = 40,
             }
-        },
+        }
     }
 }
 
@@ -580,9 +912,9 @@ function HUDA_MilitiaPersonalization:Personalize(unit_ids, first)
             if not unit.Nick then
                 local nick = self:GetRandomMilitiaName()
 
-                unit.Nick = nick
-                unit.AllCapsNick = string.upper(nick)
-                unit.snype_nick = "Militia " .. nick
+                unit.Nick = Untranslated(nick)
+                unit.AllCapsNick = Untranslated(string.upper(nick))
+                unit.snype_nick = Untranslated("Militia " .. nick)
 
                 if gunit then
                     gunit.Nick = unit.Nick
@@ -606,8 +938,8 @@ function HUDA_MilitiaPersonalization:Personalize(unit_ids, first)
                     gunit.JoinLocation = unit.JoinLocation
                 end
             end
-
-            if not unit.ArcheType or unit.ArcheType == "" then
+            
+            if not unit.ArcheType or type(unit.ArcheType) == "table" or unit.ArcheType == "" then
                 unit.ArcheType = self:GetArchetype(unit)
 
                 if gunit then
@@ -619,7 +951,7 @@ function HUDA_MilitiaPersonalization:Personalize(unit_ids, first)
                 if HUDA_GetModOptions("MilitiaEquipmentSetting") == "Randomized" or HUDA_GetModOptions("MilitiaEquipmentSetting") == "None" and not first then
                     unit:ForEachItem(function(item, slot)
                         unit:RemoveItem(slot, item)
-                    end)                    
+                    end)
                 end
 
                 if HUDA_GetModOptions("MilitiaEquipmentSetting") == "Randomized" then
@@ -709,15 +1041,19 @@ function HUDA_MilitiaPersonalization:GetRandomBio(unit)
         return
     end
 
-    return string.gsub(bio, "<name>", unit.Nick)
+    local cityId = HUDA_GetClosestCity(unit.JoinLocation or "H2", true)
+
+    local cityName = cityId and gv_Cities[cityId] and gv_Cities[cityId].DisplayName or "Unknown"
+
+    return bio:gsub("<name>", unit.Nick):gsub("<city>", TDevModeGetEnglishText(cityName))
 end
 
 function HUDA_MilitiaPersonalization:GetBios(unit)
-    return HUDA_GetAvailableBios(unit.Specialization)
+    return HUDA_GetAvailableBios(unit.ArcheType)
 end
 
 function HUDA_MilitiaPersonalization:RemoveBios(unit, filtered)
-    HUDA_SetAvailableBios(unit.Specialization, filtered)
+    HUDA_SetAvailableBios(unit.ArcheType, filtered)
 end
 
 function HUDA_MilitiaPersonalization:GetRandomSquadName(sector_id)
@@ -725,7 +1061,7 @@ function HUDA_MilitiaPersonalization:GetRandomSquadName(sector_id)
     return self:GetRandomMilitiaSquadName()
 end
 
-function HUDA_MilitiaPersonalization:GetSpecialization(unit)
+function HUDA_MilitiaPersonalization:GetSpecializationOld(unit)
     local squad = gv_Squads[unit.Squad]
 
     if not squad then
@@ -749,21 +1085,57 @@ function HUDA_MilitiaPersonalization:GetSpecialization(unit)
     end
 end
 
+function HUDA_MilitiaPersonalization:GetSpecialization(unit)
+    local squad = gv_Squads[unit.Squad]
+
+    local archetype = unit.ArcheType and self.archetypes[unit.ArcheType]
+
+    if not archetype or not next(archetype.specializations) then
+        return "AllRounder"
+    end
+
+    local specializations = archetype.specializations
+
+    return self:DrawSpecialization(specializations)
+end
+
+function HUDA_MilitiaPersonalization:DrawSpecialization(specializations)
+    local rand = InteractionRandRange(1, 100)
+
+    local currentWeight = 0
+
+    for name, v in pairs(specializations) do
+        currentWeight = currentWeight + v
+
+        if rand <= currentWeight then
+            return name
+        end
+    end
+
+    return "AllRounder"
+end
+
 function HUDA_MilitiaPersonalization:RandomizeStats(unit)
     local gunit = g_Units[unit.session_id]
 
     local defaults = {
-        Health = 65,
-        Agility = 65,
-        Strength = 65,
+        Health = 70,
+        Agility = 60,
+        Strength = 60,
         Wisdom = 50,
         Leadership = 20,
-        Marksmanship = 60,
+        Marksmanship = 55,
         Mechanical = 20,
         Explosives = 20,
         Medical = 20,
         Dexterity = 60,
     }
+
+    local archetypeStats = unit.ArcheType and self.archetypes[unit.ArcheType] and self.archetypes[unit.ArcheType].stats or {}
+
+    for k, v in pairs(archetypeStats) do
+        defaults[k] = v
+    end
 
     if unit.Specialization == "Leader" then
         defaults.Leadership = 60

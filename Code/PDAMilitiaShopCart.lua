@@ -24,7 +24,7 @@ function OnMsg.DataLoaded()
                 "Translate",
                 true,
                 "Text",
-                "Shopping Cart"
+                Untranslated("Shopping Cart")
             }),
             PlaceObj("XTemplateWindow", {
                 "comment",
@@ -60,7 +60,7 @@ function OnMsg.DataLoaded()
                 "Translate",
                 true,
                 "Text",
-                "Your cart is empty"
+                Untranslated("Your cart is empty")
             }),
             PlaceObj("XTemplateGroup", {
                 "__condition",
@@ -83,7 +83,7 @@ function OnMsg.DataLoaded()
                         end,
                         "run_after",
                         function(child, context, item, i, n, last)
-                            child.idCartProduct:SetText(item.count .. " x " .. item.name or item.id)
+                            child.idCartProduct:SetText(Untranslated(item.count .. " x " .. item.name or item.id))
                             child:SetContext(item)
                         end
                     }, {
@@ -107,7 +107,7 @@ function OnMsg.DataLoaded()
                                 "Translate",
                                 true,
                                 "Text",
-                                "Placeholder"
+                                Untranslated("Placeholder")
                             }),
                             PlaceObj("XTemplateWindow", {
                                 "LayoutMethod",
@@ -214,7 +214,7 @@ function OnMsg.DataLoaded()
                                     "VAlign",
                                     "center",
                                     "Text",
-                                    "remove",
+                                    Untranslated("remove"),
                                     "TextStyle",
                                     "PDABrowserThievesBoxLinks"
                                 }, {
@@ -271,7 +271,7 @@ function OnMsg.DataLoaded()
                         "Translate",
                         true,
                         "Text",
-                        "Delivery Type"
+                        Untranslated("Delivery Type")
                     }),
                     PlaceObj("XTemplateWindow", {
                         "__class",
@@ -312,8 +312,8 @@ function OnMsg.DataLoaded()
                             end,
                             "run_after",
                             function(child, context, item, i, n, last)
-                                child.idDeliveryType:SetText(item.title ..
-                                    "(" .. item.duration .. "d)")
+                                child.idDeliveryType:SetText(Untranslated(item.title ..
+                                    "(" .. item.duration .. "d)"))
 
                                 child:SetContext(item)
 
@@ -534,7 +534,7 @@ function OnMsg.DataLoaded()
                         "OnContextUpdate",
                         function(self, context, ...)
                             if gv_HUDA_ShopCart.coupon then
-                                self:SetText(gv_HUDA_ShopCart.coupon.id)
+                                self:SetText(Untranslated(gv_HUDA_ShopCart.coupon.id))
                             end
                         end,
                         "OnTextChanged",
@@ -578,12 +578,12 @@ function OnMsg.DataLoaded()
                     "OnLayoutComplete",
                     function(self)
                         if gv_HUDA_ShopCart.coupon then
-                            self:SetText("Discount: " .. gv_HUDA_ShopCart.coupon.discount .. "%")
+                            self:SetText(Untranslated("Discount: " .. gv_HUDA_ShopCart.coupon.discount .. "%"))
                             self:SetVisible(true)
                         end
                     end,
                     "Text",
-                    "Discout"
+                    Untranslated("Discout")
                 }),
                 PlaceObj("XTemplateWindow", {
                     "LayoutMethod",
@@ -607,7 +607,7 @@ function OnMsg.DataLoaded()
                         "Translate",
                         true,
                         "Text",
-                        "Products:"
+                        Untranslated("Products:")
                     }),
                     PlaceObj("XTemplateWindow", {
                         "__class",
@@ -632,10 +632,10 @@ function OnMsg.DataLoaded()
                         true,
                         "OnLayoutComplete",
                         function(self)
-                            self:SetText(HUDA_ShopController:GetProductPrice() .. "$")
+                            self:SetText(Untranslated(HUDA_ShopController:GetProductPrice() .. "$"))
                         end,
                         "Text",
-                        "Products"
+                        Untranslated("Products")
                     }),
                     PlaceObj("XTemplateWindow", {
                         "__class",
@@ -655,7 +655,7 @@ function OnMsg.DataLoaded()
                         "Translate",
                         true,
                         "Text",
-                        "Delivery:"
+                        Untranslated("Delivery:")
                     }),
                     PlaceObj("XTemplateWindow", {
                         "__class",
@@ -680,10 +680,10 @@ function OnMsg.DataLoaded()
                         true,
                         "OnLayoutComplete",
                         function(self)
-                            self:SetText(HUDA_ShopController:GetDeliveryCosts() .. "$")
+                            self:SetText(Untranslated(HUDA_ShopController:GetDeliveryCosts() .. "$"))
                         end,
                         "Text",
-                        "Delivery"
+                        Untranslated("Delivery")
                     }),
                     PlaceObj("XTemplateWindow", {
                         "__class",
@@ -703,7 +703,7 @@ function OnMsg.DataLoaded()
                         "Translate",
                         true,
                         "Text",
-                        "Total:"
+                        Untranslated("Total:")
                     }),
                     PlaceObj("XTemplateWindow", {
                         "__class",
@@ -728,7 +728,7 @@ function OnMsg.DataLoaded()
                         true,
                         "OnLayoutComplete",
                         function(self)
-                            self:SetText(HUDA_ShopController:GetTotalPrice() .. "$")
+                            self:SetText(Untranslated(HUDA_ShopController:GetTotalPrice() .. "$"))
                         end
                     })
                 }),
@@ -758,7 +758,7 @@ function OnMsg.DataLoaded()
                     "TextStyle",
                     "PDABrowserColaCopyright",
                     "Text",
-                    "Order now"
+                    Untranslated("Order now")
                 }, {
                     PlaceObj("XTemplateFunc", {
                         "name",
@@ -791,7 +791,7 @@ function OnMsg.DataLoaded()
                     "Translate",
                     true,
                     "Text",
-                    "<underline>Clear cart</underline>"
+                    Untranslated("<underline>Clear cart</underline>")
                 }, {
                     PlaceObj("XTemplateFunc", {
                         "name",
