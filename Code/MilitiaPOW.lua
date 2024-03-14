@@ -423,7 +423,8 @@ function HUDA_MilitiaPOW:IsNoDowner(unit)
 	local excludedSectors = {
 		"L12",
 		"L18",
-		"L17"
+		"L17",
+		"G8"
 	}
 
 	if HUDA_ArrayContains(excludedSectors, gv_CurrentSectorId) then
