@@ -253,12 +253,21 @@ function OnMsg.DataLoaded()
 		element[1].DrawOnTop = true
 		element[1].LayoutMethod = "HWrap"
 
-		element[3].Dock = "right"
 
 		element[2].Margins = box(-1610, 0, 0, 75)
-		element[3].Margins = box(0, 18, 40, 0)
-		element[4].Margins = box(-1240, 18, 32, 32)
-		element[4].HAlign = "left"
+		element[3].Margins = box(-1250, 18, 0, 0)
+		element[4].Margins = box(-860, 18, 32, 32)
+	end
+
+	local squadList = HUDA_CustomSettingsUtils.XTemplate_FindElementsByProp(
+		XTemplates.SquadsAndMercs, 'Id', 'idTitle')
+
+	if squadList and squadList.element then
+		squadList.element.LayoutMethod = "HList"
+		squadList.element.Margins = box(-10, -10, 0, 0)
+		squadList.element[1].HAlign = "left"
+		squadList.element[1].VAlign = "center"
+		squadList.element[2].Dock = "left"
 	end
 
 	local x_fit = HUDA_CustomSettingsUtils.XTemplate_FindElementsByProp(XTemplates["SquadsAndMercs"], "__class",
