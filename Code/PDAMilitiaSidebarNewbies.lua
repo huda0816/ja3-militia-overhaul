@@ -61,7 +61,7 @@ function OnMsg.DataLoaded()
                     "Translate",
                     true,
                     "Text",
-                    Untranslated("New Recruits")
+                    T(991704448992001, "New Recruits")
                 }),
                 PlaceObj("XTemplateWindow", {
                     "LayoutMethod",
@@ -77,9 +77,8 @@ function OnMsg.DataLoaded()
                         "OnLayoutComplete",
                         function(self)
                             local squadName = HUDA_GetSquadName(self.context[1].Squad)
-                            local sectorName = TDevModeGetEnglishText(HUDA_GetSectorNamePure(HUDA_GetSector(self.context
-                            [1].session_id)))
-                            self:SetText(Untranslated((squadName or "Squad") .. " / " .. (sectorName or "Sector")))
+                            local sectorName = HUDA_GetSectorNamePure(HUDA_GetSector(self.context[1].session_id))
+                            self:SetText((squadName or T(991704448992002, "Squad")) .. Untranslated(" / ") .. (sectorName or T(991704448992003, "Sector")))
                         end
                     }),
                     PlaceObj("XTemplateForEach", {
@@ -89,7 +88,7 @@ function OnMsg.DataLoaded()
                         end,
                         "run_after",
                         function(child, context, item, i, n, last)
-                            child.idSoldierName:SetText(Untranslated(item.Nick))
+                            child.idSoldierName:SetText(item.Nick)
                         end
                     }, {
                         PlaceObj("XTemplateWindow", {

@@ -202,7 +202,7 @@ end
 function TFormat.NewsMeta(item)
     local date, city = HUDA_NewsController:GetNewsMeta(item)
 
-    return Untranslated(date .. (date and city and " - ") .. city)
+    return date .. (date and city and  Untranslated(" - ")) .. city
 end
 
 function TFormat.GetDateFromTime(context)

@@ -330,8 +330,8 @@ function OnMsg.DataLoaded()
                                     {
                                         query = { category = "ammo", caliber = self.context.caliber },
                                         item = {
-                                            name = self.context.caliberName .. " ammunition",
-                                            description = "Get " .. self.context.caliberName .. " ammunition"
+                                            name = self.context.caliberName .. Untranslated(" ammunition"),
+                                            description = Untranslated("Get ") .. self.context.caliberName .. Untranslated(" ammunition")
                                         }
                                     })
                                 ObjModified(dlg)

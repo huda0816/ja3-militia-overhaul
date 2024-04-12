@@ -43,7 +43,8 @@ function TFormat.HUDA_MilitiaBackground(context_obj)
 
 	local archeType = unit.ArcheType or "Worker"
 
-	return Untranslated(HUDA_MilitiaPersonalization.archetypes[archeType] and HUDA_MilitiaPersonalization.archetypes[archeType].label or "Worker")
+	return Untranslated(HUDA_MilitiaPersonalization.archetypes[archeType] and
+	HUDA_MilitiaPersonalization.archetypes[archeType].label or "Worker")
 end
 
 function TFormat.HUDA_MilitiaBio(context_obj)
@@ -253,10 +254,11 @@ function OnMsg.DataLoaded()
 		element[1].DrawOnTop = true
 		element[1].LayoutMethod = "HWrap"
 
-
-		element[2].Margins = box(-1610, 0, 0, 75)
-		element[3].Margins = box(-1250, 18, 0, 0)
-		element[4].Margins = box(-860, 18, 32, 32)
+		if not HUDA_IsModActive("ii6mKUf") then
+			element[2].Margins = box(-1610, 0, 0, 75)
+			element[3].Margins = box(-1250, 18, 0, 0)
+			element[4].Margins = box(-860, 18, 32, 32)
+		end
 	end
 
 	local squadList = HUDA_CustomSettingsUtils.XTemplate_FindElementsByProp(
@@ -550,7 +552,7 @@ function OnMsg.DataLoaded()
 
 	if inv_template then
 		inv_template.element.__context = function(parent, context) return InventorySquads() end
-	end	
+	end
 
 	local template = HUDA_CustomSettingsUtils.XTemplate_FindElementsByProp(XTemplates["PDASatellite"], "__template",
 		"SquadsAndMercs")
@@ -595,7 +597,6 @@ function OnMsg.DataLoaded()
 end
 
 function InventorySquads()
-	
 	local squads = SortSquads(gv_SatelliteView and GetSquadsInSector(false, false, true) or
 		GetSquadsOnMap("reference"))
 

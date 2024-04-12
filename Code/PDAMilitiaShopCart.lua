@@ -83,7 +83,7 @@ function OnMsg.DataLoaded()
                         end,
                         "run_after",
                         function(child, context, item, i, n, last)
-                            child.idCartProduct:SetText(Untranslated(item.count .. " x " .. item.name or item.id))
+                            child.idCartProduct:SetText(Untranslated(item.count) .. Untranslated(" x ") .. item.name or Untranslated(item.id))
                             child:SetContext(item)
                         end
                     }, {
@@ -534,7 +534,7 @@ function OnMsg.DataLoaded()
                         "OnContextUpdate",
                         function(self, context, ...)
                             if gv_HUDA_ShopCart.coupon then
-                                self:SetText(Untranslated(gv_HUDA_ShopCart.coupon.id))
+                                self:SetText(gv_HUDA_ShopCart.coupon.id)
                             end
                         end,
                         "OnTextChanged",

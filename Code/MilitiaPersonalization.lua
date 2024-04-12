@@ -912,9 +912,9 @@ function HUDA_MilitiaPersonalization:Personalize(unit_ids, first)
             if not unit.Nick then
                 local nick = self:GetRandomMilitiaName()
 
-                unit.Nick = Untranslated(nick)
-                unit.AllCapsNick = Untranslated(string.upper(nick))
-                unit.snype_nick = Untranslated("Militia " .. nick)
+                unit.Nick = nick
+                unit.AllCapsNick = T(string.upper(TDevModeGetEnglishText(nick)))
+                unit.snype_nick = T("Militia ") .. nick
 
                 if gunit then
                     gunit.Nick = unit.Nick
@@ -959,6 +959,10 @@ function HUDA_MilitiaPersonalization:Personalize(unit_ids, first)
                 end
 
                 unit.HandledEquipment = true
+
+				if gunit then
+					gunit.HandledEquipment = unit.HandledEquipment
+                end
             end
 
             if not unit.Specialization or unit.Specialization == "None" then
@@ -997,7 +1001,7 @@ function HUDA_MilitiaPersonalization:GetRandomMilitiaName()
 
     rand = rand > 0 and rand or 1
 
-    return HUDA_male_militia_names[rand]
+    return Untranslated(HUDA_male_militia_names[rand])
 end
 
 function HUDA_MilitiaPersonalization:GetRandomMilitiaSquadName()
@@ -1015,7 +1019,7 @@ function HUDA_MilitiaPersonalization:GetRandomMilitiaSquadName()
 
     HUDA_SetAvailableSquadNames(filtered)
 
-    return name
+    return Untranslated(name)
 end
 
 function HUDA_MilitiaPersonalization:GetRandomBio(unit)
@@ -1045,7 +1049,7 @@ function HUDA_MilitiaPersonalization:GetRandomBio(unit)
 
     local cityName = cityId and gv_Cities[cityId] and gv_Cities[cityId].DisplayName or "Unknown"
 
-    return bio:gsub("<name>", unit.Nick):gsub("<city>", TDevModeGetEnglishText(cityName))
+    return bio:gsub("<name>", TDevModeGetEnglishText(unit.Nick)):gsub("<city>", TDevModeGetEnglishText(cityName))
 end
 
 function HUDA_MilitiaPersonalization:GetBios(unit)

@@ -1,3 +1,14 @@
+
+function HUDA_IsModActive(modId)
+	local activeMods = GetLoadedModsSavegameData()
+
+	for i, mod in ipairs(activeMods) do
+		if mod.id == modId then
+			return true
+		end
+	end
+end
+
 function HUDA_TableValues(tbl)
 	local values = {}
 

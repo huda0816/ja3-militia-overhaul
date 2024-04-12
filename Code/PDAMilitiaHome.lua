@@ -82,7 +82,7 @@ function OnMsg.DataLoaded()
             "Translate",
             true,
             "Text",
-            Untranslated("Welcome to the Grand Chien Militia Hub!")
+            T(2222748516863301, "Welcome to the Grand Chien Militia Hub!")
           }),
           PlaceObj("XTemplateWindow", {
             "__class",
@@ -98,7 +98,7 @@ function OnMsg.DataLoaded()
             "Translate",
             true,
             "Text",
-            Untranslated("At the Grand Chien Militia, we're not just about duty and discipline; we're also a tightly-knit family.")
+            T(2222748516863301, "At the Grand Chien Militia, we're not just about duty and discipline; we're also a tightly-knit family.")
           })
         })
       }),
