@@ -888,7 +888,7 @@ return {
 		end,
 		Custom = false,
 		GetOperationCost = function (self, merc, profession, idx)
-			return {[1] = {value = 2000, resource = "Money"}, [2] = {value = 20, resource = "Meds"}}
+			return {[1] = {value = 1000, resource = "Money"}, [2] = {value = 20, resource = "Meds"}}
 		end,
 		GetSectorSlots = function (self, prof, sector)
 			return 1
