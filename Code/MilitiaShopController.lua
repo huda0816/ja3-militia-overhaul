@@ -29,7 +29,7 @@ function OnMsg.NewHour()
 		return
 	end
 
-	if t.hour > 7 and t.hour < 13 then
+	if t.hour > 7 and t.hour < 20 then
 		HUDA_ShopController:RefreshOrders(t)
 	end
 
