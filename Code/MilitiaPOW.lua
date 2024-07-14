@@ -206,15 +206,12 @@ function HUDA_MilitiaPOW:DeliverPOWs()
     local pows = {}
 
     for _, squad in ipairs(sector.enemy_squads) do
-        print(squad.Side)
         if squad.Side ~= "neutral" then
             enemies = true
         end
     end
 
-	print("enemies", enemies and "yes" or "no")
-
-    if enemies then
+	if enemies then
         return
     end
 
@@ -224,9 +221,7 @@ function HUDA_MilitiaPOW:DeliverPOWs()
 
                 local unit = g_Units[unitId] or gv_UnitData[unitId]
 
-				print(unitId,unit.session_id)
-
-                unit.HireStatus = "Captured"
+				unit.HireStatus = "Captured"
                 unit.villain = false
                 unit:RemoveStatusEffect("Downed")
                 unit:RemoveStatusEffect("Unconscious")
@@ -240,9 +235,7 @@ function HUDA_MilitiaPOW:DeliverPOWs()
         end
     end
 
-	Inspect(pows)
-
-    if not next(pows) then
+	if not next(pows) then
         return
     end
 

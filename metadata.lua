@@ -8,7 +8,7 @@ return PlaceObj('ModDef', {
 	'author', "permanent666",
 	'version_major', 5,
 	'version_minor', 8,
-	'version', 6876,
+	'version', 6877,
 	'lua_revision', 233360,
 	'saved_with_revision', 350233,
 	'code', {
@@ -101,8 +101,8 @@ return PlaceObj('ModDef', {
 		huda_MilitiaVeteranIncome = "40 (default)",
 	},
 	'has_data', true,
-	'saved', 1720917669,
-	'code_hash', -5769880620568269783,
+	'saved', 1720918949,
+	'code_hash', -465743502247683825,
 	'affected_resources', {
 		PlaceObj('ModResourcePreset', {
 			'Class', "CharacterEffectCompositeDef",
