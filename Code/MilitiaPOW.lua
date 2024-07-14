@@ -439,6 +439,12 @@ function HUDA_MilitiaPOW:IsNoDowner(unit)
         return true
     end
 
+	local excludedAffiliations = {"Thugs", "SuperSoldiers"}
+
+	if HUDA_ArrayContains(excludedAffiliations, unit.Affiliation) then
+		return true
+	end
+
     local excludedSectors = {"L12", "L18", "L17", "G8"}
 
     if HUDA_ArrayContains(excludedSectors, gv_CurrentSectorId) then
@@ -447,7 +453,7 @@ function HUDA_MilitiaPOW:IsNoDowner(unit)
 
     local excludedList = {"LegionRaider_Jose", "JoseFamily_All", "HermanRaiders", "AbuserPoacher_All", "Crocs",
                           "Knights", "Nobles", "RimvilleGuardsAll", "SmileyThugs", "RefugeeRaiders", "PierreAndGuards",
-                          "LegionImpostors", "Fighters"}
+                          "LegionImpostors", "Fighters", "AL_Pirate_Thugs"}
 
     if not unit.Groups or #unit.Groups < 1 then
         return false
