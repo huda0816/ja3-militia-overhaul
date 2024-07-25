@@ -211,7 +211,7 @@ function HUDA_MilitiaPOW:DeliverPOWs()
         end
     end
 
-	if enemies then
+    if enemies then
         return
     end
 
@@ -221,7 +221,7 @@ function HUDA_MilitiaPOW:DeliverPOWs()
 
                 local unit = g_Units[unitId] or gv_UnitData[unitId]
 
-				unit.HireStatus = "Captured"
+                unit.HireStatus = "Captured"
                 unit.villain = false
                 unit:RemoveStatusEffect("Downed")
                 unit:RemoveStatusEffect("Unconscious")
@@ -235,7 +235,7 @@ function HUDA_MilitiaPOW:DeliverPOWs()
         end
     end
 
-	if not next(pows) then
+    if not next(pows) then
         return
     end
 
@@ -441,9 +441,9 @@ function HUDA_MilitiaPOW:IsNoDowner(unit)
 
 	local excludedAffiliations = {"Thugs", "SuperSoldiers"}
 
-	if HUDA_ArrayContains(excludedAffiliations, unit.Affiliation) then
-		return true
-	end
+    if HUDA_ArrayContains(excludedAffiliations, unit.Affiliation) then
+        return true
+    end
 
     local excludedSectors = {"L12", "L18", "L17", "G8"}
 
@@ -463,6 +463,19 @@ function HUDA_MilitiaPOW:IsNoDowner(unit)
         if HUDA_ArrayContains(excludedList, group) then
             return true
         end
+    end
+
+    local valuableCarrier = false;
+
+    unit:ForEachItem(false, function(item, slot_name)
+        if IsKindOfClasses(item, "Valuables", "ValuablesStack", "ValuableItemContainer", "QuestItem") then
+			valuableCarrier = true
+            return "break"
+        end
+    end)
+
+    if valuableCarrier then
+        return true
     end
 
     return false

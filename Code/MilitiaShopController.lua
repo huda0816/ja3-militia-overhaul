@@ -1390,7 +1390,7 @@ function HUDA_ShopController:SendMails(internalId, context)
 
 	if internalId == "delivered" then
 		id = "HUDA_ShipmentArrived"
-		context = { location = GetSectorName(gv_Sectors[context.sector]) or context.sector }
+		context = { location = context.sector }
 	elseif internalId == "orderPlaced" then
 		id = "HUDA_OrderPlaced"
 	else

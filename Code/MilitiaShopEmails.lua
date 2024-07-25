@@ -10,6 +10,7 @@ function OnMsg.DataLoaded()
 				HUDA_OpenShopPage()
 			end
 			if hyperlink == "OpenSectorInventory" then
+
 				local email = table.find_value(self.context, "id", "HUDA_ShipmentArrived") or self.context
 
 				if email then
@@ -39,7 +40,8 @@ function HUDA_OpenShopPage()
 end
 
 function HUDA_OpenSectorInventory(sectorName)
-	local sectorId = sectorName[3][1] or "H2"
+
+	local sectorId = sectorName and (type(sectorName) ~= "table" and sectorName or sectorName[1][3]) or "H2"
 
 	local unitsInSector = GetPlayerSectorUnits(sectorId)
 
