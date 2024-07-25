@@ -1298,7 +1298,7 @@ return {
 						self:ModifyProgress(progress_per_tick, sector)
 						self:CheckCompleted(merc, sector)
 		end,
-		description = T(380237902727, --[[ModItemSectorOperation HUDA_MilitiaInterrogation description]] "Interrogate the prisoners to obtain valuable information. Mercenaries with high leadership are best suited for interrogations. There are also perks that influence the outcome of the interrogation."),
+		description = T(380237902727, --[[ModItemSectorOperation HUDA_MilitiaInterrogation description]] "Interrogate the prisoners to obtain valuable information. Mercenaries with high leadership and wisdom are best suited for interrogations. There are also perks that influence the outcome of the interrogation."),
 		display_name = T(173505274548, --[[ModItemSectorOperation HUDA_MilitiaInterrogation display_name]] "Interrogation"),
 		icon = "Mod/LXPER6t/Icons/pow_operations.png",
 		id = "HUDA_MilitiaInterrogation",
