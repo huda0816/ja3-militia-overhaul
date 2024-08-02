@@ -869,7 +869,7 @@ function HUDA_MilitiaTraining:HandleConflictEnd(sector, playerAttacking, playerW
 		local cities = gv_Cities
 
 		for k, city in pairs(cities) do
-			local currentRecruits = gv_HUDA_MilitiaRecruits[k]
+			local currentRecruits = gv_HUDA_MilitiaRecruits[k] or 0
 
 			local leavingRecruits = MulDivRound(currentRecruits, 5, 100);
 
