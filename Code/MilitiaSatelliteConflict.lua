@@ -3,18 +3,16 @@
 g_thedespawned = false
 
 function OnMsg.PreSquadDespawned(squad_id, sector, reason)
-
 	local squad = gv_Squads[squad_id]
 
 	local biffSector = gv_Sectors["A8"]
 
 	if squad.militia and not g_thedespawned and sector == "E9" and biffSector.ally_squads and #biffSector.ally_squads > 0 then
-		
 		local popupHost = GetDialog("PDADialogSatellite")
 		popupHost = popupHost and popupHost:ResolveId("idDisplayPopupHost")
 
 		local dlg = CreateMessageBox(popupHost, "Squad vanishes in Refugee Camp",
-		"We lost contact to our militia Squad in the Refugee Camp. We should send a squad to investigate the situation. (Do not send a militia squad)")
+			"We lost contact to our militia Squad in the Refugee Camp. We should send a squad to investigate the situation. (Do not send a militia squad)")
 
 		g_thedespawned = true
 	end
@@ -46,7 +44,6 @@ end
 local HUDA_OriginalIsMerc = IsMerc
 
 function IsMerc(o)
-
 	if not o then
 		return false
 	end
@@ -59,48 +56,47 @@ function IsMerc(o)
 end
 
 function OnMsg.DataLoaded()
-
 	XTemplates["SatelliteConflictSquadsAndMercs"][1].LayoutVSpacing = 15
 	XTemplates["SatelliteConflictSquadsAndEnemies"][1].LayoutVSpacing = 15
 	XTemplates["SatelliteConflictSquadsAndMercs"][1].Padding = box(0, 15, 0, 15)
 	XTemplates["SatelliteConflictSquadsAndEnemies"][1].Padding = box(0, 15, 0, 15)
 
-	local mercIcons = HUDA_CustomSettingsUtils.XTemplate_FindElementsByProp(XTemplates["SatelliteConflictSquadsAndMercs"], "__template", "HUDMerc", "all")
+	local mercIcons = HUDA_CustomSettingsUtils.XTemplate_FindElementsByProp(
+	XTemplates["SatelliteConflictSquadsAndMercs"], "__template", "HUDMerc", "all")
 
 	if mercIcons then
-
 		for _, v in ipairs(mercIcons) do
 			v.element.ScaleModifier = point(600, 600)
 		end
-
 	end
 
-	local squadLogo = HUDA_CustomSettingsUtils.XTemplate_FindElementsByProp(XTemplates["SatelliteConflictSquadsAndMercs"], "Id", "idLogo")
+	local squadLogo = HUDA_CustomSettingsUtils.XTemplate_FindElementsByProp(
+	XTemplates["SatelliteConflictSquadsAndMercs"], "Id", "idLogo")
 
 	if squadLogo then
 		squadLogo.element.ScaleModifier = point(500, 500)
 	end
 
-	local enemyIcons = HUDA_CustomSettingsUtils.XTemplate_FindElementsByProp(XTemplates["SatelliteConflictSquadsAndEnemies"], "__template", "HUDMerc", "all")
+	local enemyIcons = HUDA_CustomSettingsUtils.XTemplate_FindElementsByProp(
+	XTemplates["SatelliteConflictSquadsAndEnemies"], "__template", "HUDMerc", "all")
 
 	if enemyIcons then
-
 		for _, v in ipairs(enemyIcons) do
 			v.element.ScaleModifier = point(600, 600)
 		end
-
 	end
 
-	local enemyLogo = HUDA_CustomSettingsUtils.XTemplate_FindElementsByProp(XTemplates["SatelliteConflictSquadsAndEnemies"], "Id", "idSquadImage")
+	local enemyLogo = HUDA_CustomSettingsUtils.XTemplate_FindElementsByProp(
+	XTemplates["SatelliteConflictSquadsAndEnemies"], "Id", "idSquadImage")
 
 	if enemyLogo then
 		enemyLogo.element.ScaleModifier = point(500, 500)
 	end
 
-	local militiaLogo = HUDA_CustomSettingsUtils.XTemplate_FindElementsByProp(XTemplates["SatelliteConflictSquadsAndMercs"], "Id", "idSquadImage")
+	local militiaLogo = HUDA_CustomSettingsUtils.XTemplate_FindElementsByProp(
+	XTemplates["SatelliteConflictSquadsAndMercs"], "Id", "idSquadImage")
 
 	if militiaLogo then
-
 		local originalOnContextUpdate = militiaLogo.element.OnContextUpdate
 
 		militiaLogo.element.OnContextUpdate = function(self, context, ...)
@@ -112,8 +108,9 @@ function OnMsg.DataLoaded()
 		end
 	end
 
-	local sat_conflict = HUDA_CustomSettingsUtils.XTemplate_FindElementsByProp(XTemplates["SatelliteConflict"], "ActionId",
-    "actionFight")
+	local sat_conflict = HUDA_CustomSettingsUtils.XTemplate_FindElementsByProp(XTemplates["SatelliteConflict"],
+		"ActionId",
+		"actionFight")
 
 	if sat_conflict then
 		sat_conflict.element.ActionState = function(self, host)
@@ -153,6 +150,14 @@ end
 local HUDA_OriginalIsAutoResolveEnabled = IsAutoResolveEnabled
 
 function IsAutoResolveEnabled(sector)
+	if type(sector) ~= "table" then
+		sector = gv_Sectors[sector]
+	end
+
+	if not sector then
+		return false
+	end
+
 	if sector.autoresolve_disabled then
 		return false
 	end
@@ -194,19 +199,21 @@ function SatelliteRetreat(sector_id, sides_to_retreat)
 	end
 
 	for i, squad in ipairs(squadsToRetreat) do
-		local prev_sector_id = (sector.conflict.player_attacking and sector.conflict.prev_sector_id) or squad.PreviousSector
+		local prev_sector_id = (sector.conflict.player_attacking and sector.conflict.prev_sector_id) or
+		squad.PreviousSector
 		if IsWaterSector(prev_sector_id) and squad.PreviousLandSector then
 			prev_sector_id = squad.PreviousLandSector
 		end
 		if not prev_sector_id then goto continue end
-		
+
 		if (IsSectorUnderground(sector_id) and not IsSectorUnderground(prev_sector_id)) or
 			(IsSectorUnderground(prev_sector_id) and not IsSectorUnderground(sector_id)) then
 			SetSatelliteSquadCurrentSector(squad, prev_sector_id, true, true)
 		else
 			-- Find best retreat sector if previous sector is a bad idea.
 			local badRetreat = false
-			local otherSideSquads = (squad.Side == "enemy1" or squad.Side == "enemy2") and g_PlayerAndMilitiaSquads or g_EnemySquads
+			local otherSideSquads = (squad.Side == "enemy1" or squad.Side == "enemy2") and g_PlayerAndMilitiaSquads or
+			g_EnemySquads
 			-- Check if any of the other side squads on my sector are travelling towards the one I want to retreat to.
 			for i, os in ipairs(otherSideSquads) do
 				if os.CurrentSector == sector_id and os.route then
@@ -217,12 +224,12 @@ function SatelliteRetreat(sector_id, sides_to_retreat)
 					end
 				end
 			end
-			
+
 			-- Check if retreating into water.
 			local prevSector = gv_Sectors[prev_sector_id]
 			local illegalRetreat = prevSector.Passability == "Water" or prevSector.Passability == "Blocked"
 			badRetreat = badRetreat or illegalRetreat
-			
+
 			-- Check if retreating into enemies.
 			if not badRetreat then badRetreat = not not table.find(otherSideSquads, "CurrentSector", prev_sector_id) end
 			-- Try to find a better retreat position, such as one without other side squads.
@@ -237,8 +244,8 @@ function SatelliteRetreat(sector_id, sides_to_retreat)
 						considerThisSector = true
 					end
 
-					local forbiddenRoute = IsRouteForbidden({{otherSecId}}, squad)
-				
+					local forbiddenRoute = IsRouteForbidden({ { otherSecId } }, squad)
+
 					-- If illegal retreat consider the first non-forbidden route sector, regardless of the
 					-- "other-side" conditions above.
 					if illegalRetreat and not illegalRetreatFallback and not forbiddenRoute then
@@ -251,19 +258,20 @@ function SatelliteRetreat(sector_id, sides_to_retreat)
 						return "break"
 					end
 				end)
-				
+
 				if illegalRetreat and not foundSector and illegalRetreatFallback then
 					prev_sector_id = illegalRetreatFallback
 				end
 			end
-			
-			local retreatRoute = GenerateRouteDijkstra(squad.CurrentSector, prev_sector_id, false, squad.units, "retreat", squad.CurrentSector, squad.side)
-			if not retreatRoute then 
+
+			local retreatRoute = GenerateRouteDijkstra(squad.CurrentSector, prev_sector_id, false, squad.units, "retreat",
+				squad.CurrentSector, squad.side)
+			if not retreatRoute then
 				-- Ehh, what?
-				assert(false) -- Retreat route is invalid
+				assert(false)         -- Retreat route is invalid
 				retreatRoute = { prev_sector_id } -- Fallback to just get out of this sector.
 			end
-			
+
 			-- Try to retain the joining squad if it will retreat in the same direction it was going anyway
 			local keepJoining = false
 			if squad.joining_squad then
@@ -273,7 +281,7 @@ function SatelliteRetreat(sector_id, sides_to_retreat)
 
 			SetSatelliteSquadRetreatRoute(squad, { retreatRoute }, keepJoining)
 		end
-		
+
 		::continue::
 	end
 
@@ -291,7 +299,7 @@ function ResolveConflict(sector, bNoVoice, isAutoResolve, isRetreat)
 	-- 		assert(false) -- Auto resolve is causing another auto resolve, infinite loop!
 	-- 		table.remove_value(g_ConflictSectors, sector.Id)
 	-- 		sector.conflict = false
-			
+
 	-- 		if not AnyNonWaitingConflict() then
 	-- 			ResumeCampaignTime("SatelliteConflict")	
 	-- 		end
@@ -345,7 +353,6 @@ end
 local HUDA_OriginalDropLoot = Unit.DropLoot
 
 function Unit:DropLoot(container)
-
 	if self.militia then
 		local droped_items = 0
 		local is_npc = false
@@ -423,10 +430,9 @@ function OnMsg.ClosePDA()
 end
 
 function OnMsg.OpenPDA()
-
 	for i, squad in ipairs(gv_Squads) do
 		if squad.militia then
-			squad.Side = "player1"			
+			squad.Side = "player1"
 		end
 	end
 

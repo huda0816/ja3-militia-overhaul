@@ -218,6 +218,10 @@ function HUDA_MilitiaPOW:DeliverPOWs()
 			for _, unitId in ipairs(squad.units) do
 				local unit = g_Units[unitId] or gv_UnitData[unitId]
 
+				if unit and unit.ImportantNPC then
+					goto continue
+				end
+
 				unit.HireStatus = "Captured"
 				unit.villain = false
 				unit:RemoveStatusEffect("Downed")
@@ -227,6 +231,9 @@ function HUDA_MilitiaPOW:DeliverPOWs()
 				local container = GetDropContainer(unit)
 				unit:DropLoot(container)
 				table.insert(pows, unit.session_id)
+			
+				::continue::
+			
 			end
 		end
 	end
@@ -432,6 +439,10 @@ end
 
 function HUDA_MilitiaPOW:IsNoDowner(unit)
 	if unit.species ~= "Human" or unit.villain or unit.ImportantNPC or unit.infected or unit.group == "NPC" then
+		return true
+	end
+
+	if unit:HasStatusEffect("ManningEmplacement") or unit:HasStatusEffect("StationedMachineGun") then
 		return true
 	end
 
