@@ -2,13 +2,13 @@ return PlaceObj('ModDef', {
 	'title', "GC-Militia / Militia Overhaul mod",
 	'description', '[b]Overview[/b]\n\n[list]\n[*]Militia online hub with webshop\n[*]Webshop uses Bobby Rays item configuration\n[*]Militia base building \n[*]New operations\n[*]Changes to militia training\n[*]Enemies can be captured and interrogated\n[*]New logistic operation to transfer or sell items\n[*]Militia squads can be moved\n[*]Militia squads can be managed through squad management\n[*]Militia squads can be renamed\n[*]Militia soldiers have names, a hometown and a background story (thanks ChatGPT)\n[*]Militia soldiers have randomized stats and professions\n[*]Especially rookies but on veterans have worse morale when fighting away from home\n[*]The mod changes the default squad size to 8\n[*]Optional default - In combat, militia soldiers can be controlled by the player (auto-resolve is still possible)\n[*]Optional default - Randomized militia equipment based on the militia soldiers background\n[*]Optional default - Militia soldiers have to be paid continuously (additional costs when they are on campaign)\n[*]Optional default - Cities lose loyalty when too few soldiers (including mercenaries) are stationed\n[/list]\n\n[b]Compatibility with other mods[/b]\n\n[list]\n[*]List will be updated soon\n[/list]\n\n[b]Currently Known Issues[/b]\n[list]\n[*]Testing with 1.5 was limited, so it is possible that there are new unknown bugs\n[*]There can be bugs if the games language is changed. I am not sure if your game has to be on "AUTO" or in english. Still investigating.\n[*]If there is a militia squad at E9 or a militia squad moves to E9 at a certain event it will vanish. It does not break the event as I thought earlier it is just that the event is somehow broken as it only triggers if you defeat everyone at E9\n[*]You can deactivate the mod and your savegame will still work but there is no real uninstall at the moment. I am working on it.\n[*]Please make a backup savegame before activating this mod. Close and restart the game after activation.\n[/list]\n\n[b]Plans for the future[/b]\n\nThis mod is intended to be a wip and will be developed further. Feel free to post your suggestions.\n\n[list]\n[*]Proper backgrounds for militia with special effects\n[*]City policies\n[/list]\n\n[b]Thank you modding Discord and Haemimont![/b]\n\nWithout the community in the modding Discord and also the support of the developers, this mod would not have been possible. In particular, I would like to thank Audaki, Anarkythera, Tobias, SkunkXL and HG_Feanor for their help.\n\n[b]Credits[/b]\n\nIcons downloaded from flaticon.com and created by “Freepik\nIcon with the dog was also downloaded from flaticon.com and created by “Vitaly Gorbachev”.\nMilitia bios, names and squad-names were created with ChatGPT and Bard',
 	'image', "Mod/LXPER6t/Images/gcmss2.png",
-	'last_changes', "Update 5.12\n\n[list]\n[*]Fixed bug with militia recruits which occured if a battle is lost\n[*]Added a lot of groups which cannot be downed to prevent any quest related bugs\n[/list]",
+	'last_changes', "Update 5.13\n\n[list]\n[*]Fixed bug where NPCs were treated as POWs after combat end\n[*]Militia will now capture empty sectors\n[*]Disabled death notice email for militia as it is only intended for mercs\n[*]Added units manning a MG to the no Downers list\n[*]Fixed problem where sector was passed as id instead of table\n[/list]",
 	'dependencies', {},
 	'id', "LXPER6t",
 	'author', "permanent666",
 	'version_major', 5,
-	'version_minor', 12,
-	'version', 6939,
+	'version_minor', 13,
+	'version', 6942,
 	'lua_revision', 233360,
 	'saved_with_revision', 350233,
 	'code', {
@@ -101,8 +101,8 @@ return PlaceObj('ModDef', {
 		huda_MilitiaVeteranIncome = "40 (default)",
 	},
 	'has_data', true,
-	'saved', 1722627718,
-	'code_hash', 7849067976918935417,
+	'saved', 1724615464,
+	'code_hash', 4946498611173923962,
 	'affected_resources', {
 		PlaceObj('ModResourcePreset', {
 			'Class', "CharacterEffectCompositeDef",

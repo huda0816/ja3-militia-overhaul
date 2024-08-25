@@ -151,3 +151,26 @@ function HUDACanTravel(squad, sector_id)
 
 	return true
 end
+
+
+function OnMsg.ReachSectorCenter(squad_id, sector_id, prev_sector_id)
+
+	local squad = gv_Squads[squad_id]
+
+	if not squad.militia or squad.Retreat then
+		return
+	end
+
+	local sector = gv_Sectors[sector_id]
+
+	if sector.conflict then
+		return
+	end
+
+	local sideChanged = SatelliteSectorSetSide(sector_id, squad.Side) or false
+	
+	if sideChanged and g_SatelliteUI then
+		g_SatelliteUI:UpdateSectorVisuals(sector_id)
+	end
+
+end

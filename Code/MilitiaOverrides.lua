@@ -102,3 +102,30 @@ function IModeExploration:InitiateUnitMovement(pos, unitPool, fx_pos, move_type)
 
 	HUDA_OriginalInitiateUnitMovement(self, pos, unitPool, fx_pos, move_type)
 end
+
+OnMsg.DataLoaded = function()
+	PlaceObj('Email', {
+		body = T(445418729868, --[[Email ContractEnd_Dead body]] "Hello,\n\nPlease find attached your invoice for <Nick(unitId)>:\nMerc Name: <Nick(unitId)>\nStatus: Dead\n\nDuration of contract: <totalDuration> d - contract terminated due to merc's demise\nSalary Paid: <money(moneyPaid)>\nCommendations: <tasksDone>\n\nThe next of kin of <Nick(unitId)> have been notified of their demise.\n\nThank you for your continued support and cooperation,\nA.I.M. Recruitment Team"),
+		group = "ContractTermination",
+		id = "ContractEnd_Dead",
+		msg_reactions = {
+			PlaceObj('MsgReaction', {
+				Event = "MercHireStatusChanged",
+				Handler = function (self, unitData, oldStatus, newStatus)
+					if oldStatus == "Hired" and newStatus == "Dead" and not unitData.militia then
+						local context = {
+							unitId = unitData.session_id,
+							totalDuration = GetTrackedStat(unitData, "DaysInService") or 0,
+							moneyPaid = GetTrackedStat(unitData, "TotalHiringFee") or 0,
+							tasksDone = GetTrackedStat(unitData, "CombatTasksCompleted") or 0,
+						}
+						ReceiveEmail(self.id, context)
+					end
+				end,
+			}),
+		},
+		repeatable = true,
+		sender = T(677350440753, --[[Email ContractEnd_Dead sender]] "recruitment@aimmercs.net"),
+		title = T(243565972995, --[[Email ContractEnd_Dead title]] "A.I.M. - <Nick(unitId)> Invoice"),
+	})
+end
