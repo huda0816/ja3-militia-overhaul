@@ -289,7 +289,12 @@ function HUDA_MilitiaTransfer:OnComplete(op, sector, mercs)
         self:SellItems(sector.Id, mercs)
     end
 
-    sector.operations_temp_data[self.opId] = false
+	sector.operations_temp_data = sector.operations_temp_data or {}
+
+	sector.operations_temp_data[self.opId] = false
+
+	sector.custom_operations = sector.custom_operations or {}
+
     sector.custom_operations[self.opId] = nil
 end
 

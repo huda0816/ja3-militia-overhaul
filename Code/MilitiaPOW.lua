@@ -487,9 +487,15 @@ function HUDA_MilitiaPOW:IsNoDowner(unit)
 		return true
 	end
 
+	local sectorId = gv_Squads[unit.Squad].CurrentSector
+
 	local excludedSectors = { "L12", "L18", "L17", "G8", "A2", "A8", "H12", "L9" }
 
-	if HUDA_ArrayContains(excludedSectors, gv_CurrentSectorId) then
+	if HUDA_ArrayContains(excludedSectors, sectorId) then
+		return true
+	end
+
+	if IsSectorUnderground(sectorId) then
 		return true
 	end
 

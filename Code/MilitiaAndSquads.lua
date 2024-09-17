@@ -44,7 +44,7 @@ function TFormat.HUDA_MilitiaBackground(context_obj)
 	local archeType = unit.ArcheType or "Worker"
 
 	return Untranslated(HUDA_MilitiaPersonalization.archetypes[archeType] and
-	HUDA_MilitiaPersonalization.archetypes[archeType].label or "Worker")
+		HUDA_MilitiaPersonalization.archetypes[archeType].label or "Worker")
 end
 
 function TFormat.HUDA_MilitiaBio(context_obj)
@@ -704,7 +704,7 @@ function RemoveUnitFromSquad(unit_data, reason)
 				sector.militia_squad_id = HUDA_GetTrainableMilitiaSquad(sector, squad.UniqueId)
 			end
 		end
-		RemoveSquadsFromLists(gv_Squads[squad_id])
+		RemoveSquadsFromLists(squad)
 		gv_Squads[squad_id] = nil
 		Msg("SquadDespawned", squad_id, squad.CurrentSector, squad.Side)
 	else
