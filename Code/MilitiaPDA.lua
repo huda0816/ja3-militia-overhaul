@@ -108,23 +108,23 @@ end
 local HUDA_OriginalPDAUrl = TFormat.PDAUrl
 
 function TFormat.PDAUrl(context_obj)
-    -- local pda = GetDialog("PDADialog")
-    -- if not pda then
-    --     return false
-    -- end
-    -- local content = pda:ResolveId("idContent")
-    -- local mercBrowser = IsKindOf(content, "PDABrowser") and content
+    local pda = GetDialog("PDADialog")
+    if not pda then
+        return false
+    end
+    local content = pda:ResolveId("idContent")
+    local mercBrowser = IsKindOf(content, "PDABrowser") and content
 
-    -- local browserContent = mercBrowser.idBrowserContent
+    local browserContent = mercBrowser.idBrowserContent
 
-    -- if mercBrowser and mercBrowser:GetMode() == "militia" then
-    --     local mode = browserContent:GetMode()
-    --     local mode_param = browserContent.mode_param
+    if mercBrowser and mercBrowser:GetMode() == "militia" then
+        local mode = browserContent:GetMode()
+        local mode_param = browserContent.mode_param
 
-    --     local url = browserContent:GetURL(mode, mode_param)
+        local url = browserContent:GetURL(mode, mode_param)
 
-    --     return url or "http://www.gc-militia.org/"
-    -- end
+        return url or "http://www.gc-militia.org/"
+    end
 
     return Untranslated(HUDA_OriginalPDAUrl(context_obj))
 end

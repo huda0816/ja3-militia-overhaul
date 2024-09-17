@@ -74,8 +74,6 @@ function OnMsg.DataLoaded()
                     elseif mode == "orders" then
                         return Untranslated("http://www.gc-militia.org/shop?orders=1")
                     end
-
-                    ObjModified("pda_url")
                 end
             }),
             PlaceObj("XTemplateFunc", {

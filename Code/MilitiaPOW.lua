@@ -3,6 +3,42 @@ GameVar("gv_HUDA_CapturedPows", {})
 g_MilitiaInterrogationCompleteCounter = 0
 g_MilitiaInterrogationCompletePopups = {}
 
+function OnMsg.NewDay()
+	CollectPowGarbage()
+end
+
+function CollectPowGarbage()
+	local collectedPrisoners = {}
+
+	for i, squad in ipairs(g_SquadsArray) do
+		if squad.Side == "neutral" and squad.Name[2] == "Captured POW" then
+			local sectorId = squad and squad.CurrentSector
+			if not sectorId and squad.units and next(squad.units) then
+				local unit = gv_UnitData[squad.units[1]]
+				for part in string.gmatch(unit.session_id, '([^:]+)') do
+					local sector = gv_Sectors[part]
+
+					if sector then
+						sectorId = part
+						break
+					end
+				end
+
+				if sectorId then
+					squad.CurrentSector = sectorId
+				end
+			end
+			for _, unitId in ipairs(squad.units) do
+				table.insert(collectedPrisoners, unitId)
+			end
+		end
+	end
+
+	if next(collectedPrisoners) then
+		HUDA_MilitiaPOW:SetPrisonersSector(collectedPrisoners)
+	end
+end
+
 function OnMsg.ClosePDA()
 	local units = g_Units
 
@@ -231,9 +267,8 @@ function HUDA_MilitiaPOW:DeliverPOWs()
 				local container = GetDropContainer(unit)
 				unit:DropLoot(container)
 				table.insert(pows, unit.session_id)
-			
+
 				::continue::
-			
 			end
 		end
 	end
@@ -626,12 +661,21 @@ function Unit:Captured()
 	self:RemoveAllStatusEffects()
 	self.HireStatus = "Captured"
 
+	local newSquadId;
+
 	local squad = gv_Squads[self.Squad]
 	if squad then
-		local newSquadId = SplitSquad(squad, { self.session_id })
+		newSquadId = SplitSquad(squad, { self.session_id })
 		assert(self.Squad == newSquadId)
 		SetSatelliteSquadSide(self.Squad, "neutral")
+	else -- unit is not in a squad
+		newSquadId = CreateNewSatelliteSquad({
+			Side = "neutral",
+			CurrentSector = self.CurrentSector,
+			Name = T(12156020534708170, "Captured POW")
+		}, { self.session_id })
 	end
+
 	self:SetSide("neutral")
 
 	if g_Combat and not g_AIExecutionController then

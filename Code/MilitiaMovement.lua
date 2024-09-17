@@ -163,7 +163,7 @@ function OnMsg.ReachSectorCenter(squad_id, sector_id, prev_sector_id)
 
 	local sector = gv_Sectors[sector_id]
 
-	if sector.conflict then
+	if sector.conflict or sector.Side == "player1" or sector.Side == "player2" then
 		return
 	end
 
