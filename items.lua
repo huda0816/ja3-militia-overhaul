@@ -1490,12 +1490,12 @@ return {
 			local mercs = GetOperationProfessionals(sector.Id, self.id,false, merc.session_id)
 			-- reset items
 			if #mercs<=0 then
-				sector.sector_repair_items_queued = {}
-				-- SectorOperationFillItemsToRepair(sector.Id,mercs)
-				ObjModified(sector.sector_repair_items_queued)
-				if sector.started_operations and sector.started_operations.RepairItems then
-					NetSyncEvent("InterruptSectorOperation", sector.Id,"RepairItems")				
-				end
+				-- sector.sector_repair_items_queued = {}
+				-- -- SectorOperationFillItemsToRepair(sector.Id,mercs)
+				-- ObjModified(sector.sector_repair_items_queued)
+				-- if sector.started_operations and sector.started_operations.RepairItems then
+				-- 	NetSyncEvent("InterruptSectorOperation", sector.Id,"RepairItems")				
+				-- end
 				
 				Msg("OperationCompleted", self, mercs, sector)
 			end
